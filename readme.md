@@ -31,6 +31,6 @@ Vamos focar os testes nos endpoints e nas views. É interessante cada um fazer o
 - O database está configurado e não precisa importar as models mais por ele. Elas devem ser importadas no __init__.py de models.
 - Migrations configurado também. Só fazer o flask db init e construir as models.
 - Sobre o diretório "tests", já tem um conftest. Só criar os testes mesmo. Se precisarem de ajuda nessa parte é só dar um grito.
-- Adicionei a tag 1.0. O primeiro mvp vai para ela, depois passa para main. Aí podemos ir trabalhando nos extras nas novas versões.
+- Adicionei a tag v0.0. No primeiro mvp ela vai v1.0, depois passa para main. Aí podemos ir trabalhando nos extras nas novas versões.
 
 # Comece a documentar daqui em diante...
