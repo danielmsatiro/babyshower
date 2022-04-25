@@ -32,7 +32,7 @@ def test_get_asks(client: FlaskClient):
     ), "Check your status code at route 'get asks/<product_id>'"
     assert (
         response.json == expected
-    )
+    ), "Something went wrong at route 'get asks/<product_id>'"
 
 #PATCH
 def test_patch_ask(client: FlaskClient):
@@ -52,7 +52,7 @@ def test_patch_ask(client: FlaskClient):
     ), "Check your status code at route 'patch asks/<ask_id>'"
     assert (
         response.json == expected
-    )
+    ), "Something went wrong at route 'patch asks/<product_id>'"
 
 #DELETE 
 def test_delete_ask(client: FlaskClient):
@@ -64,7 +64,7 @@ def test_delete_ask(client: FlaskClient):
     ), "Check your status code at route 'patch asks/<ask_id>'"
     assert (
         response.json == expected
-    )
+    ), "Something went wrong at route 'patch asks/<product_id>'"
 
 
 
