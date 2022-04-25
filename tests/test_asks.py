@@ -1,7 +1,7 @@
 from flask.testing import FlaskClient
 
 #POST
-def create_ask(client: FlaskClient):
+def test_create_ask(client: FlaskClient):
     payload = {
         "question": "teste"
     }
@@ -21,7 +21,7 @@ def create_ask(client: FlaskClient):
     ), "Check your body request at route 'post asks/<product_id>'"
 
 #GET
-def get_asks(client: FlaskClient):
+def test_get_asks(client: FlaskClient):
     response = client.get("/api/asks/1")
     expected = [
             {"id": 1, "question": "teste", "product_id": 1, "parent_id": 1}
@@ -35,7 +35,7 @@ def get_asks(client: FlaskClient):
     )
 
 #PATCH
-def patch_ask(client: FlaskClient):
+def test_patch_ask(client: FlaskClient):
     payload = {
         "question": "teste atualizado"
     }
@@ -55,7 +55,7 @@ def patch_ask(client: FlaskClient):
     )
 
 #DELETE 
-def delete_ask(client: FlaskClient):
+def test_delete_ask(client: FlaskClient):
     response = client.delete("api/asks/1")
     expected = {"msg": "Question deleted"}
 
