@@ -1,8 +1,11 @@
 from http import HTTPStatus
+from itertools import product
 from flask import jsonify, request
 from app.configs.database import db
 from sqlalchemy.orm import Session, Query
 from app.models import ProductModel
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 def get_all():
     products = ProductModel.query.all()
@@ -80,6 +83,7 @@ def get_by_params():
     return {"products": products_serializer}, 200
 
 
+@jwt_required()
 def create_product():
     data: dict = request.get_json()
 
@@ -93,29 +97,31 @@ def create_product():
     return jsonify(product), HTTPStatus.CREATED 
 
 
+@jwt_required()
 def update_product(product_id):
     session: Session = db.session
+    data: dict = request.get_json()
     base_query: Query = session.query(ProductModel)
 
-    data: dict = request.get_json()
-    query = base_query.get(product_id)
+    product: ProductModel = base_query.filter_by(id=product_id).first()
 
     for key, value in data.items():
-        setattr(query, key, value)
+        setattr(product, key, value)
 
-    session.add(query)
+    session.add(product)
     session.commit()
 
-    return jsonify(query), HTTPStatus.OK
+    return jsonify(product), HTTPStatus.OK
 
 
+@jwt_required()
 def delete_product(product_id):
     session: Session = db.session
-
     base_query: Query = session.query(ProductModel)
-    query = base_query.get(product_id)
 
-    session.delete(query)
+    product = base_query.get(product_id)
+
+    session.delete(product)
     session.commit()
 
     return "", HTTPStatus.NO_CONTENT
