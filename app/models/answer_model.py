@@ -3,14 +3,14 @@ from sqlalchemy.orm import backref, relationship
 from dataclasses import dataclass
 
 from app.models.parent_model import ParentModel
-from app.models.ask_model import AskModel
+from app.models.question_model import QuestionModel
 
 @dataclass
 class AnswerModel():
     id = int
     answer = str
     parent = ParentModel
-    question = AskModel
+    question = QuestionModel
 
     __tablename__ = "answers"
 
@@ -31,14 +31,6 @@ class AnswerModel():
 
     parent = relationship(
         "ParentModel",
-        backref=backref(
-            "answer",
-            use_list=False
-        )
-    )
-
-    question = relationship(
-        "AskModel",
         backref=backref(
             "answer",
             use_list=False
