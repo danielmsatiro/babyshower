@@ -3,7 +3,8 @@ from os import getenv
 from flask import Flask
 
 from app import routes
-from app.configs import commands, database, migration, jwt_auth
+from app.configs import database, migration, jwt_auth
+from app import commands
 
 
 def create_app() -> Flask:
@@ -15,8 +16,8 @@ def create_app() -> Flask:
 
     database.init_app(app)
     migration.init_app(app)
-    commands.init_app(app)
     jwt_auth.init_app(app)
+    commands.init_app(app)
     routes.init_app(app)
 
     return app

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text
+from sqlalchemy import Column, Integer, Text, String
 from dataclasses import dataclass
 from app.configs.database import db
 
@@ -9,4 +9,5 @@ class CategoryModel(db.Model):
     __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True)
+    name = Column(String(128), nullable=False)
     description = Column(Text, default="")
