@@ -26,8 +26,8 @@ class ProductModel(db.Model):
     sold = Column(Boolean, default=False)
 
     categories = relationship(
-        'Category',
-        secondary='categories_products',
+        'CategoryModel',
+        secondary='product_category',
         backref=backref('products')
     )
 
