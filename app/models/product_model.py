@@ -30,3 +30,9 @@ class ProductModel(db.Model):
         secondary='categories_products',
         backref=backref('products')
     )
+
+    questions = relationship(
+        'QuestionModel', 
+        backref="product", 
+        uselist=True
+    )
