@@ -6,12 +6,51 @@ from app.models import ProductModel
 
 
 def get_all():
-    products = ProductModel.query.all()
+    #   QUANDO EXISTIR OUTRAS TABELAS P/ PESQUISAR, APLICAR ESSE CÓDIGO DEMOSTRATIVO
+    # session : Session = db.session
 
+    # query: Query = (
+    #     session.query(ProductModel.name, Parents.id)
+    #     .select_from(ProductModel)
+    #     .join(Parents)
+    # )
+
+    params = dict(request.args.to_dict().items()) # PEGANDO TODOS OS ARGUMENTOS
+
+    # SEPARANDO OS ARGUMENTOS PARA PAGINAÇÃO
+    if "page" in params: 
+        page = int(params.pop("page"))
+    else: 
+        page = 1
+
+    if "per_page" in params: 
+        per_page = int(params.pop("per_page")) 
+    else: 
+        per_page = 1
+
+    # VERIFICANDO EXISTENCIA DE ARGUMENTOS PARA FILTRAGEM
+    if params:
+        query = ProductModel.query
+
+        for column, value in params.items():
+            query = query.filter(getattr(ProductModel, column) == value)
+
+        products = query.all()
+    else:
+        products = ProductModel.query.all()
+
+    # LOGICA DA PAGINAÇÃO
+    products_per_page = [ 
+      products[item]
+      for item in range(per_page*(page-1), per_page*page)
+      if len(products) > item
+    ]
+
+    # BÁSICA SERIALIZAÇÃO
     products_serializer = [
         product.__dict__
         for product
-        in products
+        in products_per_page
     ]
 
     [
@@ -49,34 +88,4 @@ def get_by_parent(parent_id):
 
     return {"products": products_serializer}, 200
 
-
-def get_by_params():
-    #   QUANDO EXISTIR OUTRAS TABELAS P/ PESQUISAR, APLICAR ESSE CÓDIGO DEMOSTRATIVO
-    # session : Session = db.session
-
-    # query: Query = (
-    #     session.query(ProductModel.name, Parents.id)
-    #     .select_from(ProductModel)
-    #     .join(Parents)
-    # )
-    query = ProductModel.query
-    
-    for column, value in request.args.to_dict().items():
-        query = query.filter(getattr(ProductModel, column) == value)
-
-    products = query.all()
-
-    products_serializer = [
-        product.__dict__
-        for product
-        in products
-    ]
-
-    [
-        product.pop('_sa_instance_state')
-        for product
-        in products_serializer
-    ]
-
-    return {"products": products_serializer}, 200
 
