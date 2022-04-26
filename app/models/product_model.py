@@ -20,7 +20,7 @@ class ProductModel(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(VARCHAR(128), nullable=False)
     price = Column(Numeric, nullable=False)
-    parent_id = Column(Integer, nullable=False)
+    parent_id = Column(Integer, ForeignKey('parents.cpf'), nullable=False)
     description = Column(VARCHAR)
     image = Column(VARCHAR)
     sold = Column(Boolean, default=False)
