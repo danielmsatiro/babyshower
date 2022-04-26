@@ -21,6 +21,6 @@ class QuestionModel(db.Model):
         "AswerModel",
         backref=backref(
             "question",
-            use_list=False
-        )
+            uselist=False
+        ), uselist=False
     )
