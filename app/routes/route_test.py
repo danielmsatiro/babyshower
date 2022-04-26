@@ -8,3 +8,4 @@ def function_test():
 
 
 bp.get("")(function_test)
+
