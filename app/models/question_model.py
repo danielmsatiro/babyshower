@@ -18,7 +18,7 @@ class QuestionModel(db.Model):
     parent_id = Column(Integer, ForeignKey('parents.cpf'), nullable=False)
 
     answer = relationship(
-        "AswerModel",
+        "AnswerModel",
         backref=backref(
             "question",
             uselist=False
