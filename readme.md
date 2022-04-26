@@ -34,3 +34,119 @@ Vamos focar os testes nos endpoints e nas views. É interessante cada um fazer o
 - Adicionei a tag v0.0. No primeiro mvp ela vai v1.0, depois passa para main. Aí podemos ir trabalhando nos extras nas novas versões.
 
 # Comece a documentar daqui em diante...
+
+<h1 align="center">API - BabyShower</h1>
+
+<h2 align="center">Este é o backend da aplicação BabyShower - O objetivo é desenvolver uma plataforma em que os pais possam se cadastrar e interagir com outras pais que passam por fases de vida similares às suas. Nessa plataforma eles se cadastram e também cadastram produtos que não precisa mais.</h2>
+
+## Rotas que não precisam de autenticação
+
+### Obter todos os produtos
+`GET /api/products - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/products - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "products": [
+    {
+      "price": "100.0",
+      "description": "Para crianças de até 2",
+      "id": 1,
+      "sold": false,
+      "title": "Bebe conforto",
+      "parent_id": 1,
+      "image": "https://google.com"
+	},
+	{
+	  "price": "150.97",
+	  "description": "Para crianças de até 2",
+	  "id": 2,
+	  "sold": false,
+	  "title": "Carrinho de bebe",
+	  "parent_id": 1,
+	  "image": "https://google.com"
+	}
+  ]
+}
+```
+
+### Obter produto por id
+`GET /api/products/<product_id> - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/products/<product_id> - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "price": "100.0",
+  "description": "Para crianças de até 2",
+  "id": 1,
+  "sold": false,
+  "title": "Bebe conforto",
+  "parent_id": 1,
+  "image": "https://google.com"
+}
+```
+
+### Obter produto pelo id do parent
+`GET /api/products/by_parent/<parent_id> - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/products/by_parent/<parent_id> - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "products": [
+  	{
+  	  "price": "100.0",
+  	  "description": "Para crianças de até 2",
+  	  "id": 1,
+  	  "sold": false,
+  	  "title": "Bebe conforto",
+  	  "parent_id": 1,
+  	  "image": "https://google.com"
+  	},
+  	{
+  	  "price": "150.97",
+  	  "description": "Para crianças de até 2",
+  	  "id": 2,
+  	  "sold": false,
+  	  "title": "Carrinho de bebe",
+  	  "parent_id": 1,
+  	  "image": "https://google.com"
+  	}
+  ]
+}
+```
+
+### Obter produto por query params
+`GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "products": [
+  	{
+  	  "price": "100.0",
+  	  "description": "Para crianças de até 2",
+  	  "id": 1,
+  	  "sold": false,
+  	  "title": "Bebe conforto",
+  	  "parent_id": 1,
+  	  "image": "https://google.com"
+  	}
+  ]
+}
+```
