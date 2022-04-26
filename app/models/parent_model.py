@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from sqlalchemy.sql.schema import UniqueConstraint
 from app.configs.database import db
 
+from sqlalchemy.orm import relationship, backref
+
 @dataclass
 class ParentModel(db.Model):
 
@@ -23,3 +25,8 @@ class ParentModel(db.Model):
         #     secondary='',
         #     backref=backref('')
         # )
+    
+    questions = relationship(
+        'QuestionModel', 
+        backref=backref('parent')
+    )

@@ -14,4 +14,4 @@ class QuestionModel(db.Model):
     question = Column(VARCHAR(2200), nullable=False)
 
     product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
-    parent_id = Column(Integer, ForeignKey('parents.id'), nullable=False)
+    parent_id = Column(Integer, ForeignKey('parents.cpf'), nullable=False)

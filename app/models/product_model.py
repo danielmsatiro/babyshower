@@ -35,6 +35,5 @@ class ProductModel(db.Model):
 
     questions = relationship(
         'QuestionModel', 
-        backref="product", 
-        uselist=True
+        backref=backref('product', uselist=True)
     )
