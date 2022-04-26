@@ -3,7 +3,8 @@ from os import getenv
 from flask import Flask
 
 from app import routes
-from app.configs import commands, database, migration
+from app.configs import database, migration
+from app import commands
 
 
 def create_app() -> Flask:
