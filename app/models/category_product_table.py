@@ -1,13 +1,9 @@
 from app.configs.database import db
-from dataclasses import dataclass
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer
 
-
-@dataclass
-class CategoryProductModel(db.Model):
-
-    __tablename__ = "category_product"
-
-    product_id = Column(Integer, ForeignKey("product.id"), nullable=False)
-    categories_id = Column(
-        Integer, ForeignKey("categories.id"), nullable=False)
+category_product = db.Table(
+    "product_category",
+    Column("id", Integer, primary_key=True),
+    Column("product_id", Integer, ForeignKey("products.id")),
+    Column("category_id", Integer, ForeignKey("categories.id")),
+)
