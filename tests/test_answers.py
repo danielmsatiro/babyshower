@@ -1,7 +1,6 @@
-from pytest import mark
+from flask.testing import FlaskClient
 
-
-def create_answer_test():
+def create_answer_test(client: FlaskClient):
     status_code = 201
 
     body_data = {
