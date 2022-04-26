@@ -4,8 +4,6 @@ from app.configs.database import db
 from sqlalchemy.orm import Session, Query
 from app.models import ProductModel
 
-
-
 def get_all():
     products = ProductModel.query.all()
 
@@ -83,7 +81,7 @@ def get_by_params():
 
 
 def create_product():
-    data = request.get_json()
+    data: dict = request.get_json()
 
     product = ProductModel(**data)
 
@@ -99,7 +97,7 @@ def update_product(product_id):
     session: Session = db.session
     base_query: Query = session.query(ProductModel)
 
-    data = request.get_json()
+    data: dict = request.get_json()
     query = base_query.get(product_id)
 
     for key, value in data.items():
