@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from app.configs.database import db
-from sqlalchemy import VARCHAR, Column, ForeignKey, Integer
+from sqlalchemy import VARCHAR, Column, ForeignKey, BigInteger, Integer
 
 @dataclass
 class QuestionModel(db.Model):
@@ -9,8 +9,10 @@ class QuestionModel(db.Model):
 
     id: int
     question: str
+    product_id: int
+    parent_id: int
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     question = Column(VARCHAR(2200), nullable=False)
 
     product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
