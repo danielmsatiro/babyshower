@@ -83,7 +83,7 @@ def get_by_params():
     return {"products": products_serializer}, 200
 
 
-@jwt_required()
+# @jwt_required()
 def create_product():
     data: dict = request.get_json()
 
@@ -97,7 +97,7 @@ def create_product():
     return jsonify(product), HTTPStatus.CREATED 
 
 
-@jwt_required()
+# @jwt_required()
 def update_product(product_id):
     session: Session = db.session
     data: dict = request.get_json()
@@ -114,7 +114,7 @@ def update_product(product_id):
     return jsonify(product), HTTPStatus.OK
 
 
-@jwt_required()
+# @jwt_required()
 def delete_product(product_id):
     session: Session = db.session
     base_query: Query = session.query(ProductModel)
