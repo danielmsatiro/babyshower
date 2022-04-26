@@ -1,8 +1,9 @@
-from flask import request
+from http import HTTPStatus
+from flask import jsonify, request
+from app.configs.database import db
+from sqlalchemy.orm import Session, Query
 from app.models import ProductModel
 
-# from app.configs.database import db # ACOMPANHA O CÓDIGO COMENTADO ABAIXO
-# from sqlalchemy.orm import Session, Query
 
 
 def get_all():
@@ -79,4 +80,45 @@ def get_by_params():
     ]
 
     return {"products": products_serializer}, 200
+
+
+def create_product():
+    data = request.get_json()
+
+    product = ProductModel(**data)
+
+    session: Session = db.session
+
+    session.add(product)
+    session.commit()
+
+    return jsonify(product), HTTPStatus.CREATED 
+
+
+def update_product(product_id):
+    session: Session = db.session
+    base_query: Query = session.query(ProductModel)
+
+    data = request.get_json()
+    query = base_query.get(product_id)
+
+    for key, value in data.items():
+        setattr(query, key, value)
+
+    session.add(query)
+    session.commit()
+
+    return jsonify(query), HTTPStatus.OK
+
+
+def delete_product(product_id):
+    session: Session = db.session
+
+    base_query: Query = session.query(ProductModel)
+    query = base_query.get(product_id)
+
+    session.delete(query)
+    session.commit()
+
+    return "", HTTPStatus.NO_CONTENT
 
