@@ -10,10 +10,14 @@ class ParentModel(db.Model):
 
     __tablename__ = "parents"
 
+    cpf: str
     username: str
+    email: str
+    name: str
+    phone: str
 
     id = Column(Integer, primary_key=True, nullable=False)
-    cpf = Column(BigInteger, nullable=False, unique=True)
+    cpf = Column(String, nullable=False, unique=True)
     username = Column(String, nullable=False)
     name = Column(String, nullable=False)
     email = Column(String, nullable=False)

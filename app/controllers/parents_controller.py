@@ -21,24 +21,25 @@ def pick_parents():
     #     for parent
     #     in parent_serializer
     # ]
-
-   ...
+    ...
+    
 
 def new_parents():
   
     data: dict = request.get_json()
     
     parent = ParentModel(**data)
-    parent_serializer = deepcopy(parent.__dict__)
+    
+    # parent_serializer = deepcopy(parent)
     session: Session = db.session
     
     session.add(parent)
     # parent.id = parent.cpf
     session.commit()
+    print(parent)
+    # parent_serializer.pop('_sa_instance_state')
     
-    parent_serializer.pop('_sa_instance_state')
-    
-    return jsonify(parent_serializer), HTTPStatus.CREATED 
+    return jsonify(parent), HTTPStatus.CREATED 
     
 
 # @jwt_required()
