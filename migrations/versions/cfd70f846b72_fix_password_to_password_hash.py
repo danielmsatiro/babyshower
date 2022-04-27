@@ -1,8 +1,8 @@
 """fix password to password_hash
 
-Revision ID: 9f44045110e3
-Revises: 54f9fbd967eb
-Create Date: 2022-04-26 15:46:23.130031
+Revision ID: cfd70f846b72
+Revises: e5fe1d59c376
+Create Date: 2022-04-26 17:45:27.482420
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9f44045110e3'
-down_revision = '54f9fbd967eb'
+revision = 'cfd70f846b72'
+down_revision = 'e5fe1d59c376'
 branch_labels = None
 depends_on = None
 

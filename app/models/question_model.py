@@ -19,10 +19,10 @@ class QuestionModel(db.Model):
     product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
     parent_id = Column(Integer, ForeignKey('parents.cpf'), nullable=False)
 
-    # answer = relationship(
-    #     "AswerModel",
-    #     backref=backref(
-    #         "question",
-    #         uselist=False
-    #     ), uselist=False
-    # )
+    answer = relationship(
+        "AnswerModel",
+        backref=backref(
+            "question",
+            uselist=False
+        ), uselist=False
+    )

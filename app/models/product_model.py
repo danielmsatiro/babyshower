@@ -25,13 +25,11 @@ class ProductModel(db.Model):
     image = Column(VARCHAR)
     sold = Column(Boolean, default=False)
 
-    # AGUARDANDO EXISTENCIA DAS TABELAS DE REFERENCIA ABAIXO
-    # parent_id = Column(Integer, ForeignKey('parents.id'), nullable=False)
-    # categories = relationship(
-    #     'Category',
-    #     secondary='categories_products',
-    #     backref=backref('products')
-    # )
+    categories = relationship(
+        'CategoryModel',
+        secondary='product_category',
+        backref=backref('products')
+    )
 
     questions = relationship(
         'QuestionModel', 

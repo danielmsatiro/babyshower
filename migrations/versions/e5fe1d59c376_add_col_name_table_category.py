@@ -1,8 +1,8 @@
-"""add column name in model categories
+"""add col name table category
 
-Revision ID: 98f0ec29e8fa
-Revises: 54f9fbd967eb
-Create Date: 2022-04-26 15:08:32.164267
+Revision ID: e5fe1d59c376
+Revises: 60d097e29c45
+Create Date: 2022-04-26 17:26:05.508853
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '98f0ec29e8fa'
-down_revision = '54f9fbd967eb'
+revision = 'e5fe1d59c376'
+down_revision = '60d097e29c45'
 branch_labels = None
 depends_on = None
 
