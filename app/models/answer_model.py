@@ -18,7 +18,7 @@ class AnswerModel(db.Model):
     __tablename__ = "answers"
 
     id = Column(Integer, primary_key=True)
-    answer = Column(String(150))
+    answer = Column(String(150), nullable=False)
 
     parent_id = Column(
         ForeignKey('parents.id'),
