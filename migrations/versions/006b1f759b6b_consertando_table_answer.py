@@ -1,8 +1,8 @@
-"""Fixing table answer
+"""Consertando table answer
 
-Revision ID: ff6173fe7c66
-Revises: 1207917fdd0c
-Create Date: 2022-04-27 10:24:25.283263
+Revision ID: 006b1f759b6b
+Revises: 4772d8e2a3e3
+Create Date: 2022-04-27 11:31:55.888291
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ff6173fe7c66'
-down_revision = '1207917fdd0c'
+revision = '006b1f759b6b'
+down_revision = '4772d8e2a3e3'
 branch_labels = None
 depends_on = None
 
