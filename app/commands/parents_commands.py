@@ -20,7 +20,7 @@ def parents_cli():
             try:
                 parents.append(
                     ParentModel(
-                        cpf=fake.ean(length=11),
+                        cpf=fake.ean(length=13)[:11],
                         username=fake.user_name(),
                         name=fake.name(),
                         email=fake.email(),

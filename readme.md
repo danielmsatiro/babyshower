@@ -35,9 +35,15 @@ Vamos focar os testes nos endpoints e nas views. É interessante cada um fazer o
 
 # Comece a documentar daqui em diante...
 
+![Captura de tela de 2022-04-27 00-08-14](https://user-images.githubusercontent.com/97132510/165432646-227a0248-12a9-4790-b366-c3d2f205ffa2.png)
+
 <h1 align="center">API - BabyShower</h1>
 
 <h2 align="center">Este é o backend da aplicação BabyShower - O objetivo é desenvolver uma plataforma em que os pais possam se cadastrar e interagir com outras pais que passam por fases de vida similares às suas. Nessa plataforma eles se cadastram e também cadastram produtos que não precisa mais.</h2>
+
+[Arquivo para o insomnia](https://drive.google.com/file/d/1Nia7ipq4zCmrQGLPfBY2ICDIZVlDih5N/view?usp=sharing)
+
+O url base da API é [baseUrl](http://localhost:5000/api)
 
 ## Rotas que não precisam de autenticação
 
@@ -72,6 +78,40 @@ Não é necessário um corpo da requisição.
 	  "image": "https://google.com"
 	}
   ]
+}
+```
+
+Podemos utilizar os query params para mudar a lista, mudando a paginação, podemos alterar quantos produtos queremos no perPage e alterar a página no parâmetro page. Podemos também acrescentar parametros para fazer filtragens. Uma requisição apenas no /products irá trazer 5 produtos na página 1.
+`GET /api/products?perPage=3&page=1&price=100.0 - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "products": {
+    {
+      "price": "100.0",
+      "description": "Para crianças de até 2",
+      "id": 1,
+      "sold": false,
+      "title": "Bebe conforto",
+      "parent_id": 1,
+      "image": "https://google.com"
+    },{
+      "price": "100.0",
+      "description": "Para crianças de até 3",
+      "id": 2,
+      "sold": false,
+      "title": "Bebe conforto",
+      "parent_id": 1,
+      "image": "https://google.com"
+    },{
+      "price": "100.0",
+      "description": "Para crianças de até 4",
+      "id": 4,
+      "sold": false,
+      "title": "Bebe conforto",
+      "parent_id": 1,
+      "image": "https://google.com"
+    }
+  }
 }
 ```
 
@@ -184,7 +224,39 @@ Não é necessário um corpo da requisição.
 ```
 
 ### Rotas Parents
+
 ### Obter todos os parents
+`GET /api/parents - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/parents - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+	"parents": [
+		{
+			"cpf": "12312312311",
+			"username": "Maria",
+			"email": "km@mail.com",
+			"name": "Karen",
+			"phone": "11223344556",
+			"password_hash": "pbkdf2:sha256:blablabla"
+		},
+		{
+			"cpf": "12312312312",
+			"username": "fulano",
+			"email": "fulano@mail.com",
+			"name": "Fulano de Tal",
+			"phone": "99999999999",
+			"password_hash": "pbkdf2:sha256:blablabla"
+		},
+	]
+}
+```
+
+### Criar novo parent
 `POST /api/parents - FORMATO DA REQUISIÇÃO`
 ```JSON
 {
