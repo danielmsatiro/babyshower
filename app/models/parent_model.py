@@ -10,6 +10,7 @@ class ParentModel(db.Model):
 
     __tablename__ = "parents"
 
+    id: int
     cpf: str
     username: str
     email: str

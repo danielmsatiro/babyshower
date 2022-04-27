@@ -9,10 +9,11 @@ class QuestionModel(db.Model):
     __tablename__ = 'questions'
 
     id: int
-    question: str 
-    
+    question: str
+    product_id: int
+    parent_id: int
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, nullable=False)
     question = Column(Text, nullable=False)
 
     product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
