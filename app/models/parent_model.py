@@ -18,11 +18,11 @@ class ParentModel(db.Model):
 
     id = Column(Integer, primary_key=True, nullable=False)
     cpf = Column(String, nullable=False, unique=True)
-    username = Column(String, nullable=False)
+    username = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=False)
-    email = Column(String, nullable=False)
+    email = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
-    phone = Column(String, nullable=False)
+    phone = Column(String, nullable=False, unique=True)
     
     products = relationship(
         'ProductModel',

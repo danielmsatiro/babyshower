@@ -9,9 +9,13 @@ from sqlalchemy.orm import Session, Query
 from app.configs.database import db
 
 def pick_parents():
-    response: Query = db.session.query(ParentModel)
-    response = response.all()
-    return jsonify(response), HTTPStatus.OK
+    
+    query: Query = db.session.query(ParentModel.username)
+    response = query.all()
+    
+    response = [response._asdict()["username"] for response in query]
+    
+    return {"usernames": response}, HTTPStatus.OK
     
 
 def new_parents():
