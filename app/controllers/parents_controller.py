@@ -9,19 +9,9 @@ from sqlalchemy.orm import Session, Query
 from app.configs.database import db
 
 def pick_parents():
-
-    # parent_serializer = [
-    #     parent.__dict__
-    #     for parent
-    #     in parent
-    # ]
-
-    # [
-    #     parent.pop('_sa_instance_state')
-    #     for parent
-    #     in parent_serializer
-    # ]
-    ...
+    response: Query = db.session.query(ParentModel)
+    response = response.all()
+    return jsonify(response), HTTPStatus.OK
     
 
 def new_parents():
@@ -43,10 +33,30 @@ def new_parents():
     
 
 # @jwt_required()
-def update_parents(parent_id):
-    ...
+def update_parents(parent_cpf):
+    data: dict = request.get_json()
+    session: Session = db.session
+
+    parent: Query = session.query(ParentModel)
+    parent = parent.filter_by(cpf=parent_cpf).first()
+
+    for key, value in data.items():
+        setattr(parent, key, value)
+
+    session.add(parent)
+
+    session.commit()
+
+    return jsonify(parent)
 
 # @jwt_required()
-def delete_parents(parent_id):
-    ...
+def delete_parents(parent_cpf):
+    session: Session = db.session
+    base_query: Query = session.query(ParentModel)
 
+    parent = base_query.filter_by(cpf=parent_cpf).first()
+
+    session.delete(parent)
+    session.commit()
+
+    return "", HTTPStatus.NO_CONTENT
