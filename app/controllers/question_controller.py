@@ -9,8 +9,17 @@ from sqlalchemy.orm import Query, Session
 
 def get_product_questions(product_id: int):
 
-    return {"msg": "Rota GET perguntas do produto"}
-    
+    base_query: Query = db.session.query(QuestionModel)
+
+    questions = base_query.filter(QuestionModel.product_id == product_id).all()
+
+    serialized_questions = [question.__dict__ for question in questions]
+
+    [question.pop('_sa_instance_state') for question in serialized_questions]
+
+    return jsonify(serialized_questions), HTTPStatus.OK   
+
+
 
 # @jwt_required()
 def create_question(product_id: int):
