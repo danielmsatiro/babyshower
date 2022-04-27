@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String,ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
 from dataclasses import dataclass
 from app.configs.database import db
 from sqlalchemy.orm import relationship, backref
@@ -10,9 +10,14 @@ class ParentModel(db.Model):
 
     __tablename__ = "parents"
 
+    cpf: str
     username: str
+    email: str
+    name: str
+    phone: str
 
-    cpf = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    cpf = Column(String, nullable=False, unique=True)
     username = Column(String, nullable=False)
     name = Column(String, nullable=False)
     email = Column(String, nullable=False)

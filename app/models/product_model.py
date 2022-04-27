@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from app.configs.database import db
-from sqlalchemy import VARCHAR, Boolean, Column, ForeignKey, Integer, Numeric
+from sqlalchemy import String, Boolean, Column, ForeignKey, Integer, Numeric
 from sqlalchemy.orm import relationship, backref
 
 
@@ -18,20 +18,18 @@ class ProductModel(db.Model):
     sold: bool
 
     id = Column(Integer, primary_key=True)
-    title = Column(VARCHAR(128), nullable=False)
+    title = Column(String(128), nullable=False)
     price = Column(Numeric, nullable=False)
-    parent_id = Column(Integer, ForeignKey('parents.cpf'), nullable=False)
-    description = Column(VARCHAR)
-    image = Column(VARCHAR)
+    parent_id = Column(Integer, ForeignKey('parents.id'), nullable=False)
+    description = Column(String)
+    image = Column(String)
     sold = Column(Boolean, default=False)
 
-    # AGUARDANDO EXISTENCIA DAS TABELAS DE REFERENCIA ABAIXO
-    # parent_id = Column(Integer, ForeignKey('parents.id'), nullable=False)
-    # categories = relationship(
-    #     'Category',
-    #     secondary='categories_products',
-    #     backref=backref('products')
-    # )
+    categories = relationship(
+        'CategoryModel',
+        secondary='product_category',
+        backref=backref('products')
+    )
 
     questions = relationship(
         'QuestionModel', 
