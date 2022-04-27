@@ -1,36 +1,58 @@
+import email
 from copy import deepcopy
 from http import HTTPStatus
 
-from sqlalchemy.util.langhelpers import constructor_copy
-from flask import request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models.parent_model import ParentModel
-from sqlalchemy.orm import Session, Query
 from app.configs.database import db
+from app.models.parent_model import ParentModel
+from flask import jsonify, request
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from sqlalchemy.orm import Query, Session
+from sqlalchemy.util.langhelpers import constructor_copy
+
 
 def pick_parents():
     response: Query = db.session.query(ParentModel)
     response = response.all()
     return jsonify(response), HTTPStatus.OK
-    
+
 
 def new_parents():
-  
+
     data: dict = request.get_json()
-    
+
     parent = ParentModel(**data)
-    
+
     # parent_serializer = deepcopy(parent)
     session: Session = db.session
-    
+
     session.add(parent)
     # parent.id = parent.cpf
     session.commit()
     print(parent)
     # parent_serializer.pop('_sa_instance_state')
-    
-    return jsonify(parent), HTTPStatus.CREATED 
-    
+
+    return jsonify(parent), HTTPStatus.CREATED
+
+
+def login():
+    parent_data = request.get_json()
+
+    found_parent: ParentModel = ParentModel.query.filter(
+        (ParentModel.cpf == parent_data.get("cpf"))
+        | (ParentModel.email == parent_data.get("email"))
+        | (ParentModel.username == parent_data.get("username"))
+    ).first()
+
+    if not found_parent:
+        return {"message": "User not found"}, HTTPStatus.NOT_FOUND
+
+    if not found_parent.verify_password(parent_data["password"]):
+        return {"message": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+
+    token = create_access_token(found_parent)
+
+    return {"access_token": token}, HTTPStatus.OK
+
 
 # @jwt_required()
 def update_parents(parent_cpf):
@@ -48,6 +70,7 @@ def update_parents(parent_cpf):
     session.commit()
 
     return jsonify(parent)
+
 
 # @jwt_required()
 def delete_parents(parent_cpf):
