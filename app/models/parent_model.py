@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, BigInteger
 from dataclasses import dataclass
+
 from app.configs.database import db
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
+from sqlalchemy.orm import backref, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -16,7 +17,6 @@ class ParentModel(db.Model):
     email: str
     name: str
     phone: str
-    password_hash: str
 
     id = Column(Integer, primary_key=True, nullable=False)
     cpf = Column(String, nullable=False, unique=True)
@@ -25,21 +25,15 @@ class ParentModel(db.Model):
     email = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
     phone = Column(String, nullable=False, unique=True)
-    
-    products = relationship(
-        'ProductModel',
-        backref=backref('parent', uselist=False)
-    )
 
-    questions = relationship(
-        'QuestionModel', 
-        backref=backref('parent', uselist=False)
-    )
+    products = relationship("ProductModel", backref=backref("parent", uselist=False))
+
+    questions = relationship("QuestionModel", backref=backref("parent", uselist=False))
 
     @property
     def password(self):
         raise AttributeError("Password cannot be accessed")
-    
+
     @password.setter
     def password(self, password_to_hash):
         self.password_hash = generate_password_hash(password_to_hash)
