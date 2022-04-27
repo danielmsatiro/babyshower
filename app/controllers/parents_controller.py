@@ -1,4 +1,3 @@
-import email
 from copy import deepcopy
 from http import HTTPStatus
 
@@ -11,9 +10,13 @@ from sqlalchemy.util.langhelpers import constructor_copy
 
 
 def pick_parents():
-    response: Query = db.session.query(ParentModel)
-    response = response.all()
-    return jsonify(response), HTTPStatus.OK
+
+    query: Query = db.session.query(ParentModel.username)
+    response = query.all()
+
+    response = [response._asdict()["username"] for response in query]
+
+    return {"usernames": response}, HTTPStatus.OK
 
 
 def new_parents():
