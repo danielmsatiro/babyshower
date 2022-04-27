@@ -1,11 +1,7 @@
 from dataclasses import dataclass
 
 from app.configs.database import db
-<<<<<<< HEAD
-from sqlalchemy import VARCHAR, Column, ForeignKey, Integer
-=======
 from sqlalchemy import String, Column, ForeignKey, Integer, Text
->>>>>>> development
 from sqlalchemy.orm import relationship, backref
 
 @dataclass
