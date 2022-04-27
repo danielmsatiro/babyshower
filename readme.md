@@ -36,6 +36,9 @@ Vamos focar os testes nos endpoints e nas views. É interessante cada um fazer o
 # Comece a documentar daqui em diante...
 
 <h1 align="center">API - BabyShower</h1>
+<p align="center"><a target="_blank" href="https://drive.google.com/file/d/1Nia7ipq4zCmrQGLPfBY2ICDIZVlDih5N/view?usp=sharing">Arquivo para o insomnia</a></p>
+<p align="center">O url base da API é localhost:5000/api</p>
+
 
 <h2 align="center">Este é o backend da aplicação BabyShower - O objetivo é desenvolver uma plataforma em que os pais possam se cadastrar e interagir com outras pais que passam por fases de vida similares às suas. Nessa plataforma eles se cadastram e também cadastram produtos que não precisa mais.</h2>
 
