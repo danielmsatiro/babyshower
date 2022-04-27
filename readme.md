@@ -47,6 +47,7 @@ O url base da API é [baseUrl](http://localhost:5000/api)
 
 ## Rotas que não precisam de autenticação
 
+### Rotas Products
 ### Obter todos os produtos
 `GET /api/products - FORMATO DA REQUISIÇÃO`
 ```
@@ -164,5 +165,180 @@ Não é necessário um corpo da requisição.
   	  "image": "https://google.com"
   	}
   ]
+}
+```
+
+### Obter produto por query params
+`GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "products": [
+  	{
+  	  "price": "100.0",
+  	  "description": "Para crianças de até 2",
+  	  "id": 1,
+  	  "sold": false,
+  	  "title": "Bebe conforto",
+  	  "parent_id": 1,
+  	  "image": "https://google.com"
+  	}
+  ]
+}
+```
+
+### Criar novo produto
+`POST /api/products - FORMATO DA REQUISIÇÃO`
+```JSON
+{
+  "title": "Lorem ipsum",
+  "price": 100.0,
+  "parent_id": 1,
+  "description": "Lorem ipsum pa pa pa, Lorem ipsum pa pa pa",
+  "image": "http://imagem"
+}
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`POST /api/products - FORMATO DA RESPOSTA - STATUS 201`
+```json
+{
+  "id": 1,
+  "title": "Lorem ipsum",
+  "price": "100.0",
+  "parent_id": 1,
+  "description": "Lorem ipsum pa pa pa, Lorem ipsum pa pa pa",
+  "image": "http://imagem",
+  "sold": false
+}
+```
+
+### atualizar produto por id
+`PATCH /api/products/1 - FORMATO DA REQUISIÇÃO`
+```JSON
+{
+  "title": "New Lorem ipsum",
+  "price": 80.0
+}
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`PATCH /api/products/1 - FORMATO DA RESPOSTA - STATUS 201`
+```json
+{
+  "id": 1,
+  "title": "New Lorem ipsum",
+  "price": "80.0",
+  "parent_id": 1,
+  "description": "Lorem ipsum pa pa pa, Lorem ipsum pa pa pa",
+  "image": "http://imagem",
+  "sold": false
+}
+```
+
+### Excluir produto por id
+`DELETE /api/products/1 - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`DELETE /api/products/1 - FORMATO DA RESPOSTA - STATUS 204`
+```json
+Sem corpo de resposta
+```
+
+### Rotas Categories
+### Obter todas as categories
+`GET /api/categories - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/categories - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "products": [
+    {
+	  "id": 1,
+	  "name": "até 3 meses",
+	  "description": "Tudo o que o seu bebê precisa até os seus 3 meses"
+	},
+	{
+	  "id": 2,
+	  "name": "até 6 meses",
+	  "description": "Tudo o que o seu bebê precisa até os seus 6 meses"
+	},
+	{
+	  "id": 3,
+	  "name": "até 9 meses",
+	  "description": "Tudo o que o seu bebê precisa até os seus 9 meses"
+	}
+  ]
+}
+```
+
+### Rotas Parents
+
+### Obter todos os parents
+`GET /api/parents - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/parents - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "parents": [
+    {
+      "cpf": "12312312311",
+      "username": "Maria",
+      "email": "km@mail.com",
+      "name": "Karen",
+      "phone": "11223344556",
+      "password_hash": "pbkdf2:sha256:blablabla"
+    },
+    {
+      "cpf": "12312312312",
+      "username": "fulano",
+      "email": "fulano@mail.com",
+      "name": "Fulano de Tal",
+      "phone": "99999999999",
+      "password_hash": "pbkdf2:sha256:blablabla"
+    },
+  ]
+}
+```
+
+### Criar novo parent
+`POST /api/parents - FORMATO DA REQUISIÇÃO`
+```JSON
+{
+  "cpf": "12312312312",
+  "username": "fulano",
+  "email": "fulano@mail.com",
+  "password": "k3nz13",
+  "name": "Fulano de Tal",
+  "phone": "99999999999"
+}
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`POST /api/parents - FORMATO DA RESPOSTA - STATUS 201`
+```json
+{
+  "cpf": "12312312313",
+  "username": "fulano",
+  "email": "fulano@mail.com",
+  "name": "Fulano de Tal",
+  "phone": "99999999999",
+  "password_hash": "pbkdf2:sha256:blablabla"
 }
 ```
