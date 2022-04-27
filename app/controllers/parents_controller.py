@@ -2,7 +2,7 @@ from copy import deepcopy
 from http import HTTPStatus
 
 from app.configs.database import db
-from app.models.parent_model import ParentModel
+from app.models import ParentModel, ProductModel
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
@@ -10,6 +10,16 @@ from sqlalchemy.util.langhelpers import constructor_copy
 
 
 def pick_parents():
+    idd = 3
+    query_product_by_parent: Query = (
+        db.session.query(ProductModel.id)
+        .select_from(ParentModel)
+        .join(ProductModel)
+        .filter(ProductModel.parent_id != idd)
+        .all()
+    )
+    ids_product_by_parent = [response._asdict()["id"] for response in query_product_by_parent]
+    print(ids_product_by_parent)
 
     query: Query = db.session.query(ParentModel.username)
     response = query.all()
