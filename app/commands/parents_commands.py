@@ -17,19 +17,19 @@ def parents_cli():
         parents = []
 
         for _ in range(int(quantity)):
-            try:
-                parents.append(
-                    ParentModel(
-                        cpf=fake.ean(length=11),
-                        username=fake.user_name(),
-                        name=fake.name(),
-                        email=fake.email(),
-                        password=fake.ean(length=8),
-                        phone=fake.phone_number(),
-                    )
+            # try:
+            parents.append(
+                ParentModel(
+                    cpf=fake.ean(length=11),
+                    username=fake.user_name(),
+                    name=fake.name(),
+                    email=fake.email(),
+                    password=fake.ean(length=8),
+                    phone=fake.phone_number(),
                 )
-            except:
-                continue
+            )
+            # except:
+            #     continue
 
         session.add_all(parents)
         session.commit()
