@@ -13,6 +13,7 @@ class AnswerModel(db.Model):
     answer = str
     parent = ParentModel
     question = QuestionModel
+    parent_id = int
 
     __tablename__ = "answers"
 
@@ -20,7 +21,7 @@ class AnswerModel(db.Model):
     answer = Column(String(150))
 
     parent_id = Column(
-        ForeignKey('parents.cpf'),
+        ForeignKey('parents.id'),
         nullable=False,
         unique=True
     )
