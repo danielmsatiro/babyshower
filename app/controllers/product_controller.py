@@ -8,15 +8,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 def get_all():
-    #   QUANDO EXISTIR OUTRAS TABELAS P/ PESQUISAR, APLICAR ESSE CÓDIGO DEMOSTRATIVO
-    # session : Session = db.session
-
-    # query: Query = (
-    #     session.query(ProductModel.name, Parents.id)
-    #     .select_from(ProductModel)
-    #     .join(Parents)
-    # )
-
     params = dict(request.args.to_dict().items()) # PEGANDO TODOS OS ARGUMENTOS
 
     # SEPARANDO OS ARGUMENTOS PARA PAGINAÇÃO
@@ -91,9 +82,12 @@ def get_by_parent(parent_id):
     return {"products": products_serializer}, 200
 
 
-# @jwt_required()
+@jwt_required()
 def create_product():
+    parent = get_jwt_identity()
+
     data: dict = request.get_json()
+    data["parent_id"] = parent["id"]
 
     product = ProductModel(**data)
 
@@ -105,13 +99,23 @@ def create_product():
     return jsonify(product), HTTPStatus.CREATED 
 
 
-# @jwt_required()
+@jwt_required()
 def update_product(product_id):
+    parent = get_jwt_identity()
+
     session: Session = db.session
     data: dict = request.get_json()
-    base_query: Query = session.query(ProductModel)
 
-    product: ProductModel = base_query.filter_by(id=product_id).first()
+    product: Query = (
+        session.query(ProductModel)
+        .select_from(ProductModel)
+        .filter(ProductModel.id == product_id)
+        .filter(ProductModel.parent_id == parent["id"])
+        .first()
+    )
+
+    if not product: 
+        return {"Error": "UNAUTHORIZED"}, HTTPStatus.UNAUTHORIZED
 
     for key, value in data.items():
         setattr(product, key, value)
@@ -122,12 +126,22 @@ def update_product(product_id):
     return jsonify(product), HTTPStatus.OK
 
 
-# @jwt_required()
+@jwt_required()
 def delete_product(product_id):
-    session: Session = db.session
-    base_query: Query = session.query(ProductModel)
+    parent = get_jwt_identity()
 
-    product = base_query.get(product_id)
+    session: Session = db.session
+
+    product: Query = (
+        session.query(ProductModel)
+        .select_from(ProductModel)
+        .filter(ProductModel.id == product_id)
+        .filter(ProductModel.parent_id == parent["id"])
+        .first()
+    )
+
+    if not product: 
+        return {"Error": "UNAUTHORIZED"}, HTTPStatus.UNAUTHORIZED
 
     session.delete(product)
     session.commit()
