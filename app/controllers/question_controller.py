@@ -25,31 +25,34 @@ def create_question(product_id: int):
     session.commit
 
     return jsonify(question), HTTPStatus.CREATED
+    return {"msg": "Rota POST perguntas do produto"}
 
 
 # @jwt_required()
 def update_question(question_id: int):
-    data: dict = request.get_json()
+    # data: dict = request.get_json()
     
-    session: Session = db.session
+    # session: Session = db.session
 
-    question = session.query(QuestionModel).get(question_id)
+    # question = session.query(QuestionModel).get(question_id)
 
-    for key, value in data.items():
-        setattr(question, key, value)
+    # for key, value in data.items():
+    #     setattr(question, key, value)
     
-    session.commit()
+    # session.commit()
 
-    return jsonify(question), HTTPStatus.OK
+    # return jsonify(question), HTTPStatus.OK
+    return {"msg": "Rota PATCH perguntas do produto"}
 
 
 # @jwt_required()
 def delete_question(question_id: int):
-    session: Session = db.session
+    # session: Session = db.session
 
-    question = session.query(QuestionModel).get(question_id)
+    # question = session.query(QuestionModel).get(question_id)
 
-    session.delete(question)
-    session.commit()
+    # session.delete(question)
+    # session.commit()
 
-    return "", HTTPStatus.NO_CONTENT
+    # return "", HTTPStatus.NO_CONTENT
+    return {"msg": "Rota DEL perguntas do produto"}
