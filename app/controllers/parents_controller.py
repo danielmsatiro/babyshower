@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session, Query
 from app.configs.database import db
 
 def pick_parents():
-
     # parent_serializer = [
     #     parent.__dict__
     #     for parent
@@ -21,7 +20,7 @@ def pick_parents():
     #     for parent
     #     in parent_serializer
     # ]
-    ...
+    return "", 200
     
 
 def new_parents():

@@ -15,6 +15,7 @@ class ParentModel(db.Model):
     email: str
     name: str
     phone: str
+    password_hash: str
 
     id = Column(Integer, primary_key=True, nullable=False)
     cpf = Column(String, nullable=False, unique=True)

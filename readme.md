@@ -41,6 +41,7 @@ Vamos focar os testes nos endpoints e nas views. É interessante cada um fazer o
 
 ## Rotas que não precisam de autenticação
 
+### Rotas Products
 ### Obter todos os produtos
 `GET /api/products - FORMATO DA REQUISIÇÃO`
 ```
@@ -148,5 +149,63 @@ Não é necessário um corpo da requisição.
   	  "image": "https://google.com"
   	}
   ]
+}
+```
+
+### Rotas Categories
+### Obter todas as categories
+`GET /api/categories - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/categories - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "products": [
+    {
+		"id": 1,
+		"name": "até 3 meses",
+		"description": "Tudo o que o seu bebê precisa até os seus 3 meses"
+	},
+	{
+		"id": 2,
+		"name": "até 6 meses",
+		"description": "Tudo o que o seu bebê precisa até os seus 6 meses"
+	},
+	{
+		"id": 3,
+		"name": "até 9 meses",
+		"description": "Tudo o que o seu bebê precisa até os seus 9 meses"
+	}
+  ]
+}
+```
+
+### Rotas Parents
+### Obter todos os parents
+`POST /api/parents - FORMATO DA REQUISIÇÃO`
+```JSON
+{
+  "cpf": "12312312312",
+  "username": "fulano",
+  "email": "fulano@mail.com",
+  "password": "k3nz13",
+  "name": "Fulano de Tal",
+  "phone": "99999999999"
+}
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`POST /api/parents - FORMATO DA RESPOSTA - STATUS 201`
+```json
+{
+	"cpf": "12312312313",
+	"username": "fulano",
+	"email": "fulano@mail.com",
+	"name": "Fulano de Tal",
+	"phone": "99999999999",
+	"password_hash": "pbkdf2:sha256:blablabla"
 }
 ```

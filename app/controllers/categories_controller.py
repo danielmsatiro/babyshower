@@ -7,4 +7,4 @@ from app.models.category_model import CategoryModel
 def retrieve():
     response: Query = db.session.query(CategoryModel)
     response = response.all()
-    return jsonify(response), HTTPStatus.OK
+    return {"categories": response}, HTTPStatus.OK
