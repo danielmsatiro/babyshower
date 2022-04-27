@@ -8,11 +8,10 @@ from app.models.question_model import QuestionModel
 
 @dataclass
 class AnswerModel(db.Model):
-    id = int
-    answer = str
-    parent = ParentModel
-    question = QuestionModel
-    parent_id = int
+    id: int
+    answer: str
+    parent_id: int
+    question_id: int
 
     __tablename__ = "answers"
 
@@ -21,8 +20,7 @@ class AnswerModel(db.Model):
 
     parent_id = Column(
         ForeignKey('parents.id'),
-        nullable=False,
-        unique=True
+        nullable=False
     )
 
     question_id = Column(

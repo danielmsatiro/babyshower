@@ -10,7 +10,7 @@ from app.controllers.answers_controller import (
 
 bp = Blueprint('answers', __name__, url_prefix='answers')
 
-bp.post('/<int:id>')(create_answer)
-bp.get('/<int:id>')(read_answer)
-bp.patch('/<int:id>')(update_answer)
-bp.delete('/<int:id>')(delete_answer)
+bp.post('/<int:product_id>')(create_answer)
+bp.get('/<int:answer_id>')(read_answer)
+bp.patch('/<int:answer_id>')(update_answer)
+bp.delete('/<int:answer_id>')(delete_answer)
