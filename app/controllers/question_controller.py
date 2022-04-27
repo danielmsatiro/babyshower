@@ -1,11 +1,12 @@
+from bdb import set_trace
 from http import HTTPStatus
 
 from app.configs.database import db
 from app.models import QuestionModel
 from flask import jsonify, request, session
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import Query, Session
-
+from ipdb import set_trace
 
 def get_product_questions(product_id: int):
 
@@ -21,9 +22,13 @@ def get_product_questions(product_id: int):
 
 
 
-# @jwt_required()
+@jwt_required()
 def create_question(product_id: int):
     data: dict = request.get_json()
+
+    parent = get_jwt_identity()
+
+    data["parent_id"] = parent["id"]
 
     data["product_id"] = product_id
 
@@ -31,36 +36,42 @@ def create_question(product_id: int):
 
     session: Session = db.session
     session.add(question)
-    session.commit
-
+    session.commit()
+    
     return jsonify(question), HTTPStatus.CREATED
 
 
-# @jwt_required()
+@jwt_required()
 def update_question(question_id: int):
     data: dict = request.get_json()
+
+    parent = get_jwt_identity()
     
     session: Session = db.session
 
     question = session.query(QuestionModel).get(question_id)
 
-    for key, value in data.items():
-        setattr(question, key, value)
-    
-    session.commit()
+    if parent["id"] == question.parent_id:
+        for key, value in data.items():
+            setattr(question, key, value)    
+        session.commit()
+    else:
+        return {"msg": "Unauthorized action"}, HTTPStatus.UNAUTHORIZED
 
     return jsonify(question), HTTPStatus.OK
-    # return {"msg": "Rota PATCH perguntas do produto"}
 
-
-# @jwt_required()
+@jwt_required()
 def delete_question(question_id: int):
     session: Session = db.session
 
+    parent = get_jwt_identity()
+
     question = session.query(QuestionModel).get(question_id)
 
-    session.delete(question)
-    session.commit()
+    if parent["id"] == question.parent_id:
+        session.delete(question)
+        session.commit()
+    else:
+        return {"msg": "Unauthorized action"}, HTTPStatus.UNAUTHORIZED
 
     return "", HTTPStatus.NO_CONTENT
-    # return {"msg": "Rota DEL perguntas do produto"}
