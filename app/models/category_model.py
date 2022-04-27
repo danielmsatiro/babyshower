@@ -8,6 +8,10 @@ class CategoryModel(db.Model):
 
     __tablename__ = "categories"
 
+    id: int
+    name: str
+    description: str
+
     id = Column(Integer, primary_key=True)
     name = Column(String(128), nullable=False)
     description = Column(Text, default="")
