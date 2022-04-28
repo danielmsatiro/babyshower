@@ -268,22 +268,24 @@ Não é necessário um corpo da requisição.
 `GET /api/parents - FORMATO DA RESPOSTA - STATUS 200`
 ```json
 {
-	"usernames": [
-		"icostela",
-		"jrodrigues",
-		"vrezende",
-		"lucca77",
-		"ubarros",
-		"rochaenrico",
-		"rochaleticia",
-		"caio72",
-		"laisgoncalves",
-		"daniela23"
+	"users": [
+		{
+			"id": 1,
+			"username": "luiz-miguel90"
+		},
+		{
+			"id": 2,
+			"username": "kalmeida"
+		},
+		{
+			"id": 3,
+			"username": "ryanteixeira"
+		}
 	]
 }
 ```
 ## **Rotas que não precisam de autenticação**
-<h2 align="center">Criar novo parent<h2>
+<h2 align="center">Criar novo parent(usuário)<h2>
 
 `POST /api/parents - FORMATO DA REQUISIÇÃO`
 ```JSON
@@ -331,6 +333,43 @@ Não é necessário um corpo da requisição.
   "name": "Fulano de Tal",
   "phone": "99999999999"
 }
+```
+## **Rotas que precisam de autenticação**
+<h2 align="center">Update de parent(usuário)<h2>
+
+`POST /api/parents - FORMATO DA REQUISIÇÃO`
+```JSON
+{
+	"password": "123456789"
+}
+```
+### Obrigatório pelo menos um campo que queira modificar.
+
+#### Caso dê tudo certo, a resposta será assim:
+`POST /api/parents - FORMATO DA RESPOSTA - STATUS 201`
+```json
+{
+  "id": 28,
+  "cpf": "12312312313",
+  "username": "fulano",
+  "email": "fulano@mail.com",
+  "name": "Fulano de Tal",
+  "phone": "99999999999"
+}
+```
+<h2 align="center">Deletar parent(usuário)<h2>
+
+`GET /api/parents - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+
+```
+### Obrigatório estar logado.
+
+#### Caso dê tudo certo, a resposta será assim:
+`POST /api/parents - FORMATO DA RESPOSTA - STATUS 201`
+```json
+Sem corpo de resposta
 ```
 
 # Rotas Questions
