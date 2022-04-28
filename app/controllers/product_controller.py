@@ -1,9 +1,10 @@
 from http import HTTPStatus
-from flask import jsonify, request
+
 from app.configs.database import db
-from sqlalchemy.orm import Session, Query
-from app.models import ProductModel, CategoryModel
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.models import CategoryModel, ProductModel
+from flask import jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy.orm import Query, Session
 
 
 def get_all():
@@ -19,7 +20,6 @@ def get_all():
     else:
         per_page = 8
 
-
     query = ProductModel.query
 
     for column, value in params.items():
@@ -28,8 +28,8 @@ def get_all():
             query: Query = query.filter(ProductModel.price <= value)
         elif "title" in column:
             query: Query = query.filter(ProductModel.title in column)
-            
-    products: Query = query.offset(page*per_page).limit(per_page).all()
+
+    products: Query = query.offset(page * per_page).limit(per_page).all()
 
     return {"products": products}, 200
 
@@ -56,9 +56,9 @@ def create_product():
     categories = data.pop("categories")
 
     product = ProductModel(**data)
-    
+
     for category in categories:
-        response = query.filter(CategoryModel.name == category).first()
+        response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
         if response:
             product.categories.append(response)
 
