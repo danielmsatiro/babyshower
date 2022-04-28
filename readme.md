@@ -371,7 +371,7 @@ Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
-`POST /question/1 - FORMATO DA RESPOSTA - STATUS 201`
+`POST /api/question/1 - FORMATO DA RESPOSTA - STATUS 201`
 ```json
 {
 	"id": 3,
@@ -390,7 +390,7 @@ Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
-`PATCH /questions/3 - FORMATO DA RESPOSTA - STATUS 200`
+`PATCH /api/questions/3 - FORMATO DA RESPOSTA - STATUS 200`
 ```json
 {
 	"id": 3,
@@ -408,7 +408,7 @@ Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
-`DELETE /questions/3 - FORMATO DA RESPOSTA - STATUS 204`
+`DELETE /api/questions/3 - FORMATO DA RESPOSTA - STATUS 204`
 ```
 Sem corpo de resposta
 ```
