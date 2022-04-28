@@ -332,3 +332,83 @@ Não é necessário um corpo da requisição.
   "phone": "99999999999"
 }
 ```
+
+# Rotas Questions
+## **Rotas que não precisam de autenticação**
+<h2 align="center">Obter todas as perguntas por id de produto</h2>
+
+`GET /api/questions/<product_id> - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`GET /api/questions/1 - FORMATO DA RESPOSTA - STATUS 200`
+```json
+[
+	{
+		"id": 1,
+		"question": "Teste 1",
+		"parent_id": 1,
+		"product_id": 1
+	},
+	{
+		"id": 2,
+		"question": "Teste 2",
+		"parent_id": 1,
+		"product_id": 1
+	}
+]
+```
+## **Rotas que precisam de autenticação**
+<h2 align="center">Criar nova pergunta em um produto,por id de produto</h2>
+
+`POST /api/questions/<product_id> - FORMATO DA REQUISIÇÃO`
+```JSON
+{
+	"question": "Pergunta Teste?"
+}
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`POST /api/question/1 - FORMATO DA RESPOSTA - STATUS 201`
+```json
+{
+	"id": 3,
+	"question": "Pergunta Teste?",
+	"product_id": 1,
+	"parent_id": 1
+}
+```
+<h2 align="center">Atualizar pergunta por id de pergunta</h2>
+
+`PATCH /api/questions/<question_id> - FORMATO DA REQUISIÇÃO`
+```JSON
+{
+	"question": "Pergunta Teste Atualizada?"
+}
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`PATCH /api/questions/3 - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+	"id": 3,
+	"question": "Pergunta Teste Atualizada?",
+	"product_id": 1,
+	"parent_id": 1
+}
+```
+
+<h2 align="center">Deletar pergunta por id de pergunta</h2>
+
+`DELETE /api/questions/<question_id> - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+`DELETE /api/questions/3 - FORMATO DA RESPOSTA - STATUS 204`
+```
+Sem corpo de resposta
+```
