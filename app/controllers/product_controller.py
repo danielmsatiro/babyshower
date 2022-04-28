@@ -8,17 +8,17 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 def get_all():
-    params = dict(request.args.to_dict().items()) # PEGANDO TODOS OS ARGUMENTOS
+    params = dict(request.args.to_dict().items())  # PEGANDO TODOS OS ARGUMENTOS
 
     # SEPARANDO OS ARGUMENTOS PARA PAGINAÇÃO
-    if "page" in params: 
+    if "page" in params:
         page = int(params.pop("page"))
-    else: 
+    else:
         page = 1
 
-    if "per_page" in params: 
-        per_page = int(params.pop("per_page")) 
-    else: 
+    if "per_page" in params:
+        per_page = int(params.pop("per_page"))
+    else:
         per_page = 1
 
     # VERIFICANDO EXISTENCIA DE ARGUMENTOS PARA FILTRAGEM
@@ -33,24 +33,16 @@ def get_all():
         products = ProductModel.query.all()
 
     # LOGICA DA PAGINAÇÃO
-    products_per_page = [ 
-      products[item]
-      for item in range(per_page*(page-1), per_page*page)
-      if len(products) > item
+    products_per_page = [
+        products[item]
+        for item in range(per_page * (page - 1), per_page * page)
+        if len(products) > item
     ]
 
     # BÁSICA SERIALIZAÇÃO
-    products_serializer = [
-        product.__dict__
-        for product
-        in products_per_page
-    ]
+    products_serializer = [product.__dict__ for product in products_per_page]
 
-    [
-        product.pop('_sa_instance_state')
-        for product
-        in products_serializer
-    ]
+    [product.pop("_sa_instance_state") for product in products_serializer]
 
     return {"products": products_serializer}, 200
 
@@ -59,25 +51,17 @@ def get_by_id(product_id: int):
     product = ProductModel.query.get(product_id)
 
     product_serialize = product.__dict__
-    product_serialize.pop('_sa_instance_state')
+    product_serialize.pop("_sa_instance_state")
 
     return product_serialize, 200
 
 
 def get_by_parent(parent_id):
-    products = ProductModel.query.filter(ProductModel.parent_id==parent_id).all()
+    products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
 
-    products_serializer = [
-        product.__dict__
-        for product
-        in products
-    ]
+    products_serializer = [product.__dict__ for product in products]
 
-    [
-        product.pop('_sa_instance_state')
-        for product
-        in products_serializer
-    ]
+    [product.pop("_sa_instance_state") for product in products_serializer]
 
     return {"products": products_serializer}, 200
 
@@ -96,7 +80,7 @@ def create_product():
     session.add(product)
     session.commit()
 
-    return jsonify(product), HTTPStatus.CREATED 
+    return jsonify(product), HTTPStatus.CREATED
 
 
 @jwt_required()
@@ -114,7 +98,7 @@ def update_product(product_id):
         .first()
     )
 
-    if not product: 
+    if not product:
         return {"Error": "UNAUTHORIZED"}, HTTPStatus.UNAUTHORIZED
 
     for key, value in data.items():
@@ -140,11 +124,10 @@ def delete_product(product_id):
         .first()
     )
 
-    if not product: 
+    if not product:
         return {"Error": "UNAUTHORIZED"}, HTTPStatus.UNAUTHORIZED
 
     session.delete(product)
     session.commit()
 
     return "", HTTPStatus.NO_CONTENT
-

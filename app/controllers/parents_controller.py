@@ -18,7 +18,9 @@ def pick_parents():
         .filter(ProductModel.parent_id != idd)
         .all()
     )
-    ids_product_by_parent = [response._asdict()["id"] for response in query_product_by_parent]
+    ids_product_by_parent = [
+        response._asdict()["id"] for response in query_product_by_parent
+    ]
     print(ids_product_by_parent)
 
     query: Query = db.session.query(ParentModel.username)
@@ -67,14 +69,14 @@ def update_parents(parent_cpf):
     compare_cpf = get_jwt_identity()
 
     data: dict = request.get_json()
-    
+
     session: Session = db.session
-    
+
     parent: Query = session.query(ParentModel)
     parent = parent.filter_by(cpf=parent_cpf).first()
 
-    if(compare_cpf["cpf"] == parent_cpf):
-        
+    if compare_cpf["cpf"] == parent_cpf:
+
         for key, value in data.items():
             setattr(parent, key, value)
 
@@ -86,6 +88,7 @@ def update_parents(parent_cpf):
     else:
         return {"error": "invalid cpf"}
 
+
 @jwt_required()
 def delete_parents(parent_cpf):
     compare_cpf = get_jwt_identity()
@@ -94,7 +97,7 @@ def delete_parents(parent_cpf):
 
     parent = base_query.filter_by(cpf=parent_cpf).first()
 
-    if(compare_cpf["cpf"] == parent_cpf):
+    if compare_cpf["cpf"] == parent_cpf:
         session.delete(parent)
         session.commit()
     else:
