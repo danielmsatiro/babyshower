@@ -20,7 +20,7 @@ class ProductModel(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(String(128), nullable=False)
     price = Column(Numeric, nullable=False)
-    parent_id = Column(Integer, ForeignKey('parents.id'), nullable=False)
+    parent_id = Column(Integer, ForeignKey('parents.id', ondelete="CASCADE"), nullable=False)
     description = Column(String)
     image = Column(String)
     sold = Column(Boolean, default=False)
@@ -31,7 +31,7 @@ class ProductModel(db.Model):
         backref=backref('products')
     )
 
-    questions = relationship(
-        'QuestionModel', 
-        backref=backref('product', uselist=True)
-    )
+    # questions = relationship(
+    #     'QuestionModel', 
+    #     backref=backref('product', uselist=True)
+    # )

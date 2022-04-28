@@ -26,9 +26,9 @@ class ParentModel(db.Model):
     password_hash = Column(String, nullable=False)
     phone = Column(String, nullable=False, unique=True)
 
-    products = relationship("ProductModel", backref=backref("parent", uselist=False))
+    # products = relationship("ProductModel", backref=backref("parent", passive_deletes=True, uselist=False))
 
-    questions = relationship("QuestionModel", backref=backref("parent", uselist=False))
+    # questions = relationship("QuestionModel", backref=backref("parent", passive_deletes=True, uselist=False))
 
     @property
     def password(self):

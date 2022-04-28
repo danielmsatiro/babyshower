@@ -12,13 +12,13 @@ from app.models.product_model import ProductModel
 
 
 @jwt_required()
-def create_answer(product_id: int):
+def create_answer(question_id: int):
     data = request.get_json()
     user_logged = get_jwt_identity()
 
     session: Session = db.session
 
-    question: QuestionModel = session.query(QuestionModel).filter_by(id=product_id).first()
+    question: QuestionModel = session.query(QuestionModel).filter_by(id=question_id).first()
 
     product: ProductModel = session.query(ProductModel).filter_by(id=question.product_id).first()
 
@@ -28,14 +28,14 @@ def create_answer(product_id: int):
         }, HTTPStatus.BAD_REQUEST
 
     data["parent_id"] = user_logged["id"]
-    data["question_id"] = id
+    data["question_id"] = question_id
 
     new_answer = AnswerModel(**data)
-
+    print(new_answer)
     session.add(new_answer)
     session.commit()
 
-    set_trace()
+    
     return jsonify(new_answer), HTTPStatus.CREATED
 
 def read_answer(answer_id: int):

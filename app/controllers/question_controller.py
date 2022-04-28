@@ -1,6 +1,8 @@
 from bdb import set_trace
 from http import HTTPStatus
 
+from sqlalchemy.exc import IntegrityError
+
 from app.configs.database import db
 from app.models import QuestionModel
 from flask import jsonify, request, session
@@ -31,12 +33,15 @@ def create_question(product_id: int):
     data["parent_id"] = parent["id"]
 
     data["product_id"] = product_id
-
-    question = QuestionModel(**data)
-
-    session: Session = db.session
-    session.add(question)
-    session.commit()
+    try:
+        question = QuestionModel(**data)
+    
+        session: Session = db.session
+        
+        session.add(question)
+        session.commit()
+    except IntegrityError:
+        return {"Error": "Product not found"}
     
     return jsonify(question), HTTPStatus.CREATED
 
@@ -65,11 +70,12 @@ def delete_question(question_id: int):
     session: Session = db.session
 
     parent = get_jwt_identity()
-
-    question = session.query(QuestionModel).get(question_id)
-
+    
+    question = session.query(QuestionModel).filter_by(id=question_id).first()
+  
     if parent["id"] == question.parent_id:
         session.delete(question)
+
         session.commit()
     else:
         return {"msg": "Unauthorized action"}, HTTPStatus.UNAUTHORIZED
