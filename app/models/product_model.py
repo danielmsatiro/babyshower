@@ -16,6 +16,7 @@ class ProductModel(db.Model):
     description: str
     image: str
     sold: bool
+    categories: list
 
     id = Column(Integer, primary_key=True)
     title = Column(String(128), nullable=False)
