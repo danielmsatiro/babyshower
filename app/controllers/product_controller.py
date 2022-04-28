@@ -1,69 +1,47 @@
 from http import HTTPStatus
-from itertools import product
 from flask import jsonify, request
 from app.configs.database import db
 from sqlalchemy.orm import Session, Query
-from app.models import ProductModel
+from app.models import ProductModel, CategoryModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 def get_all():
-    params = dict(request.args.to_dict().items())  # PEGANDO TODOS OS ARGUMENTOS
+    params = dict(request.args.to_dict().items())
 
-    # SEPARANDO OS ARGUMENTOS PARA PAGINAÇÃO
     if "page" in params:
-        page = int(params.pop("page"))
+        page = int(params.pop("page")) - 1
     else:
-        page = 1
+        page = 0
 
     if "per_page" in params:
         per_page = int(params.pop("per_page"))
     else:
-        per_page = 1
+        per_page = 8
 
-    # VERIFICANDO EXISTENCIA DE ARGUMENTOS PARA FILTRAGEM
-    if params:
-        query = ProductModel.query
 
-        for column, value in params.items():
-            query = query.filter(getattr(ProductModel, column) == value)
+    query = ProductModel.query
 
-        products = query.all()
-    else:
-        products = ProductModel.query.all()
+    for column, value in params.items():
+        if "price" in column:
+            print("entrou aqui")
+            query: Query = query.filter(ProductModel.price <= value)
+        elif "title" in column:
+            query: Query = query.filter(ProductModel.title in column)
+            
+    products: Query = query.offset(page*per_page).limit(per_page).all()
 
-    # LOGICA DA PAGINAÇÃO
-    products_per_page = [
-        products[item]
-        for item in range(per_page * (page - 1), per_page * page)
-        if len(products) > item
-    ]
-
-    # BÁSICA SERIALIZAÇÃO
-    products_serializer = [product.__dict__ for product in products_per_page]
-
-    [product.pop("_sa_instance_state") for product in products_serializer]
-
-    return {"products": products_serializer}, 200
+    return {"products": products}, 200
 
 
 def get_by_id(product_id: int):
     product = ProductModel.query.get(product_id)
-
-    product_serialize = product.__dict__
-    product_serialize.pop("_sa_instance_state")
-
-    return product_serialize, 200
+    return jsonify(product), 200
 
 
 def get_by_parent(parent_id):
-    products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
-
-    products_serializer = [product.__dict__ for product in products]
-
-    [product.pop("_sa_instance_state") for product in products_serializer]
-
-    return {"products": products_serializer}, 200
+    products = ProductModel.query.filter(ProductModel.parent_id == parent_id).first()
+    return {"products": products}, 200
 
 
 @jwt_required()
@@ -73,10 +51,18 @@ def create_product():
     data: dict = request.get_json()
     data["parent_id"] = parent["id"]
 
+    query: Query = db.session.query(CategoryModel)
+
+    categories = data.pop("categories")
+
     product = ProductModel(**data)
+    
+    for category in categories:
+        response = query.filter(CategoryModel.name == category).first()
+        if response:
+            product.categories.append(response)
 
     session: Session = db.session
-
     session.add(product)
     session.commit()
 
