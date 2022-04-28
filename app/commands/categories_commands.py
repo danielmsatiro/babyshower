@@ -8,12 +8,12 @@ def categories_cli():
     category_group = AppGroup("categories", help="Create categories")
 
     categories_names_list = [
-        "até 3 meses",
-        "até 6 meses",
-        "até 9 meses",
-        "até 1 ano",
-        "até 2 anos",
-        "de 3 a 5 anos",
+        "0 a 3 meses",
+        "4 a 6 meses",
+        "7 a 9 meses",
+        "10 meses a 1 ano",
+        "2 anos",
+        "3 a 5 anos",
         "carrinhos",
         "roupas",
         "quarto do bebê",
@@ -27,12 +27,12 @@ def categories_cli():
     ]
 
     categories_description_list = [
-        "Tudo o que o seu bebê precisa até os seus 3 meses",
-        "Tudo o que o seu bebê precisa até os seus 6 meses",
-        "Tudo o que o seu bebê precisa até os seus 9 meses",
-        "Tudo o que o seu bebê precisa até os seus 1 ano de idade",
-        "Tudo o que o seu bebê precisa até os seus 2 anos de idade",
-        "Tudo o que o seu bebê precisa de 3 a 5 anos",
+        "Tudo o que o seu bebê precisa dos 0 a 3 meses",
+        "Tudo o que o seu bebê precisa dos 4 a 6 meses",
+        "Tudo o que o seu bebê precisa dos 7 a 9 meses",
+        "Tudo o que o seu bebê precisa dos 10 meses a 1 ano de idade",
+        "Tudo o que o seu bebê precisa para os 2 anos de idade",
+        "Tudo o que o seu bebê precisa de 3 a 5 anos de idade",
         "Carrinhos para o seu bebê",
         "Roupas para o seu bebê",
         "Acessórios para o quarto do seu bebê",

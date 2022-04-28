@@ -318,7 +318,7 @@ Não é necessário um corpo da requisição.
   "password": "k3nz13",
 }
 ```
-Obrigatórios uma identificação do usuário e seu password. Além de "username" podem ser usados "cpf" ou "email".
+### Obrigatórios uma identificação do usuário e seu password. Além de "username" podem ser usados "cpf" ou "email".
 
 #### Caso dê tudo certo, a resposta será assim:
 `POST /api/parents - FORMATO DA RESPOSTA - STATUS 201`
