@@ -6,6 +6,7 @@ from app.configs.database import db
 from app.models.parent_model import ParentModel
 from app.models.question_model import QuestionModel
 
+
 @dataclass
 class AnswerModel(db.Model):
     id: int

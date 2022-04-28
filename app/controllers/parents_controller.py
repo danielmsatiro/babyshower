@@ -6,7 +6,6 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from sqlalchemy.orm import Query, Session
 
 
-
 def pick_parents():
 
     query: Query = db.session.query(ParentModel.id, ParentModel.username)
@@ -61,7 +60,7 @@ def update_parents():
     data: dict = request.get_json()
 
     session: Session = db.session
-    
+
     parent: Query = session.query(ParentModel)
     parent = parent.filter_by(id=user_logged["id"]).first()
 

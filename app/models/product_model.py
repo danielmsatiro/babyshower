@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship, backref
 
 @dataclass
 class ProductModel(db.Model):
-    __tablename__ = 'products'
+    __tablename__ = "products"
 
     id: int
     title: str
@@ -16,6 +16,7 @@ class ProductModel(db.Model):
     description: str
     image: str
     sold: bool
+    categories: list
 
     id = Column(Integer, primary_key=True)
     title = Column(String(128), nullable=False)
@@ -26,9 +27,7 @@ class ProductModel(db.Model):
     sold = Column(Boolean, default=False)
 
     categories = relationship(
-        'CategoryModel',
-        secondary='product_category',
-        backref=backref('products')
+        "CategoryModel", secondary="product_category", backref=backref("products")
     )
 
     # questions = relationship(

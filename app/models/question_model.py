@@ -4,9 +4,10 @@ from app.configs.database import db
 from sqlalchemy import String, Column, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship, backref
 
+
 @dataclass
 class QuestionModel(db.Model):
-    __tablename__ = 'questions'
+    __tablename__ = "questions"
 
     id: int
     question: str
@@ -21,9 +22,5 @@ class QuestionModel(db.Model):
     parent_id = Column(Integer, ForeignKey('parents.id', ondelete="CASCADE"), nullable=False)
 
     answer = relationship(
-        "AnswerModel",
-        backref=backref(
-            "question",
-            uselist=False
-        ), uselist=False
+        "AnswerModel", backref=backref("question", uselist=False), uselist=False
     )
