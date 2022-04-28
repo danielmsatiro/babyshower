@@ -1,6 +1,6 @@
-from flask.cli import AppGroup
 from app.configs.database import db
 from app.models.category_model import CategoryModel
+from flask.cli import AppGroup
 from sqlalchemy.orm.session import Session
 
 
@@ -8,10 +8,23 @@ def categories_cli():
     category_group = AppGroup("categories", help="Create categories")
 
     categories_names_list = [
-        "até 3 meses", "até 6 meses", "até 9 meses", "até 1 ano", "até 2 anos",
-        "de 3 a 5 anos", "carrinhos", "roupas", "quarto do bebê", "cadeiras",
-        "maternidade", "banho de bebê", "brinquedos",
-        "lactação", "segurança para bebê", "saúde para bebê"]
+        "até 3 meses",
+        "até 6 meses",
+        "até 9 meses",
+        "até 1 ano",
+        "até 2 anos",
+        "de 3 a 5 anos",
+        "carrinhos",
+        "roupas",
+        "quarto do bebê",
+        "cadeiras",
+        "maternidade",
+        "banho de bebê",
+        "brinquedos",
+        "lactação",
+        "segurança para bebê",
+        "saúde para bebê",
+    ]
 
     categories_description_list = [
         "Tudo o que o seu bebê precisa até os seus 3 meses",
@@ -41,8 +54,9 @@ def categories_cli():
             categories.append(
                 CategoryModel(
                     name=categories_names_list[x],
-                    description=categories_description_list[x]
-                    ))
+                    description=categories_description_list[x],
+                )
+            )
 
         session.add_all(categories)
         session.commit()

@@ -309,3 +309,26 @@ Não é necessário um corpo da requisição.
   "phone": "99999999999"
 }
 ```
+<h2 align="center">Fazer login<h2>
+
+`POST /api/parents/login - FORMATO DA REQUISIÇÃO`
+```JSON
+{
+  "username": "fulano",
+  "password": "k3nz13",
+}
+```
+Obrigatórios uma identificação do usuário e seu password. Além de "username" podem ser usados "cpf" ou "email".
+
+#### Caso dê tudo certo, a resposta será assim:
+`POST /api/parents - FORMATO DA RESPOSTA - STATUS 201`
+```json
+{
+  "id": 28,
+  "cpf": "12312312313",
+  "username": "fulano",
+  "email": "fulano@mail.com",
+  "name": "Fulano de Tal",
+  "phone": "99999999999"
+}
+```
