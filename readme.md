@@ -335,7 +335,7 @@ Não é necessário um corpo da requisição.
 
 # Rotas Questions
 ## **Rotas que não precisam de autenticação**
-<h2 align="center">Obter todas as perguntas de um produto específico</h2>
+<h2 align="center">Obter todas as perguntas por id de produto</h2>
 
 `GET /api/questions/<product_id> - FORMATO DA REQUISIÇÃO`
 ```
@@ -361,7 +361,7 @@ Não é necessário um corpo da requisição.
 ]
 ```
 ## **Rotas que precisam de autenticação**
-<h2 align="center">Criar nova pergunta<h2>
+<h2 align="center">Criar nova pergunta em um produto,por id de produto</h2>
 
 `POST /api/questions/<product_id> - FORMATO DA REQUISIÇÃO`
 ```JSON
@@ -380,7 +380,7 @@ Não é necessário um corpo da requisição.
 	"parent_id": 1
 }
 ```
-<h2 align="center">Atualizar pergunta<h2>
+<h2 align="center">Atualizar pergunta por id de pergunta</h2>
 
 `PATCH /api/questions/<question_id> - FORMATO DA REQUISIÇÃO`
 ```JSON
@@ -400,7 +400,7 @@ Não é necessário um corpo da requisição.
 }
 ```
 
-<h2 align="center">Deletar pergunta<h2>
+<h2 align="center">Deletar pergunta por id de pergunta</h2>
 
 `DELETE /api/questions/<question_id> - FORMATO DA REQUISIÇÃO`
 ```
@@ -410,5 +410,5 @@ Não é necessário um corpo da requisição.
 #### Caso dê tudo certo, a resposta será assim:
 `DELETE /questions/3 - FORMATO DA RESPOSTA - STATUS 204`
 ```
-Não haverá corpo de reposta, apenas status verificando a deleção da pergunta
+Sem corpo de resposta
 ```
