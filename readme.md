@@ -11,15 +11,19 @@ O url base da API é [baseUrl](http://localhost:5000/api)
 # Rotas Products
 
 ## **Rotas que não precisam de autenticação**
+
 <h2 align="center">Obter todos os produtos</h2>
 
 `GET /api/products - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `GET /api/products - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 {
   "products": [
@@ -31,16 +35,16 @@ Não é necessário um corpo da requisição.
       "title": "Bebe conforto",
       "parent_id": 1,
       "image": "https://google.com"
-	},
-	{
-	  "price": "150.97",
-	  "description": "Para crianças de até 2",
-	  "id": 2,
-	  "sold": false,
-	  "title": "Carrinho de bebe",
-	  "parent_id": 1,
-	  "image": "https://google.com"
-	}
+    },
+    {
+      "price": "150.97",
+      "description": "Para crianças de até 2",
+      "id": 2,
+      "sold": false,
+      "title": "Carrinho de bebe",
+      "parent_id": 1,
+      "image": "https://google.com"
+    }
   ]
 }
 ```
@@ -48,6 +52,7 @@ Não é necessário um corpo da requisição.
 Podemos utilizar os query params para mudar a lista, mudando a paginação, podemos alterar quantos produtos queremos no perPage e alterar a página no parâmetro page. Podemos também acrescentar parametros para fazer filtragens. Uma requisição apenas no /products irá trazer 5 produtos na página 1.
 
 `GET /api/products?perPage=3&page=1&price=100.0 - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 {
   "products": {
@@ -83,12 +88,15 @@ Podemos utilizar os query params para mudar a lista, mudando a paginação, pode
 <h2 align="center">Obter produto por id</h2>
 
 `GET /api/products/<product_id> - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `GET /api/products/<product_id> - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 {
   "price": "100.0",
@@ -104,33 +112,36 @@ Não é necessário um corpo da requisição.
 <h2 align="center">Obter produto pelo id do parent</h2>
 
 `GET /api/products/by_parent/<parent_id> - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `GET /api/products/by_parent/<parent_id> - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 {
   "products": [
-  	{
-  	  "price": "100.0",
-  	  "description": "Para crianças de até 2",
-  	  "id": 1,
-  	  "sold": false,
-  	  "title": "Bebe conforto",
-  	  "parent_id": 1,
-  	  "image": "https://google.com"
-  	},
-  	{
-  	  "price": "150.97",
-  	  "description": "Para crianças de até 2",
-  	  "id": 2,
-  	  "sold": false,
-  	  "title": "Carrinho de bebe",
-  	  "parent_id": 1,
-  	  "image": "https://google.com"
-  	}
+    {
+      "price": "100.0",
+      "description": "Para crianças de até 2",
+      "id": 1,
+      "sold": false,
+      "title": "Bebe conforto",
+      "parent_id": 1,
+      "image": "https://google.com"
+    },
+    {
+      "price": "150.97",
+      "description": "Para crianças de até 2",
+      "id": 2,
+      "sold": false,
+      "title": "Carrinho de bebe",
+      "parent_id": 1,
+      "image": "https://google.com"
+    }
   ]
 }
 ```
@@ -138,31 +149,37 @@ Não é necessário um corpo da requisição.
 <h2 align="center">Obter produto por query params</h2>
 
 `GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 {
   "products": [
-  	{
-  	  "price": "100.0",
-  	  "description": "Para crianças de até 2",
-  	  "id": 1,
-  	  "sold": false,
-  	  "title": "Bebe conforto",
-  	  "parent_id": 1,
-  	  "image": "https://google.com"
-  	}
+    {
+      "price": "100.0",
+      "description": "Para crianças de até 2",
+      "id": 1,
+      "sold": false,
+      "title": "Bebe conforto",
+      "parent_id": 1,
+      "image": "https://google.com"
+    }
   ]
 }
 ```
+
 ## **Rotas que precisam de autenticação**
+
 <h2 align="center">Criar novo produto</h2>
 
 `POST /api/products - FORMATO DA REQUISIÇÃO`
+
 ```JSON
 {
   "title": "Lorem ipsum",
@@ -174,7 +191,9 @@ Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `POST /api/products - FORMATO DA RESPOSTA - STATUS 201`
+
 ```json
 {
   "id": 1,
@@ -189,6 +208,7 @@ Não é necessário um corpo da requisição.
 <h2 align="center">Atualizar produto por id</h2>
 
 `PATCH /api/products/1 - FORMATO DA REQUISIÇÃO`
+
 ```JSON
 {
   "title": "New Lorem ipsum",
@@ -197,7 +217,9 @@ Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `PATCH /api/products/1 - FORMATO DA RESPOSTA - STATUS 201`
+
 ```json
 {
   "id": 1,
@@ -213,79 +235,96 @@ Não é necessário um corpo da requisição.
 <h2 align="center">Excluir produto por id</h2>
 
 `DELETE /api/products/1 - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `DELETE /api/products/1 - FORMATO DA RESPOSTA - STATUS 204`
+
 ```json
 Sem corpo de resposta
 ```
+
 # Rotas Categories
+
 ## **Rotas que não precisam de autenticação**
+
 <h2 align="center">Obter todas as categories</h2>
 
 `GET /api/categories - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `GET /api/categories - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 {
   "categories": [
     {
-	  "id": 1,
-	  "name": "até 3 meses",
-	  "description": "Tudo o que o seu bebê precisa até os seus 3 meses"
-	},
-	{
-	  "id": 2,
-	  "name": "até 6 meses",
-	  "description": "Tudo o que o seu bebê precisa até os seus 6 meses"
-	},
-	{
-	  "id": 3,
-	  "name": "até 9 meses",
-	  "description": "Tudo o que o seu bebê precisa até os seus 9 meses"
-	}
+      "id": 1,
+      "name": "até 3 meses",
+      "description": "Tudo o que o seu bebê precisa até os seus 3 meses"
+    },
+    {
+      "id": 2,
+      "name": "até 6 meses",
+      "description": "Tudo o que o seu bebê precisa até os seus 6 meses"
+    },
+    {
+      "id": 3,
+      "name": "até 9 meses",
+      "description": "Tudo o que o seu bebê precisa até os seus 9 meses"
+    }
   ]
 }
 ```
 
 # Rotas Parents
+
 ## **Rotas que não precisam de autenticação**
+
 <h2 align="center">Obter todos os parents</h2>
 
 `GET /api/parents - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `GET /api/parents - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 {
-	"usernames": [
-		"icostela",
-		"jrodrigues",
-		"vrezende",
-		"lucca77",
-		"ubarros",
-		"rochaenrico",
-		"rochaleticia",
-		"caio72",
-		"laisgoncalves",
-		"daniela23"
-	]
+  "usernames": [
+    "icostela",
+    "jrodrigues",
+    "vrezende",
+    "lucca77",
+    "ubarros",
+    "rochaenrico",
+    "rochaleticia",
+    "caio72",
+    "laisgoncalves",
+    "daniela23"
+  ]
 }
 ```
+
 ## **Rotas que não precisam de autenticação**
+
 <h2 align="center">Criar novo parent<h2>
 
 `POST /api/parents - FORMATO DA REQUISIÇÃO`
+
 ```JSON
 {
   "cpf": "12312312312",
@@ -298,7 +337,9 @@ Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `POST /api/parents - FORMATO DA RESPOSTA - STATUS 201`
+
 ```json
 {
   "id": 28,
@@ -309,19 +350,24 @@ Não é necessário um corpo da requisição.
   "phone": "99999999999"
 }
 ```
+
 <h2 align="center">Fazer login<h2>
 
 `POST /api/parents/login - FORMATO DA REQUISIÇÃO`
+
 ```JSON
 {
   "username": "fulano",
   "password": "k3nz13",
 }
 ```
+
 ### Obrigatórios uma identificação do usuário e seu password. Além de "username" podem ser usados "cpf" ou "email".
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `POST /api/parents - FORMATO DA RESPOSTA - STATUS 201`
+
 ```json
 {
   "id": 28,
@@ -334,36 +380,44 @@ Não é necessário um corpo da requisição.
 ```
 
 # Rotas Questions
+
 ## **Rotas que não precisam de autenticação**
+
 <h2 align="center">Obter todas as perguntas por id de produto</h2>
 
 `GET /api/questions/<product_id> - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `GET /api/questions/1 - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 [
-	{
-		"id": 1,
-		"question": "Teste 1",
-		"parent_id": 1,
-		"product_id": 1
-	},
-	{
-		"id": 2,
-		"question": "Teste 2",
-		"parent_id": 1,
-		"product_id": 1
-	}
+  {
+    "id": 1,
+    "question": "Teste 1",
+    "parent_id": 1,
+    "product_id": 1
+  },
+  {
+    "id": 2,
+    "question": "Teste 2",
+    "parent_id": 1,
+    "product_id": 1
+  }
 ]
 ```
+
 ## **Rotas que precisam de autenticação**
+
 <h2 align="center">Criar nova pergunta em um produto,por id de produto</h2>
 
 `POST /api/questions/<product_id> - FORMATO DA REQUISIÇÃO`
+
 ```JSON
 {
 	"question": "Pergunta Teste?"
@@ -371,18 +425,22 @@ Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `POST /api/question/1 - FORMATO DA RESPOSTA - STATUS 201`
+
 ```json
 {
-	"id": 3,
-	"question": "Pergunta Teste?",
-	"product_id": 1,
-	"parent_id": 1
+  "id": 3,
+  "question": "Pergunta Teste?",
+  "product_id": 1,
+  "parent_id": 1
 }
 ```
+
 <h2 align="center">Atualizar pergunta por id de pergunta</h2>
 
 `PATCH /api/questions/<question_id> - FORMATO DA REQUISIÇÃO`
+
 ```JSON
 {
 	"question": "Pergunta Teste Atualizada?"
@@ -390,25 +448,119 @@ Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `PATCH /api/questions/3 - FORMATO DA RESPOSTA - STATUS 200`
+
 ```json
 {
-	"id": 3,
-	"question": "Pergunta Teste Atualizada?",
-	"product_id": 1,
-	"parent_id": 1
+  "id": 3,
+  "question": "Pergunta Teste Atualizada?",
+  "product_id": 1,
+  "parent_id": 1
 }
 ```
 
 <h2 align="center">Deletar pergunta por id de pergunta</h2>
 
 `DELETE /api/questions/<question_id> - FORMATO DA REQUISIÇÃO`
+
 ```
 Não é necessário um corpo da requisição.
 ```
 
 #### Caso dê tudo certo, a resposta será assim:
+
 `DELETE /api/questions/3 - FORMATO DA RESPOSTA - STATUS 204`
+
 ```
 Sem corpo de resposta
+```
+
+# Rotas Answers
+
+## **Rotas que precisam de autenticação**
+
+<h2 align="center">Criar uma resposta</h2>
+
+`POST /api/answers/<question_id> - FORMATO DA REQUISIÇÃO`
+
+```JSON
+{
+  "answer": "Resposta Teste!"
+}
+```
+
+#### Caso tudo dê certo, a resposta será assim:
+
+`POST /api/answers/1 - FORMATO DA RESPOSTA - STATUS 201`
+
+```JSON
+{
+  "id": 1,
+  "answer": "Resposta Teste!",
+  "parent_id": 1,
+  "question_id": 1
+}
+```
+
+<h2 align="center">Editar uma resposta</h2>
+
+`PATCH /api/answers/<answer_id> - FORMATO DA REQUISIÇÃO`
+
+```JSON
+{
+  "answer": "Resposta Teste Editada!"
+}
+```
+
+#### Caso tudo dê certo, a resposta será assim:
+
+`PATCH /api/answers/1 - FORMATO DA RESPOSTA - STATUS 200`
+
+```JSON
+{
+  "id": 1,
+  "answer": "Resposta Teste Editada!",
+  "parent_id": 1,
+  "question_id": 1
+}
+```
+
+<h2 align="center">Deletar uma resposta</h2>
+
+`DELETE /api/answers/<answer_id> - FORMATO DA REQUISIÇÃO`
+
+```JSON
+Não é necessário um corpo da requisição.
+```
+
+#### Caso tudo dê certo, a resposta será assim:
+
+`DELETE /api/answers/1 - FORMATO DA RESPOSTA - STATUS 204`
+
+```JSON
+Sem corpo de resposta.
+```
+
+## **Rotas que não precisam de autenticação**
+
+<h2 align="center">Obter uma resposta</h2>
+
+`GET /api/answers/<answer_id> - FORMATO DA REQUISIÇÃO`
+
+```JSON
+Não é necessário um corpo da requisição.
+```
+
+#### Caso tudo dê certo, a resposta será assim:
+
+`GET /api/answers/1 - FORMATO DA RESPOSTA - STATUS 200`
+
+```JSON
+{
+  "id": 1,
+  "answer": "Resposta Teste Editada!",
+  "parent_id": 1,
+  "question_id": 1
+}
 ```
