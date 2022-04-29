@@ -5,7 +5,6 @@ import click
 from app.configs.database import db
 from app.models import CategoryModel, ParentModel, ProductModel
 from flask.cli import AppGroup
-from ipdb import set_trace
 from sqlalchemy.orm import Query
 from sqlalchemy.orm.session import Session
 
