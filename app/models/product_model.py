@@ -1,20 +1,11 @@
 from dataclasses import dataclass
 
 from app.configs.database import db
-from sqlalchemy import (
-    String, 
-    Boolean, 
-    Column, 
-    ForeignKey, 
-    Integer, 
-    Numeric
-)
-from sqlalchemy.orm import relationship, backref, validates
 
 # Exceptions Importations
-from app.exceptions.products_exceptions import (
-    InvalidDataError
-)
+from app.exceptions.products_exceptions import InvalidDataError
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, Numeric, String
+from sqlalchemy.orm import backref, relationship, validates
 
 
 @dataclass
@@ -33,7 +24,9 @@ class ProductModel(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(String(128), nullable=False)
     price = Column(Numeric, nullable=False)
-    parent_id = Column(Integer, ForeignKey('parents.id', ondelete="CASCADE"), nullable=False)
+    parent_id = Column(
+        Integer, ForeignKey("parents.id", ondelete="CASCADE"), nullable=False
+    )
     description = Column(String)
     image = Column(String)
     sold = Column(Boolean, default=False)
@@ -42,36 +35,18 @@ class ProductModel(db.Model):
         "CategoryModel", secondary="product_category", backref=backref("products")
     )
 
-    questions = relationship(
-        'QuestionModel', 
-        backref=backref('product', uselist=True)
-    )
+    @validates("title", "price", "description", "image")
+    def validates_product_values(self, key, value):
 
-    @validates(
-        "title",
-        "price",
-        "description",
-        "image"
-    )
-    def validates_product_values(
-        self, 
-        key,
-        value
-    ):
-
-        str_values = [
-            "title",
-            "description",
-            "image"
-        ]
+        str_values = ["title", "description", "image"]
 
         if key in str_values:
-            
+
             if type(value) != str:
                 raise InvalidDataError(
                     description={
                         "error": f"The value of keys: {str_values} needs to be String!"
-                    } 
+                    }
                 )
 
         if key == "price":
@@ -84,7 +59,8 @@ class ProductModel(db.Model):
                 )
 
         return value
+
     # questions = relationship(
-    #     'QuestionModel', 
+    #     'QuestionModel',
     #     backref=backref('product', uselist=True)
     # )
