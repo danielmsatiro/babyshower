@@ -19,8 +19,12 @@ def questions_cli():
     def create_questions(quantity):
         session: Session = db.session
 
+        query_product: Query = db.session.query(ProductModel).all()
         query_parent: Query = db.session.query(ParentModel.id).all()
         ids_parents = [response._asdict()["id"] for response in query_parent]
+
+        if not query_parent or not query_product:
+            raise Warning("Falta incluir os pais e/ou produtos")
 
         for _ in range(int(quantity)):
             parent_id = deepcopy(ids_parents[random.randint(1, len(ids_parents) - 1)])
@@ -46,5 +50,6 @@ def questions_cli():
             )
             session.add(new_question)
             session.commit()
+        print(f"{quantity} questions added")
 
     return question_group
