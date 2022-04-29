@@ -1,18 +1,17 @@
 """create table cities in database
 
-Revision ID: 130765d3bc5c
-Revises: 13a375290b8a
-Create Date: 2022-04-29 13:11:45.691326
+Revision ID: 1da534bf273c
+Revises: 6c32496ce0cd
+Create Date: 2022-04-29 13:18:21.933632
 
 """
 from alembic import op
 import sqlalchemy as sa
 from geoalchemy2 import Geometry
 
-
 # revision identifiers, used by Alembic.
-revision = '130765d3bc5c'
-down_revision = '13a375290b8a'
+revision = '1da534bf273c'
+down_revision = '6c32496ce0cd'
 branch_labels = None
 depends_on = None
 

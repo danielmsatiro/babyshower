@@ -1,12 +1,15 @@
 from bdb import set_trace
 from http import HTTPStatus
 
+from sqlalchemy.exc import IntegrityError
+
 from app.configs.database import db
 from app.models import QuestionModel
 from flask import jsonify, request, session
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import Query, Session
 from ipdb import set_trace
+
 
 def get_product_questions(product_id: int):
 
@@ -16,10 +19,9 @@ def get_product_questions(product_id: int):
 
     serialized_questions = [question.__dict__ for question in questions]
 
-    [question.pop('_sa_instance_state') for question in serialized_questions]
+    [question.pop("_sa_instance_state") for question in serialized_questions]
 
-    return jsonify(serialized_questions), HTTPStatus.OK   
-
+    return jsonify(serialized_questions), HTTPStatus.OK
 
 
 @jwt_required()
@@ -31,12 +33,15 @@ def create_question(product_id: int):
     data["parent_id"] = parent["id"]
 
     data["product_id"] = product_id
-
-    question = QuestionModel(**data)
-
-    session: Session = db.session
-    session.add(question)
-    session.commit()
+    try:
+        question = QuestionModel(**data)
+    
+        session: Session = db.session
+        
+        session.add(question)
+        session.commit()
+    except IntegrityError:
+        return {"Error": "Product not found"}
     
     return jsonify(question), HTTPStatus.CREATED
 
@@ -46,30 +51,32 @@ def update_question(question_id: int):
     data: dict = request.get_json()
 
     parent = get_jwt_identity()
-    
+
     session: Session = db.session
 
     question = session.query(QuestionModel).get(question_id)
 
     if parent["id"] == question.parent_id:
         for key, value in data.items():
-            setattr(question, key, value)    
+            setattr(question, key, value)
         session.commit()
     else:
         return {"msg": "Unauthorized action"}, HTTPStatus.UNAUTHORIZED
 
     return jsonify(question), HTTPStatus.OK
 
+
 @jwt_required()
 def delete_question(question_id: int):
     session: Session = db.session
 
     parent = get_jwt_identity()
-
-    question = session.query(QuestionModel).get(question_id)
-
+    
+    question = session.query(QuestionModel).filter_by(id=question_id).first()
+  
     if parent["id"] == question.parent_id:
         session.delete(question)
+
         session.commit()
     else:
         return {"msg": "Unauthorized action"}, HTTPStatus.UNAUTHORIZED
