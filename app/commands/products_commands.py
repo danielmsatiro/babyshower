@@ -4,6 +4,7 @@ from copy import deepcopy
 import click
 from app.configs.database import db
 from app.models import CategoryModel, ParentModel, ProductModel
+from app.services.add_categories import add_categories_if_empty
 from flask.cli import AppGroup
 from sqlalchemy.orm import Query
 from sqlalchemy.orm.session import Session
@@ -111,9 +112,13 @@ def products_cli():
     @product_group.command("create")
     @click.argument("quantity")
     def create_products(quantity):
+        add_categories_if_empty()
         session: Session = db.session
 
         query: Query = db.session.query(ParentModel.id).all()
+
+        if not query:
+            raise Warning("Falta incluir os pais")
 
         ids_parents = [response._asdict()["id"] for response in query]
 
@@ -145,5 +150,6 @@ def products_cli():
 
             session.add(product)
             session.commit()
+        print(f"{quantity} products added")
 
     return product_group

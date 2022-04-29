@@ -13,6 +13,9 @@ def answers_cli():
 
         questions = db.session.query(QuestionModel).all()
 
+        if not questions:
+            raise Warning("Falta incluir perguntas")
+
         for question in questions:
             new_answer = AnswerModel(
                 answer=fake.sentence(nb_words=10),
@@ -21,5 +24,6 @@ def answers_cli():
             )
             db.session.add(new_answer)
             db.session.commit()
+        print(f"answers added for each question ({len(questions)} questions)")
 
     return answer_group
