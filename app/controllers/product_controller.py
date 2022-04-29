@@ -6,6 +6,7 @@ from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
 
+from app.services.product_service import serialize_product
 from app.exceptions.products_exceptions import (
     NonexistentProductError,
     NonexistentParentProductsError,
@@ -36,32 +37,39 @@ def get_all():
 
     products: Query = query.offset(page * per_page).limit(per_page).all()
 
-    return {"products": products}, 200
+    for i in range(len(products)):
+        product_serialized = serialize_product(products[i])
+        products[i] = product_serialized
+
+    return {"products": products}, HTTPStatus.OK
 
 
 def get_by_id(product_id: int):
     try:
-
         product = ProductModel.query.get(product_id)
+        product_serialized = serialize_product(product)
 
         if not product:
             raise NonexistentProductError
 
+        return jsonify(product_serialized), HTTPStatus.OK
+        
     except NonexistentProductError as err:
         return err.message, HTTPStatus.NOT_FOUND
 
-    return jsonify(product), 200
 
 
 def get_by_parent(parent_id: int):
     try:
-
         products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
-
-        if len(products) == 0:
+        if not products:
             raise NonexistentParentProductsError
 
-        return {"products": products}, 200
+        for i in range(len(products)):
+            product_serialized = serialize_product(products[i])
+            products[i] = product_serialized
+
+        return {"products": products}, HTTPStatus.OK
 
     except NonexistentParentProductsError as err:
         return err.message, HTTPStatus.NOT_FOUND
@@ -88,19 +96,20 @@ def create_product():
     session: Session = db.session
     session.add(product)
     session.commit()
+    
+    product_serialized = serialize_product(product)
 
-    return jsonify(product), HTTPStatus.CREATED
+    return jsonify(product_serialized), HTTPStatus.CREATED
 
 
 @jwt_required()
 def update_product(product_id: int):
     try:
-
         parent = get_jwt_identity()
 
-        session: Session = db.session
         data: dict = request.get_json()
 
+        session: Session = db.session
         product: Query = (
             session.query(ProductModel)
             .select_from(ProductModel)
@@ -118,8 +127,10 @@ def update_product(product_id: int):
         session.add(product)
         session.commit()
 
-        return jsonify(product), HTTPStatus.OK
+        product_serialized = serialize_product(product)
 
+        return jsonify(product_serialized), HTTPStatus.OK
+    
     except NonexistentProductError as err:
         return err.message, HTTPStatus.NOT_FOUND
 
@@ -127,11 +138,9 @@ def update_product(product_id: int):
 @jwt_required()
 def delete_product(product_id: int):
     try:
-
         parent = get_jwt_identity()
 
         session: Session = db.session
-
         product: Query = (
             session.query(ProductModel)
             .select_from(ProductModel)
