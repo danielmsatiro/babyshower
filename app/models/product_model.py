@@ -1,8 +1,20 @@
 from dataclasses import dataclass
 
 from app.configs.database import db
-from sqlalchemy import String, Boolean, Column, ForeignKey, Integer, Numeric
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import (
+    String, 
+    Boolean, 
+    Column, 
+    ForeignKey, 
+    Integer, 
+    Numeric
+)
+from sqlalchemy.orm import relationship, backref, validates
+
+# Exceptions Importations
+from app.exceptions.products_exceptions import (
+    InvalidDataError
+)
 
 
 @dataclass
@@ -30,6 +42,48 @@ class ProductModel(db.Model):
         "CategoryModel", secondary="product_category", backref=backref("products")
     )
 
+    questions = relationship(
+        'QuestionModel', 
+        backref=backref('product', uselist=True)
+    )
+
+    @validates(
+        "title",
+        "price",
+        "description",
+        "image"
+    )
+    def validates_product_values(
+        self, 
+        key,
+        value
+    ):
+
+        str_values = [
+            "title",
+            "description",
+            "image"
+        ]
+
+        if key in str_values:
+            
+            if type(value) != str:
+                raise InvalidDataError(
+                    description={
+                        "error": f"The value of keys: {str_values} needs to be String!"
+                    } 
+                )
+
+        if key == "price":
+
+            if type(value) != float:
+                raise InvalidDataError(
+                    description={
+                        "error": f"The value of key: 'price' needs to be Float!"
+                    }
+                )
+
+        return value
     # questions = relationship(
     #     'QuestionModel', 
     #     backref=backref('product', uselist=True)

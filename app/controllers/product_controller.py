@@ -6,6 +6,8 @@ from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
 
+from ipdb import set_trace
+
 
 def get_all():
     params = dict(request.args.to_dict().items())
