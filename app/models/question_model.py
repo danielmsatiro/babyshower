@@ -13,12 +13,13 @@ class QuestionModel(db.Model):
     question: str
     product_id: int
     parent_id: int
+    answer: str
 
     id = Column(Integer, primary_key=True, nullable=False)
     question = Column(Text, nullable=False)
 
-    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
-    parent_id = Column(Integer, ForeignKey("parents.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey('products.id', ondelete="CASCADE"), nullable=False)
+    parent_id = Column(Integer, ForeignKey('parents.id', ondelete="CASCADE"), nullable=False)
 
     answer = relationship(
         "AnswerModel", backref=backref("question", uselist=False), uselist=False

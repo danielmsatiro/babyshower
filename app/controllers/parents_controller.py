@@ -71,7 +71,7 @@ def update_parents():
 
     session.commit()
 
-    return jsonify(parent.username)
+    return jsonify(parent)
 
 
 @jwt_required()
