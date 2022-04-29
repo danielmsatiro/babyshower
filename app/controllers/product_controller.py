@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session, Query
 from app.models import ProductModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
+from ipdb import set_trace
+
 
 def get_all():
     params = dict(request.args.to_dict().items()) # PEGANDO TODOS OS ARGUMENTOS
