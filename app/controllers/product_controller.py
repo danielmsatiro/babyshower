@@ -8,8 +8,9 @@ from sqlalchemy.orm import Query, Session
 
 from app.exceptions.products_exceptions import (
     NonexistentProductError,
-    NonexistentParentProductsError
-    )
+    NonexistentParentProductsError,
+)
+
 
 def get_all():
     params = dict(request.args.to_dict().items())
@@ -45,7 +46,7 @@ def get_by_id(product_id: int):
 
         if not product:
             raise NonexistentProductError
-    
+
     except NonexistentProductError as err:
         return err.message, HTTPStatus.NOT_FOUND
 
@@ -56,13 +57,11 @@ def get_by_parent(parent_id: int):
     try:
 
         products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
-        
+
         if len(products) == 0:
             raise NonexistentParentProductsError
 
-        return {
-            "products": products
-        }, 200
+        return {"products": products}, 200
 
     except NonexistentParentProductsError as err:
         return err.message, HTTPStatus.NOT_FOUND

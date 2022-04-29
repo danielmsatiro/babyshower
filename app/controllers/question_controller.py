@@ -35,14 +35,14 @@ def create_question(product_id: int):
     data["product_id"] = product_id
     try:
         question = QuestionModel(**data)
-    
+
         session: Session = db.session
-        
+
         session.add(question)
         session.commit()
     except IntegrityError:
         return {"Error": "Product not found"}
-    
+
     return jsonify(question), HTTPStatus.CREATED
 
 
@@ -71,9 +71,9 @@ def delete_question(question_id: int):
     session: Session = db.session
 
     parent = get_jwt_identity()
-    
+
     question = session.query(QuestionModel).filter_by(id=question_id).first()
-  
+
     if parent["id"] == question.parent_id:
         session.delete(question)
 

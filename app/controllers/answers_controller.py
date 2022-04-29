@@ -17,7 +17,9 @@ def create_answer(question_id: int):
 
     session: Session = db.session
 
-    question: QuestionModel = session.query(QuestionModel).filter_by(id=question_id).first()
+    question: QuestionModel = (
+        session.query(QuestionModel).filter_by(id=question_id).first()
+    )
 
     product: ProductModel = (
         session.query(ProductModel).filter_by(id=question.product_id).first()
@@ -34,7 +36,6 @@ def create_answer(question_id: int):
     session.add(new_answer)
     session.commit()
 
-    
     return jsonify(new_answer), HTTPStatus.CREATED
 
 
