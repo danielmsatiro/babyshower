@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Query, Session
-from flask import request, current_app, jsonify
+from flask import request, jsonify
 from http import HTTPStatus
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ipdb import set_trace
@@ -8,6 +8,7 @@ from app.configs.database import db
 from app.models.answer_model import AnswerModel
 from app.models.question_model import QuestionModel
 from app.models.product_model import ProductModel
+from app.services.answer_service import serialize_answer
 
 
 @jwt_required()
@@ -25,6 +26,7 @@ def create_answer(question_id: int):
         session.query(ProductModel).filter_by(id=question.product_id).first()
     )
 
+
     if user_logged["id"] != product.parent_id:
         return {"message": "Error"}, HTTPStatus.BAD_REQUEST
 
@@ -36,13 +38,13 @@ def create_answer(question_id: int):
     session.add(new_answer)
     session.commit()
 
-    return jsonify(new_answer), HTTPStatus.CREATED
+    return jsonify(serialize_answer(new_answer)), HTTPStatus.CREATED
 
 
 def read_answer(answer_id: int):
     answer = AnswerModel.query.filter_by(id=answer_id).first()
 
-    return jsonify(answer), HTTPStatus.OK
+    return jsonify(serialize_answer(answer)), HTTPStatus.OK
 
 
 @jwt_required()
@@ -63,7 +65,7 @@ def update_answer(answer_id: int):
     session.add(answer)
     session.commit()
 
-    return jsonify(answer), HTTPStatus.OK
+    return jsonify(serialize_answer(answer)), HTTPStatus.OK
 
 
 @jwt_required()
