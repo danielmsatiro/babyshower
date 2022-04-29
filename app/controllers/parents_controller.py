@@ -1,12 +1,16 @@
 from copy import deepcopy
 from http import HTTPStatus
 
+from psycopg2 import IntegrityError
+from psycopg2.errors import UniqueViolation
+
 from app.configs.database import db
 from app.models import ParentModel, ProductModel
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
 from sqlalchemy.util.langhelpers import constructor_copy
+
 
 
 def pick_parents():
@@ -32,11 +36,11 @@ def pick_parents():
 def new_parents():
 
     data: dict = request.get_json()
+    
     parent = ParentModel(**data)
-
+ 
     session: Session = db.session
     session.add(parent)
-    session.commit()
 
     return jsonify(parent), HTTPStatus.CREATED
 

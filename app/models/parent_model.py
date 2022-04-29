@@ -2,8 +2,10 @@ from dataclasses import dataclass
 
 from app.configs.database import db
 from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, relationship, validates, Query
 from werkzeug.security import check_password_hash, generate_password_hash
+
+from app.exceptions import EmailAlreadyExists
 
 
 @dataclass
@@ -40,3 +42,13 @@ class ParentModel(db.Model):
 
     def verify_password(self, password_to_compare):
         return check_password_hash(self.password_hash, password_to_compare)
+    
+    # @validates("cpf")
+    # def validate_cpf(self, key, email_to_be_validate):
+    #     query: Query = db.session.query(ParentModel.cpf).all()
+    #     cpf_parents = [response._asdict()["cpf"] for response in query]
+
+    #     if email_to_be_validate in cpf_parents:
+    #         raise EmailAlreadyExists
+        
+    #     return email_to_be_validate
