@@ -6,6 +6,8 @@ from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
 
+from app.services.product_service import serialize_product
+
 
 def get_all():
     params = dict(request.args.to_dict().items())
@@ -31,16 +33,27 @@ def get_all():
 
     products: Query = query.offset(page * per_page).limit(per_page).all()
 
+    for i in range(len(products)):
+        product_serialized = serialize_product(products[i])
+        products[i] = product_serialized
+
     return {"products": products}, 200
 
 
 def get_by_id(product_id: int):
     product = ProductModel.query.get(product_id)
-    return jsonify(product), 200
+    product_serialized = serialize_product(product)
+
+    return jsonify(product_serialized), 200
 
 
 def get_by_parent(parent_id):
-    products = ProductModel.query.filter(ProductModel.parent_id == parent_id).first()
+    products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
+
+    for i in range(len(products)):
+        product_serialized = serialize_product(products[i])
+        products[i] = product_serialized
+    
     return {"products": products}, 200
 
 
@@ -65,8 +78,10 @@ def create_product():
     session: Session = db.session
     session.add(product)
     session.commit()
+    
+    product_serialized = serialize_product(product)
 
-    return jsonify(product), HTTPStatus.CREATED
+    return jsonify(product_serialized), HTTPStatus.CREATED
 
 
 @jwt_required()
@@ -93,7 +108,9 @@ def update_product(product_id):
     session.add(product)
     session.commit()
 
-    return jsonify(product), HTTPStatus.OK
+    product_serialized = serialize_product(product)
+
+    return jsonify(product_serialized), HTTPStatus.OK
 
 
 @jwt_required()
