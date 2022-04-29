@@ -1,12 +1,14 @@
-from copy import deepcopy
-import click
 import random
+from copy import deepcopy
+
+import click
 from app.configs.database import db
+from app.models import ParentModel, ProductModel, QuestionModel
 from faker import Faker
 from flask.cli import AppGroup
-from sqlalchemy.orm.session import Session
-from app.models import QuestionModel, ParentModel, ProductModel
 from sqlalchemy.orm import Query
+from sqlalchemy.orm.session import Session
+
 
 def questions_cli():
     fake = Faker("pt_BR")
@@ -16,7 +18,7 @@ def questions_cli():
     @click.argument("quantity")
     def create_questions(quantity):
         session: Session = db.session
-        
+
         query_parent: Query = db.session.query(ParentModel.id).all()
         ids_parents = [response._asdict()["id"] for response in query_parent]
 
@@ -29,16 +31,20 @@ def questions_cli():
                 .all()
             )
 
-
-            ids_product_by_parent = [response._asdict()["id"] for response in query_product_by_parent]
+            ids_product_by_parent = [
+                response._asdict()["id"] for response in query_product_by_parent
+            ]
 
             new_question = QuestionModel(
-                    question= fake.sentence(nb_words=10),
-                    product_id=deepcopy(ids_product_by_parent[random.randint(1, len(ids_product_by_parent) - 1)]),
-                    parent_id=parent_id,
+                question=fake.sentence(nb_words=10),
+                product_id=deepcopy(
+                    ids_product_by_parent[
+                        random.randint(1, len(ids_product_by_parent) - 1)
+                    ]
+                ),
+                parent_id=parent_id,
             )
             session.add(new_question)
             session.commit()
-        
-    
+
     return question_group

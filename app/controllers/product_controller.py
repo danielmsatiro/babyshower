@@ -1,87 +1,49 @@
 from http import HTTPStatus
-from itertools import product
-from flask import jsonify, request
+
 from app.configs.database import db
-from sqlalchemy.orm import Session, Query
-from app.models import ProductModel
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.models import CategoryModel, ProductModel
+from flask import jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy.orm import Query, Session
 
 from ipdb import set_trace
 
 
 def get_all():
-    params = dict(request.args.to_dict().items()) # PEGANDO TODOS OS ARGUMENTOS
+    params = dict(request.args.to_dict().items())
 
-    # SEPARANDO OS ARGUMENTOS PARA PAGINAÇÃO
-    if "page" in params: 
-        page = int(params.pop("page"))
-    else: 
-        page = 1
-
-    if "per_page" in params: 
-        per_page = int(params.pop("per_page")) 
-    else: 
-        per_page = 1
-
-    # VERIFICANDO EXISTENCIA DE ARGUMENTOS PARA FILTRAGEM
-    if params:
-        query = ProductModel.query
-
-        for column, value in params.items():
-            query = query.filter(getattr(ProductModel, column) == value)
-
-        products = query.all()
+    if "page" in params:
+        page = int(params.pop("page")) - 1
     else:
-        products = ProductModel.query.all()
+        page = 0
 
-    # LOGICA DA PAGINAÇÃO
-    products_per_page = [ 
-      products[item]
-      for item in range(per_page*(page-1), per_page*page)
-      if len(products) > item
-    ]
+    if "per_page" in params:
+        per_page = int(params.pop("per_page"))
+    else:
+        per_page = 8
 
-    # BÁSICA SERIALIZAÇÃO
-    products_serializer = [
-        product.__dict__
-        for product
-        in products_per_page
-    ]
+    query = ProductModel.query
 
-    [
-        product.pop('_sa_instance_state')
-        for product
-        in products_serializer
-    ]
+    for column, value in params.items():
+        if "price" in column:
+            print("entrou aqui")
+            query: Query = query.filter(ProductModel.price <= value)
+        elif "title" in column:
+            query: Query = query.filter(ProductModel.title in column)
 
-    return {"products": products_serializer}, 200
+    products: Query = query.offset(page * per_page).limit(per_page).all()
+
+    return {"products": products}, 200
 
 
 def get_by_id(product_id: int):
     product = ProductModel.query.get(product_id)
-
-    product_serialize = product.__dict__
-    product_serialize.pop('_sa_instance_state')
-
-    return product_serialize, 200
+    return jsonify(product), 200
 
 
 def get_by_parent(parent_id):
-    products = ProductModel.query.filter(ProductModel.parent_id==parent_id).all()
-
-    products_serializer = [
-        product.__dict__
-        for product
-        in products
-    ]
-
-    [
-        product.pop('_sa_instance_state')
-        for product
-        in products_serializer
-    ]
-
-    return {"products": products_serializer}, 200
+    products = ProductModel.query.filter(ProductModel.parent_id == parent_id).first()
+    return {"products": products}, 200
 
 
 @jwt_required()
@@ -91,14 +53,22 @@ def create_product():
     data: dict = request.get_json()
     data["parent_id"] = parent["id"]
 
+    query: Query = db.session.query(CategoryModel)
+
+    categories = data.pop("categories")
+
     product = ProductModel(**data)
 
-    session: Session = db.session
+    for category in categories:
+        response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
+        if response:
+            product.categories.append(response)
 
+    session: Session = db.session
     session.add(product)
     session.commit()
 
-    return jsonify(product), HTTPStatus.CREATED 
+    return jsonify(product), HTTPStatus.CREATED
 
 
 @jwt_required()
@@ -116,7 +86,7 @@ def update_product(product_id):
         .first()
     )
 
-    if not product: 
+    if not product:
         return {"Error": "UNAUTHORIZED"}, HTTPStatus.UNAUTHORIZED
 
     for key, value in data.items():
@@ -142,11 +112,10 @@ def delete_product(product_id):
         .first()
     )
 
-    if not product: 
+    if not product:
         return {"Error": "UNAUTHORIZED"}, HTTPStatus.UNAUTHORIZED
 
     session.delete(product)
     session.commit()
 
     return "", HTTPStatus.NO_CONTENT
-

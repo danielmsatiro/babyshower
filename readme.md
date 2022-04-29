@@ -416,7 +416,6 @@ Não é necessário um corpo da requisição.
 
 ```
 Não é necessário um corpo da requisição.
-
 ```
 
 ### Obrigatório estar logado.
