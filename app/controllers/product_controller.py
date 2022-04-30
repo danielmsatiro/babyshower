@@ -1,3 +1,4 @@
+from copy import deepcopy
 from http import HTTPStatus
 
 from app.configs.database import db
@@ -5,7 +6,7 @@ from app.exceptions.products_exceptions import (
     NonexistentParentProductsError,
     NonexistentProductError,
 )
-from app.models import CategoryModel, ProductModel
+from app.models import CategoryModel, ProductModel, category_product
 from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -17,29 +18,36 @@ def get_all():
     params = dict(request.args.to_dict().items())
     data = None
     try:
-        data: dict = request.get_json()  # add filter by categories too
+
+        data = request.get_json()  # add filter by categories too
+
     finally:
-        # set_trace()
+        session: Session = db.session
+        categories = []
 
-        if "page" in params:
-            page = int(params.pop("page")) - 1
-        else:
-            page = 0
+        for name in deepcopy(data.get("categories", [])):
+            categories.append(session.query(CategoryModel).filter_by(name=name).first())
 
-        if "per_page" in params:
-            per_page = int(params.pop("per_page"))
-        else:
-            per_page = 8
+        query: Query = session.query(ProductModel)
 
-        query = ProductModel.query
+        # filter by category
+        if categories:
+            for category in categories:
+                query: Query = query.filter(ProductModel.categories.contains(category))
 
-        for key, value in params.items():
-            if "min_price" == key.lower():
-                query: Query = query.filter(ProductModel.price >= value)
-            if "max_price" == key.lower():
-                query: Query = query.filter(ProductModel.price <= value)
-            elif "title" == key.lower():
-                query: Query = query.filter(ProductModel.title.ilike(f"%{value}%"))
+        min_price = params.get("min_price")
+        max_price = params.get("max_price")
+        title = params.get("title")
+
+        if min_price:
+            query: Query = query.filter(ProductModel.price >= min_price)
+        if max_price:
+            query: Query = query.filter(ProductModel.price <= max_price)
+        if title:
+            query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
+
+        page = int(params.get("page", 1)) - 1
+        per_page = int(params.get("per_page", 8))
 
         products: Query = query.offset(page * per_page).limit(per_page).all()
 
