@@ -1,6 +1,9 @@
 from copy import deepcopy
 from http import HTTPStatus
 
+from psycopg2 import IntegrityError
+from psycopg2.errors import UniqueViolation
+
 from app.configs.database import db
 from app.models import ParentModel, ProductModel
 from flask import jsonify, request
@@ -34,9 +37,13 @@ def new_parents():
     data: dict = request.get_json()
     parent = ParentModel(**data)
 
-    session: Session = db.session
-    session.add(parent)
-    session.commit()
+    try:
+        session: Session = db.session
+        session.add(parent)
+        session.commit()
+    except IntegrityError as e:
+        # if type(e.orig) == UniqueViolation:
+        return {"msg": "Values has already been registered, check cpf/username/phone/email"}, HTTPStatus.CONFLICT        
 
     return jsonify(parent), HTTPStatus.CREATED
 
