@@ -35,9 +35,9 @@ def get_all():
             for category in categories:
                 query: Query = query.filter(ProductModel.categories.contains(category))
 
-        min_price = params.get("min_price")
-        max_price = params.get("max_price")
-        title = params.get("title")
+        min_price = data.get("min_price")
+        max_price = data.get("max_price")
+        title = data.get("title_product")
 
         if min_price:
             query: Query = query.filter(ProductModel.price >= min_price)
