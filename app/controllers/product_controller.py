@@ -1,14 +1,17 @@
 from http import HTTPStatus
 
 from app.configs.database import db
-from app.models import CategoryModel, ProductModel
+from app.models import CategoryModel, ProductModel, ParentModel
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
+from ipdb import set_trace
+from app.models.cities_model import CityModel
 
 
 def get_all():
     params = dict(request.args.to_dict().items())
+    session: Session = db.session
 
     if "page" in params:
         page = int(params.pop("page")) - 1
@@ -21,17 +24,40 @@ def get_all():
         per_page = 8
 
     query = ProductModel.query
+    teste = ProductModel.query
+    query_city = CityModel.query
 
-    for column, value in params.items():
-        if "price" in column:
+    for key, value in params.items():
+        if "price" in key:
             print("entrou aqui")
             query: Query = query.filter(ProductModel.price <= value)
-        elif "title" in column:
-            query: Query = query.filter(ProductModel.title in column)
+        elif "title" in key:
+            query: Query = query.filter(ProductModel.title in key)
+    query_city: Query = query_city.filter_by(nome_municipio=params.get("cidade"))
 
-    products: Query = query.offset(page * per_page).limit(per_page).all()
+    # get all products
+    #     products: Query = query.offset(page * per_page).limit(per_page).all()
+    #     products: Query = query.filter_by(parent_id=1).all()
+    #     products: Query = query.filter_by()
 
-    return {"products": products}, 200
+    # pegar produtos por estado
+    # for product in products:
+    #     product_onwer = parents.filter_by(id=product.parent_id) // irá retornar o dono do produto
+    #     if city_id_current == product_onwer.city_id
+    #     products.append(product)  
+
+    # distance = params.get('distance')
+    # cities = query_city.first().get_cities_within_radius(distance)[0]
+
+    # pegar produtos por varios estados a partir da distancia
+    # for city in cities:
+    #     city_id_current = city_id
+    #     for product in products:
+    #           product_onwer = parents.filter_by(id=product.parent_id) // irá retornar o dono do produto
+    #           if city_id_current == product_onwer.city_id
+    #           products.append(product) 
+
+    return jsonify("products"), 200
 
 
 def get_by_id(product_id: int):

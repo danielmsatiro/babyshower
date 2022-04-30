@@ -8,7 +8,7 @@ from sqlalchemy.orm import Query, Session
 
 def pick_parents():
 
-    query: Query = db.session.query(ParentModel.id, ParentModel.username)
+    query: Query = db.session.query(ParentModel.id, ParentModel.username, ParentModel.name)
 
     response = query.all()
 
