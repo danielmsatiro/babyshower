@@ -15,15 +15,18 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import Query, Session
 from ipdb import set_trace
 
+from app.services.question_service import serialize_answer
+
 
 def get_product_questions(product_id: int):
 
     base_query: Query = db.session.query(QuestionModel)
 
     questions = base_query.filter(QuestionModel.product_id == product_id).all()
-    serialized_questions = [question.__dict__ for question in questions]
+    
+    serialized_questions = [serialize_answer(question) for question in questions]
 
-    [question.pop("_sa_instance_state") for question in serialized_questions]
+    # [question.pop("_sa_instance_state") for question in serialized_questions]
 
     return jsonify(serialized_questions), HTTPStatus.OK
 
