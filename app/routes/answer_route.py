@@ -8,7 +8,7 @@ from app.controllers.answers_controller import (
 )
 
 
-bp = Blueprint("answers", __name__, url_prefix="answers")
+bp = Blueprint("bp_answers", __name__, url_prefix="answers")
 
 bp.post("/<int:question_id>")(create_answer)
 bp.get("/<int:answer_id>")(read_answer)
