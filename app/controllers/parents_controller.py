@@ -47,7 +47,12 @@ def login():
     if not found_parent.verify_password(parent_data["password"]):
         return {"message": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
-    token = create_access_token(found_parent)
+    information_for_encoding = {
+        "id": found_parent.id,
+        "username": found_parent.username,
+    }
+
+    token = create_access_token(information_for_encoding)
 
     return {"access_token": token}, HTTPStatus.OK
 
