@@ -45,9 +45,16 @@ def get_all():
     try:
         municipio = params.get("municipio")
         estado = params.get("estado")
-        city_current = query_city.filter_by(
-            nome_municipio=municipio).filter_by(
-                estado=estado).first()
+        latitude = float(params.get("latitude"))
+        longitude = float(params.get("longitude"))
+        if latitude and longitude:
+            city_current = query_city.filter_by(
+                latitude=latitude).filter_by(
+                    longitude=longitude).first()
+        if municipio and estado:
+            city_current = query_city.filter_by(
+                nome_municipio=municipio).filter_by(
+                    estado=estado).first()
         if params.get("distance"):
             distance = params.get("distance")
             cities = city_current.get_cities_within_radius(int(distance))
