@@ -40,24 +40,33 @@ def get_all():
     #     products: Query = query.filter_by(parent_id=1).all()
     #     products: Query = query
 
-    distance = params.get("distance")
-    city_current = query_city.filter_by(nome_municipio='Abadia de Goiás').first()
-    cities = city_current.get_cities_within_radius(int(distance))
-
-
-    # pegar produtos por varios estados a partir da distancia
-    products_lista = []
-    for city in cities:
-        city: CityModel
-        for product in teste:
-            product_onwer = parents.filter_by(id=product.parent_id).first()
-            product_onwer: ProductModel
-            if (
-                city.nome_municipio == product_onwer.nome_municipio
-                and product not in products_lista
-            ):
-                products_lista.append(product)
-    return jsonify(products_lista), 200
+    # if params.get("municipio"):
+    #     municipio = params.get("municipio")
+    #     city_current = query_city.filter_by(nome_municipio=municipio)
+    # if params.get("estado"):
+    #     estado = params.get("estado")
+    #     city_current = query_city.filter_by(estado=estado)
+    # if params.get("distance"):
+    #     distance = params.get("distance")
+    #     cities = city_current.get_cities_within_radius(int(distance))
+    # else:
+    #     cities = city_current.get_cities_within_radius()
+    # cities = city_current.get_cities_within_radius()
+    
+    # set_trace()
+    # # pegar produtos por varios estados a partir da distancia
+    # products_lista = []
+    # for city in cities:
+    #     city: CityModel
+    #     for product in teste:
+    #         product_onwer = parents.filter_by(id=product.parent_id).first()
+    #         product_onwer: ProductModel
+    #         if (
+    #             city.nome_municipio == product_onwer.nome_municipio
+    #             and product not in products_lista
+    #         ):
+    #             products_lista.append(product)
+    return jsonify(teste), 200
 
 
 def get_by_id(product_id: int):
