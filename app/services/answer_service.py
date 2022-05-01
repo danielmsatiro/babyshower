@@ -7,10 +7,10 @@ from app.configs.database import db
 
 def serialize_answer(answer: AnswerModel) -> dict:
     answer_serialized = asdict(answer)
-    print(f'{answer_serialized=}')
+    print(f"{answer_serialized=}")
 
-    username = (db.session
-        .query(ParentModel.username)
+    username = (
+        db.session.query(ParentModel.username)
         .select_from(ParentModel)
         .join(QuestionModel)
         .filter(QuestionModel.id == answer_serialized["question_id"])
@@ -28,16 +28,19 @@ def serialize_answer(answer: AnswerModel) -> dict:
         .filter(QuestionModel.id == answer_serialized["question_id"])
         .first()
     )
-    
+
     url = {
         "question": {
-            "link": url_for('bp_api.bp_questions.get_product_questions', product_id=answer_serialized['question_id']),
+            "link": url_for(
+                "bp_api.bp_questions.get_product_questions",
+                product_id=answer_serialized["question_id"],
+            ),
             "question": parent[0],
-            "username": username[0]
+            "username": username[0],
         }
     }
-    
+
     answer_serialized.update(url)
-    answer_serialized.pop('question_id')
-    
+    answer_serialized.pop("question_id")
+
     return answer_serialized

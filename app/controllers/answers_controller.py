@@ -30,26 +30,27 @@ def create_answer(question_id: int):
         if not received_key == expected_key:
             raise InvalidKeyError(received_key, expected_key)
 
-        question: QuestionModel = session.query(QuestionModel).filter_by(id=question_id).first()
+        question: QuestionModel = (
+            session.query(QuestionModel).filter_by(id=question_id).first()
+        )
         if not question:
             raise NotFoundError(question_id, "Question")
 
         product: ProductModel = (
             session.query(ProductModel).filter_by(id=question.product_id).first()
         )
-        
 
         if user_logged["id"] != product.parent_id:
-           raise NotAuthorizedError
+            raise NotAuthorizedError
 
         data["parent_id"] = user_logged["id"]
         data["question_id"] = question_id
 
         new_answer = AnswerModel(**data)
-        
+
         session.add(new_answer)
         session.commit()
-        
+
     except NotFoundError as e:
         return e.message, e.status
     except NotAuthorizedError as e:
@@ -57,7 +58,7 @@ def create_answer(question_id: int):
     except InvalidKeyError as e:
         return e.message, e.status
     except InvalidTypeValueError as e:
-        return e.message, e.status    
+        return e.message, e.status
 
     return jsonify(serialize_answer(new_answer)), HTTPStatus.CREATED
 
@@ -107,7 +108,7 @@ def update_answer(answer_id: int):
     except InvalidKeyError as e:
         return e.message, e.status
     except InvalidTypeValueError as e:
-        return e.message, e.status    
+        return e.message, e.status
 
     return jsonify(serialize_answer(answer)), HTTPStatus.OK
 
@@ -119,7 +120,7 @@ def delete_answer(answer_id: int):
     session: Session = db.session
 
     answer: AnswerModel = session.query(AnswerModel).filter_by(id=answer_id).first()
-    
+
     try:
         if not answer:
             raise NotFoundError(answer_id, "answer")

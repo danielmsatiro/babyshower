@@ -16,46 +16,42 @@ from sqlalchemy.orm import Query, Session
 
 def get_all():
     params = dict(request.args.to_dict().items())
-    data = None
-    try:
 
-        data = request.get_json()  # add filter by categories too
+    data = request.get_json()  # add filter by categories too
 
-    finally:
-        session: Session = db.session
-        categories = []
+    session: Session = db.session
+    categories = []
 
-        for name in deepcopy(data.get("categories", [])):
-            categories.append(session.query(CategoryModel).filter_by(name=name).first())
+    for name in deepcopy(data.get("categories", [])):
+        categories.append(session.query(CategoryModel).filter_by(name=name).first())
 
-        query: Query = session.query(ProductModel)
+    query: Query = session.query(ProductModel)
 
-        # filter by category
-        if categories:
-            for category in categories:
-                query: Query = query.filter(ProductModel.categories.contains(category))
+    if categories:
+        for category in categories:
+            query: Query = query.filter(ProductModel.categories.contains(category))
 
-        min_price = data.get("min_price")
-        max_price = data.get("max_price")
-        title = data.get("title_product")
+    min_price = data.get("min_price")
+    max_price = data.get("max_price")
+    title = data.get("title_product")
 
-        if min_price:
-            query: Query = query.filter(ProductModel.price >= min_price)
-        if max_price:
-            query: Query = query.filter(ProductModel.price <= max_price)
-        if title:
-            query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
+    if min_price:
+        query: Query = query.filter(ProductModel.price >= min_price)
+    if max_price:
+        query: Query = query.filter(ProductModel.price <= max_price)
+    if title:
+        query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
 
-        page = int(params.get("page", 1)) - 1
-        per_page = int(params.get("per_page", 8))
+    page = int(params.get("page", 1)) - 1
+    per_page = int(params.get("per_page", 8))
 
-        products: Query = query.offset(page * per_page).limit(per_page).all()
+    products: Query = query.offset(page * per_page).limit(per_page).all()
 
-        for i in range(len(products)):
-            product_serialized = serialize_product(products[i])
-            products[i] = product_serialized
+    for i in range(len(products)):
+        product_serialized = serialize_product(products[i])
+        products[i] = product_serialized
 
-        return {"products": products}, HTTPStatus.OK
+    return {"products": products}, HTTPStatus.OK
 
 
 def get_by_id(product_id: int):
