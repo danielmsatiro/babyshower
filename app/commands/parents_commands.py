@@ -10,6 +10,8 @@ def parents_cli():
     fake: Faker = Faker("pt_BR")
     parent_group = AppGroup("parents", help="Create parents")
 
+    
+
     @parent_group.command("create")
     @click.argument("quantity")
     def create_parents(quantity):
@@ -26,6 +28,8 @@ def parents_cli():
                         email=fake.email(),
                         password=fake.ean(length=8),
                         phone=fake.phone_number(),
+                        estado=fake.estado_nome(),
+                        nome_municipio=fake.city()
                     )
                 )
             except:

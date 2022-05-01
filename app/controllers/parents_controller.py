@@ -2,13 +2,16 @@ from http import HTTPStatus
 from app.configs.database import db
 from app.models import ParentModel
 from flask import jsonify, request
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
 
 
 def pick_parents():
 
-    query: Query = db.session.query(ParentModel.id, ParentModel.username, ParentModel.name)
+    query: Query = db.session.query(
+        ParentModel.id, ParentModel.username, ParentModel.name
+    )
 
     response = query.all()
 
@@ -19,11 +22,10 @@ def pick_parents():
 
 def new_parents():
 
+    session: Session = db.session
     data: dict = request.get_json()
 
     parent = ParentModel(**data)
-
-    session: Session = db.session
 
     session.add(parent)
 
@@ -47,7 +49,10 @@ def login():
     if not found_parent.verify_password(parent_data["password"]):
         return {"message": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
 
-    information_for_encoding = {"id": found_parent.id, "username":found_parent.username}
+    information_for_encoding = {
+        "id": found_parent.id,
+        "username": found_parent.username,
+    }
 
     token = create_access_token(information_for_encoding)
 

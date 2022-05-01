@@ -6,14 +6,14 @@ from app.configs.database import db
 from sqlalchemy.orm import Query, Session
 from geoalchemy2 import func
 from dataclasses import dataclass
-from ipdb import set_trace
+from sqlalchemy.orm import relationship
 
 
 @dataclass
 class CityModel(db.Model):
     _tablename_ = "cities"
 
-    point_id = Column(Integer, primary_key=True, autoincrement=True)
+    point_id: int = Column(Integer, primary_key=True, autoincrement=True)
     codigo_ibge: int = Column(Integer)
     nome_municipio: str = Column(String)
     capital: str = Column(Boolean, default=False)

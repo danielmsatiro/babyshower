@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from app.configs.database import db
-from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import backref, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -26,9 +26,16 @@ class ParentModel(db.Model):
     password_hash = Column(String, nullable=False)
     phone = Column(String, nullable=False, unique=True)
 
-    # products = relationship("ProductModel", backref=backref("parent", passive_deletes=True, uselist=False))
+    nome_municipio = Column(String, nullable=False)
+    estado = Column(String, nullable=False)
 
-    # questions = relationship("QuestionModel", backref=backref("parent", passive_deletes=True, uselist=False))
+    # products = relationship(
+    # "ProductModel", backref=backref(
+    # "parent", passive_deletes=True, uselist=False))
+
+    # questions = relationship(
+    # "QuestionModel", backref=backref(
+    # "parent", passive_deletes=True, uselist=False))
 
     @property
     def password(self):

@@ -36,7 +36,7 @@ def get_all():
     query_city: Query = query_city.filter_by(nome_municipio=params.get("cidade"))
 
     # get all products
-    #     products: Query = query.offset(page * per_page).limit(per_page).all()
+    products: Query = query.offset(page * per_page).limit(per_page).all()
     #     products: Query = query.filter_by(parent_id=1).all()
     #     products: Query = query.filter_by()
 
@@ -57,7 +57,7 @@ def get_all():
     #           if city_id_current == product_onwer.city_id
     #           products.append(product) 
 
-    return jsonify("products"), 200
+    return jsonify(products), 200
 
 
 def get_by_id(product_id: int):
