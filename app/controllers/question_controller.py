@@ -23,7 +23,7 @@ def get_product_questions(product_id: int):
     base_query: Query = db.session.query(QuestionModel)
 
     questions = base_query.filter(QuestionModel.product_id == product_id).all()
-    
+
     serialized_questions = [serialize_answer(question) for question in questions]
 
     # [question.pop("_sa_instance_state") for question in serialized_questions]
@@ -40,22 +40,22 @@ def create_question(product_id: int):
     data["parent_id"] = parent["id"]
 
     data["product_id"] = product_id
-    
+
     try:
         question = QuestionModel(**data)
 
         session: Session = db.session
-        
+
         product: ProductModel = (
-                session.query(ProductModel).filter_by(id=product_id).first()
-            )
+            session.query(ProductModel).filter_by(id=product_id).first()
+        )
         if not product:
             raise NotFoundError(product_id, "product")
         session.add(question)
         session.commit()
     except NotFoundError as e:
         return e.message, e.status
-    
+
     return jsonify(question), HTTPStatus.CREATED
 
 
@@ -65,9 +65,9 @@ def update_question(question_id: int):
     received_key = set(data.keys())
     expected_key = {"question"}
     parent = get_jwt_identity()
-    
+
     session: Session = db.session
-        
+
     try:
         if not type(data["question"]) == str:
             raise InvalidTypeValueError
@@ -76,7 +76,7 @@ def update_question(question_id: int):
             raise InvalidKeyError(received_key, expected_key)
 
         question = session.query(QuestionModel).get(question_id)
-        
+
         if not question:
             raise NotFoundError(question_id, "question")
 
@@ -106,13 +106,13 @@ def delete_question(question_id: int):
     parent = get_jwt_identity()
 
     question = session.query(QuestionModel).filter_by(id=question_id).first()
-    
-    try: 
+
+    try:
         if not question:
             raise NotFoundError(question_id, "question")
 
         if parent["id"] == question.parent_id:
-            
+
             session.delete(question)
 
             session.commit()
@@ -123,7 +123,6 @@ def delete_question(question_id: int):
     except NotFoundError as e:
         return e.message, e.status
     except NotAuthorizedError as e:
-        return e.message, e.status 
-
+        return e.message, e.status
 
     return "", HTTPStatus.NO_CONTENT

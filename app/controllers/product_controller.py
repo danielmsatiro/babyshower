@@ -1,39 +1,49 @@
+from copy import deepcopy
 from http import HTTPStatus
 
 from app.configs.database import db
-from app.models import CategoryModel, ProductModel
+from app.exceptions.products_exceptions import (
+    NonexistentParentProductsError,
+    NonexistentProductError,
+)
+from app.models import CategoryModel, ProductModel, category_product
+from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from ipdb import set_trace
 from sqlalchemy.orm import Query, Session
-
-from app.services.product_service import serialize_product
-from app.exceptions.products_exceptions import (
-    NonexistentProductError,
-    NonexistentParentProductsError,
-)
 
 
 def get_all():
     params = dict(request.args.to_dict().items())
 
-    if "page" in params:
-        page = int(params.pop("page")) - 1
-    else:
-        page = 0
+    data = request.get_json()  # add filter by categories too
 
-    if "per_page" in params:
-        per_page = int(params.pop("per_page"))
-    else:
-        per_page = 8
+    session: Session = db.session
+    categories = []
 
-    query = ProductModel.query
+    for name in deepcopy(data.get("categories", [])):
+        categories.append(session.query(CategoryModel).filter_by(name=name).first())
 
-    for column, value in params.items():
-        if "price" in column:
-            print("entrou aqui")
-            query: Query = query.filter(ProductModel.price <= value)
-        elif "title" in column:
-            query: Query = query.filter(ProductModel.title in column)
+    query: Query = session.query(ProductModel)
+
+    if categories:
+        for category in categories:
+            query: Query = query.filter(ProductModel.categories.contains(category))
+
+    min_price = data.get("min_price")
+    max_price = data.get("max_price")
+    title = data.get("title_product")
+
+    if min_price:
+        query: Query = query.filter(ProductModel.price >= min_price)
+    if max_price:
+        query: Query = query.filter(ProductModel.price <= max_price)
+    if title:
+        query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
+
+    page = int(params.get("page", 1)) - 1
+    per_page = int(params.get("per_page", 8))
 
     products: Query = query.offset(page * per_page).limit(per_page).all()
 
@@ -53,10 +63,9 @@ def get_by_id(product_id: int):
             raise NonexistentProductError
 
         return jsonify(product_serialized), HTTPStatus.OK
-        
+
     except NonexistentProductError as err:
         return err.message, HTTPStatus.NOT_FOUND
-
 
 
 def get_by_parent(parent_id: int):
@@ -96,7 +105,7 @@ def create_product():
     session: Session = db.session
     session.add(product)
     session.commit()
-    
+
     product_serialized = serialize_product(product)
 
     return jsonify(product_serialized), HTTPStatus.CREATED
@@ -130,7 +139,7 @@ def update_product(product_id: int):
         product_serialized = serialize_product(product)
 
         return jsonify(product_serialized), HTTPStatus.OK
-    
+
     except NonexistentProductError as err:
         return err.message, HTTPStatus.NOT_FOUND
 
