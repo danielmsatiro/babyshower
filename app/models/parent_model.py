@@ -26,8 +26,8 @@ class ParentModel(db.Model):
     password_hash = Column(String, nullable=False)
     phone = Column(String, nullable=False, unique=True)
 
-    nome_municipio = Column(String, nullable=False)
-    estado = Column(String, nullable=False)
+    nome_municipio: str = Column(String, nullable=False)
+    estado: str = Column(String, nullable=False)
 
     # products = relationship(
     # "ProductModel", backref=backref(

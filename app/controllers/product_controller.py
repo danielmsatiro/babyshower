@@ -24,8 +24,9 @@ def get_all():
         per_page = 8
 
     query = ProductModel.query
-    teste = ProductModel.query
-    query_city = CityModel.query
+    teste = session.query(ProductModel).all()
+    query_city = session.query(CityModel)
+    parents = session.query(ParentModel)
 
     for key, value in params.items():
         if "price" in key:
@@ -33,31 +34,30 @@ def get_all():
             query: Query = query.filter(ProductModel.price <= value)
         elif "title" in key:
             query: Query = query.filter(ProductModel.title in key)
-    query_city: Query = query_city.filter_by(nome_municipio=params.get("cidade"))
 
     # get all products
-    products: Query = query.offset(page * per_page).limit(per_page).all()
+    #     products: Query = query.offset(page * per_page).limit(per_page).all()
     #     products: Query = query.filter_by(parent_id=1).all()
-    #     products: Query = query.filter_by()
+    #     products: Query = query
 
-    # pegar produtos por estado
-    # for product in products:
-    #     product_onwer = parents.filter_by(id=product.parent_id) // irá retornar o dono do produto
-    #     if city_id_current == product_onwer.city_id
-    #     products.append(product)  
+    distance = params.get("distance")
+    city_current = query_city.filter_by(nome_municipio='Abadia de Goiás').first()
+    cities = city_current.get_cities_within_radius(int(distance))
 
-    # distance = params.get('distance')
-    # cities = query_city.first().get_cities_within_radius(distance)[0]
 
     # pegar produtos por varios estados a partir da distancia
-    # for city in cities:
-    #     city_id_current = city_id
-    #     for product in products:
-    #           product_onwer = parents.filter_by(id=product.parent_id) // irá retornar o dono do produto
-    #           if city_id_current == product_onwer.city_id
-    #           products.append(product) 
-
-    return jsonify(products), 200
+    products_lista = []
+    for city in cities:
+        city: CityModel
+        for product in teste:
+            product_onwer = parents.filter_by(id=product.parent_id).first()
+            product_onwer: ProductModel
+            if (
+                city.nome_municipio == product_onwer.nome_municipio
+                and product not in products_lista
+            ):
+                products_lista.append(product)
+    return jsonify(products_lista), 200
 
 
 def get_by_id(product_id: int):
