@@ -36,4 +36,6 @@ def parents_cli():
         session.add_all(parents)
         session.commit()
 
+        print(f"{quantity} parents added")
+
     return parent_group
