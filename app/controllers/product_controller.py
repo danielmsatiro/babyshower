@@ -7,6 +7,8 @@ from app.exceptions.products_exceptions import (
     NonexistentProductError,
 )
 from app.models import CategoryModel, ProductModel, category_product
+from app.models.parent_model import ParentModel
+from app.services.product_service import products_per_geolocalization
 from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -21,6 +23,15 @@ def get_all():
     # Se o token for fornecido automaticamente é possível obter o id
     # e buscar a cidade e o estado do do usuário para a localização.
     user_logged = get_jwt_identity()
+    user_municipio = None
+    user_estado = None
+    if user_logged:
+        session: Session = db.session
+        query: Query = session.query(ParentModel)
+        user = query.filter_by(id=user_logged["id"]).first()
+        user: ParentModel
+        user_municipio = user.nome_municipio
+        user_estado = user.estado
 
     params = dict(request.args.to_dict().items())
 
@@ -48,22 +59,20 @@ def get_all():
         title = data.get("title_product")
 
         if min_price:
-            query: Query = query.filter(ProductModel.price >= min_price)
+            query: Query = query.filter(
+                ProductModel.price >= min_price)
         if max_price:
-            query: Query = query.filter(ProductModel.price <= max_price)
+            query: Query = query.filter(
+                ProductModel.price <= max_price)
         if title:
-            query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
+            query: Query = query.filter(
+                ProductModel.title.ilike(f"%{title}%"))
 
         page = int(params.get("page", 1)) - 1
         per_page = int(params.get("per_page", 8))
 
-        products: Query = query.offset(page * per_page).limit(per_page).all()
-
-        for i in range(len(products)):
-            product_serialized = serialize_product(products[i])
-            products[i] = product_serialized
-
-        return {"products": products}, HTTPStatus.OK
+        return products_per_geolocalization(
+            query, page, per_page, user_municipio, user_estado)
 
 
 def get_by_id(product_id: int):
@@ -80,17 +89,20 @@ def get_by_id(product_id: int):
         return err.message, HTTPStatus.NOT_FOUND
 
 
-def get_by_id(product_id: int):
+def get_by_parent(parent_id: int):
     try:
-        product = ProductModel.query.get(product_id)
-        product_serialized = serialize_product(product)
+        products = ProductModel.query.filter(
+            ProductModel.parent_id == parent_id).all()
+        if not products:
+            raise NonexistentParentProductsError
 
-        if not product:
-            raise NonexistentProductError
+        for i in range(len(products)):
+            product_serialized = serialize_product(products[i])
+            products[i] = product_serialized
 
-        return jsonify(product_serialized), HTTPStatus.OK
+        return {"products": products}, HTTPStatus.OK
 
-    except NonexistentProductError as err:
+    except NonexistentParentProductsError as err:
         return err.message, HTTPStatus.NOT_FOUND
 
 
