@@ -24,7 +24,7 @@ class CityModel(db.Model):
     latitude: float = Column(Float)
     geom: str = Column(Geometry("Point"))
 
-    def get_cities_within_radius(self, radius):
+    def get_cities_within_radius(self, radius=50000):
         session: Session = db.session
         query: Query = session.query(CityModel)
         cities = query.filter(

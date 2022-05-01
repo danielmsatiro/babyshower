@@ -40,33 +40,33 @@ def get_all():
     #     products: Query = query.filter_by(parent_id=1).all()
     #     products: Query = query
 
-    # if params.get("municipio"):
-    #     municipio = params.get("municipio")
-    #     city_current = query_city.filter_by(nome_municipio=municipio)
-    # if params.get("estado"):
-    #     estado = params.get("estado")
-    #     city_current = query_city.filter_by(estado=estado)
-    # if params.get("distance"):
-    #     distance = params.get("distance")
-    #     cities = city_current.get_cities_within_radius(int(distance))
-    # else:
-    #     cities = city_current.get_cities_within_radius()
-    # cities = city_current.get_cities_within_radius()
-    
-    # set_trace()
-    # # pegar produtos por varios estados a partir da distancia
-    # products_lista = []
-    # for city in cities:
-    #     city: CityModel
-    #     for product in teste:
-    #         product_onwer = parents.filter_by(id=product.parent_id).first()
-    #         product_onwer: ProductModel
-    #         if (
-    #             city.nome_municipio == product_onwer.nome_municipio
-    #             and product not in products_lista
-    #         ):
-    #             products_lista.append(product)
-    return jsonify(teste), 200
+    products_lista = []
+
+    try:
+        municipio = params.get("municipio")
+        estado = params.get("estado")
+        city_current = query_city.filter_by(
+            nome_municipio=municipio).filter_by(
+                estado=estado).first()
+        if params.get("distance"):
+            distance = params.get("distance")
+            cities = city_current.get_cities_within_radius(int(distance))
+        else:
+            cities = city_current.get_cities_within_radius()
+        for city in cities:
+            city: CityModel
+            for product in teste:
+                product_onwer = parents.filter_by(id=product.parent_id).first()
+                product_onwer: ProductModel
+                if (
+                    city.nome_municipio == product_onwer.nome_municipio
+                    and product not in products_lista
+                ):
+                    products_lista.append(product)
+    except Exception:
+        return jsonify(teste), 200
+
+    return jsonify(products_lista), 200
 
 
 def get_by_id(product_id: int):
@@ -75,7 +75,8 @@ def get_by_id(product_id: int):
 
 
 def get_by_parent(parent_id):
-    products = ProductModel.query.filter(ProductModel.parent_id == parent_id).first()
+    products = ProductModel.query.filter(
+        ProductModel.parent_id == parent_id).first()
     return {"products": products}, 200
 
 
@@ -93,7 +94,8 @@ def create_product():
     product = ProductModel(**data)
 
     for category in categories:
-        response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
+        response = query.filter(
+            CategoryModel.name.ilike(f"%{category}%")).first()
         if response:
             product.categories.append(response)
 
