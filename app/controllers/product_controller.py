@@ -14,44 +14,52 @@ from ipdb import set_trace
 from sqlalchemy.orm import Query, Session
 
 
+@jwt_required(optional=True)
 def get_all():
+    # Se o token for fornecido automaticamente é possível obter o id
+    # e buscar a cidade e o estado do do usuário para a localização.
+    user_logged = get_jwt_identity()
+
     params = dict(request.args.to_dict().items())
 
-    data = request.get_json()  # add filter by categories too
+    data = {}
 
-    session: Session = db.session
-    categories = []
+    try:
+        data = request.get_json()  # add filter by categories too
+    finally:
+        session: Session = db.session
+        categories = []
 
-    for name in deepcopy(data.get("categories", [])):
-        categories.append(session.query(CategoryModel).filter_by(name=name).first())
+        for name in deepcopy(data.get("categories", [])):
+            categories.append(session.query(CategoryModel).filter_by(name=name).first())
 
-    query: Query = session.query(ProductModel)
+        query: Query = session.query(ProductModel)
 
-    if categories:
-        for category in categories:
-            query: Query = query.filter(ProductModel.categories.contains(category))
+        if categories:
+            for category in categories:
+                query: Query = query.filter(ProductModel.categories.contains(category))
 
-    min_price = data.get("min_price")
-    max_price = data.get("max_price")
-    title = data.get("title_product")
+        min_price = data.get("min_price")
+        max_price = data.get("max_price")
+        title = data.get("title_product")
 
-    if min_price:
-        query: Query = query.filter(ProductModel.price >= min_price)
-    if max_price:
-        query: Query = query.filter(ProductModel.price <= max_price)
-    if title:
-        query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
+        if min_price:
+            query: Query = query.filter(ProductModel.price >= min_price)
+        if max_price:
+            query: Query = query.filter(ProductModel.price <= max_price)
+        if title:
+            query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
 
-    page = int(params.get("page", 1)) - 1
-    per_page = int(params.get("per_page", 8))
+        page = int(params.get("page", 1)) - 1
+        per_page = int(params.get("per_page", 8))
 
-    products: Query = query.offset(page * per_page).limit(per_page).all()
+        products: Query = query.offset(page * per_page).limit(per_page).all()
 
-    for i in range(len(products)):
-        product_serialized = serialize_product(products[i])
-        products[i] = product_serialized
+        for i in range(len(products)):
+            product_serialized = serialize_product(products[i])
+            products[i] = product_serialized
 
-    return {"products": products}, HTTPStatus.OK
+        return {"products": products}, HTTPStatus.OK
 
 
 def get_by_id(product_id: int):
@@ -86,10 +94,10 @@ def get_by_parent(parent_id: int):
 
 @jwt_required()
 def create_product():
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
     data: dict = request.get_json()
-    data["parent_id"] = parent["id"]
+    data["parent_id"] = user_logged["id"]
 
     query: Query = db.session.query(CategoryModel)
 
@@ -114,7 +122,7 @@ def create_product():
 @jwt_required()
 def update_product(product_id: int):
     try:
-        parent = get_jwt_identity()
+        user_logged = get_jwt_identity()
 
         data: dict = request.get_json()
 
@@ -123,7 +131,7 @@ def update_product(product_id: int):
             session.query(ProductModel)
             .select_from(ProductModel)
             .filter(ProductModel.id == product_id)
-            .filter(ProductModel.parent_id == parent["id"])
+            .filter(ProductModel.parent_id == user_logged["id"])
             .first()
         )
 
@@ -147,14 +155,14 @@ def update_product(product_id: int):
 @jwt_required()
 def delete_product(product_id: int):
     try:
-        parent = get_jwt_identity()
+        user_logged = get_jwt_identity()
 
         session: Session = db.session
         product: Query = (
             session.query(ProductModel)
             .select_from(ProductModel)
             .filter(ProductModel.id == product_id)
-            .filter(ProductModel.parent_id == parent["id"])
+            .filter(ProductModel.parent_id == user_logged["id"])
             .first()
         )
 
