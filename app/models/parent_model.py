@@ -24,7 +24,7 @@ class ParentModel(db.Model):
     name: str = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
-    phone = Column(String, nullable=False, unique=True)
+    phone = Column(String, nullable=False)
 
     nome_municipio: str = Column(String, nullable=False)
     estado: str = Column(String, nullable=False)
