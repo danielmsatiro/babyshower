@@ -46,14 +46,14 @@ Não é necessário um corpo da requisição.
 ```
 ### <u>Realizando filtros nesta rota:</u>
 
-Podem ser realizados filtros de duas formas aquery seguir:
+Podem ser realizados filtros de duas formas a seguir:
 - Via Query Params: Para paginações utilizando **'page'(deault=1)** e/ou **'per_page' (default=8)**
 - Via Body da requisição: 
   - Para título do produto (podendo ser parcial);
   - Para lista de categorias do produto;
   - Para preços;
   - Para cidade/estado referência para geolocalização;
-  - Para latitude/logintude referência também para geolocalização;
+  - Para latitude/longitude referência também para geolocalização;
   - Para raio de cobertura geográfica a partir do local de referência.
 
 
@@ -164,6 +164,19 @@ Caso dê tudo certo, a resposta será assim:
 }
 ```
 
+<h2 align="center">Outras informações sobre a geolocalização</h2>
+
+Sobre a rota anterior, caso seja fornecido o **Token Bearer** no head da requisição a localização de referência para o raio de alcance da pesquisa serão a cidade e o estado no cadastro do usuário. Caso o usuário não esteja autenticado, ou não seja fornecido o token a pesquisa não considerará aspectos geográficos.
+
+Como mencionado anteriormente, podem ser fornecidos no body da requisição como referência para o raio de alcance:
+- Cidade E estado; OU
+- Latitude e Longitude
+  
+### Raio de alcance:
+
+O raio de alcance quando não fornecido possui o valor padrão de 50 mil km.
+
+**Importante**: Esta área de cobertura só será utilizada se houver um ponto de referênica obtido pelos dados do usuário ou pelo body da requisição.
 
 <h2 align="center">Obter produto por id</h2>
 
@@ -219,48 +232,6 @@ Não é necessário um corpo da requisição.
       "id": 2,
       "sold": false,
       "title": "Carrinho de bebe",
-      "parent_id": 1,
-      "image": "https://google.com"
-    }
-  ]
-}
-```
-<h2 align="center">Outras informações sobre a geolocalização</h2>
-
-Sobre a rota anterior, caso seja fornecido o **Token Bearer** no head da requisição a localização de referência para o raio de alcance da pesquisa serão a cidade e o estado no cadastro do usuário. Caso o usuário não esteja autenticado, ou não seja fornecido o token a pesquisa não considerará aspectos geográficos.
-
-Como mencionado anteriormente, podem ser fornecidos no body da requisição como referência para o raio de alcance:
-- Cidade E estado; OU
-- Latitude e Longitude
-  
-### Raio de alcance:
-
-O raio de alcance quando não fornecido possui o valor padrão de 50 mil km.
-
-**Importante**: Esta área de cobertura só será utilizada se houver um ponto de referênica obtido pelos dados do usuário ou pelo body da requisição.
-
-
-<h2 align="center">Obter produto por query params</h2>
-
-`GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA REQUISIÇÃO`
-
-```
-Não é necessário um corpo da requisição.
-```
-
-#### Caso dê tudo certo, a resposta será assim:
-
-`GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA RESPOSTA - STATUS 200`
-
-```json
-{
-  "products": [
-    {
-      "price": "100.0",
-      "description": "Para crianças de até 2",
-      "id": 1,
-      "sold": false,
-      "title": "Bebe conforto",
       "parent_id": 1,
       "image": "https://google.com"
     }
