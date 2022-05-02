@@ -6,6 +6,7 @@ from app.configs.database import db
 from app.models.parent_model import ParentModel
 from app.models.question_model import QuestionModel
 
+
 @dataclass
 class AnswerModel(db.Model):
     id: int
@@ -18,21 +19,16 @@ class AnswerModel(db.Model):
     id = Column(Integer, primary_key=True)
     answer = Column(String(150), nullable=False)
 
-    parent_id = Column(
-        ForeignKey('parents.id'),
-        nullable=False
-    )
+    parent_id = Column(ForeignKey("parents.id", ondelete="CASCADE"), nullable=False)
 
     question_id = Column(
-        ForeignKey('questions.id'),
-        nullable=False,
-        unique=True
+        ForeignKey("questions.id", ondelete="CASCADE"), nullable=False, unique=True
     )
 
-    parent = relationship(
-        "ParentModel",
-        backref=backref(
-            "answer",
-            uselist=False
-        ), uselist=False
-    )
+    # parent = relationship(
+    #     "ParentModel",
+    #     backref=backref(
+    #         "answer",
+    #         uselist=False
+    #     ), uselist=False
+    # )

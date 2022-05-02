@@ -1,5 +1,6 @@
-
 from sqlalchemy.orm import Query, Session
+from app.exceptions.answer_exc import NotAuthorizedError
+from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotFoundError
 from flask import request, current_app, jsonify
 from http import HTTPStatus
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -9,82 +10,127 @@ from app.configs.database import db
 from app.models.answer_model import AnswerModel
 from app.models.question_model import QuestionModel
 from app.models.product_model import ProductModel
+from app.services.answer_service import serialize_answer
 
 
 @jwt_required()
-def create_answer(product_id: int):
+def create_answer(question_id: int):
     data = request.get_json()
     user_logged = get_jwt_identity()
 
+    received_key = set(data.keys())
+    expected_key = {"answer"}
+
     session: Session = db.session
 
-    question: QuestionModel = session.query(QuestionModel).filter_by(id=product_id).first()
+    try:
+        if not type(data["answer"]) == str:
+            raise InvalidTypeValueError
 
-    product: ProductModel = session.query(ProductModel).filter_by(id=question.product_id).first()
+        if not received_key == expected_key:
+            raise InvalidKeyError(received_key, expected_key)
 
-    if user_logged["id"] != product.parent_id:
-        return {
-            "message": "Error"
-        }, HTTPStatus.BAD_REQUEST
+        question: QuestionModel = session.query(QuestionModel).filter_by(id=question_id).first()
+        if not question:
+            raise NotFoundError(question_id, "Question")
 
-    data["parent_id"] = user_logged["id"]
-    data["question_id"] = id
+        product: ProductModel = (
+            session.query(ProductModel).filter_by(id=question.product_id).first()
+        )
+        
 
-    new_answer = AnswerModel(**data)
+        if user_logged["id"] != product.parent_id:
+           raise NotAuthorizedError
 
-    session.add(new_answer)
-    session.commit()
+        data["parent_id"] = user_logged["id"]
+        data["question_id"] = question_id
 
-    set_trace()
-    return jsonify(new_answer), HTTPStatus.CREATED
+        new_answer = AnswerModel(**data)
+        
+        session.add(new_answer)
+        session.commit()
+        
+    except NotFoundError as e:
+        return e.message, e.status
+    except NotAuthorizedError as e:
+        return e.message, e.status
+    except InvalidKeyError as e:
+        return e.message, e.status
+    except InvalidTypeValueError as e:
+        return e.message, e.status    
+
+    return jsonify(serialize_answer(new_answer)), HTTPStatus.CREATED
+
 
 def read_answer(answer_id: int):
-    answer = (
-        AnswerModel
-        .query
-        .filter_by(id=answer_id)
-        .first()
-    )
+    answer = AnswerModel.query.filter_by(id=answer_id).first()
 
-    return jsonify(answer), HTTPStatus.OK
+    return jsonify(serialize_answer(answer)), HTTPStatus.OK
+
 
 @jwt_required()
 def update_answer(answer_id: int):
     data = request.get_json()
     user_logged = get_jwt_identity()
 
+    received_key = set(data.keys())
+    expected_key = {"answer"}
+
     session: Session = db.session
-    
-    answer: AnswerModel = session.query(AnswerModel).filter_by(id=answer_id).first()
 
-    if user_logged["id"] != answer.parent_id:
-        return {
-            "message": "Error"
-        }, HTTPStatus.BAD_REQUEST
+    try:
+        if not type(data["answer"]) == str:
+            raise InvalidTypeValueError
 
-    for key, value in data.items():
-        setattr(answer, key, value)
+        if not received_key == expected_key:
+            raise InvalidKeyError(received_key, expected_key)
 
-    session.add(answer)
-    session.commit()
+        answer: AnswerModel = session.query(AnswerModel).filter_by(id=answer_id).first()
+        if not answer:
+            raise NotFoundError(answer_id, "answer")
 
-    return jsonify(answer), HTTPStatus.OK
+        if user_logged["id"] != answer.parent_id:
+            raise NotAuthorizedError
+
+        for key, value in data.items():
+            setattr(answer, key, value)
+
+        session.add(answer)
+        session.commit()
+
+    except AttributeError:
+        return {"Error": "Answer not found"}, HTTPStatus.NOT_FOUND
+    except NotAuthorizedError as e:
+        return e.message, e.status
+    except NotFoundError as e:
+        return e.message, e.status
+    except InvalidKeyError as e:
+        return e.message, e.status
+    except InvalidTypeValueError as e:
+        return e.message, e.status    
+
+    return jsonify(serialize_answer(answer)), HTTPStatus.OK
+
 
 @jwt_required()
 def delete_answer(answer_id: int):
     user_logged = get_jwt_identity()
 
     session: Session = db.session
-    
-    answer: AnswerModel = session.query(AnswerModel).filter_by(id=answer_id).first()
 
-    if user_logged["id"] != answer.parent_id:
-        return {
-            "message": "Error"
-        }, HTTPStatus.BAD_REQUEST
+    answer: AnswerModel = session.query(AnswerModel).filter_by(id=answer_id).first()
+    
+    try:
+        if not answer:
+            raise NotFoundError(answer_id, "answer")
+        if user_logged["id"] != answer.parent_id:
+            raise NotAuthorizedError
+    except NotAuthorizedError as e:
+        return e.message, e.status
+    except NotFoundError as e:
+        return e.message, e.status
 
     session.delete(answer)
     session.commit()
 
     return "", HTTPStatus.NO_CONTENT
-    
