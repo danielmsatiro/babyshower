@@ -9,11 +9,13 @@ from app.configs.database import db
 from app.exceptions.question_exc import NotAuthorizedError
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotFoundError
 from app.models import QuestionModel
+from app.models.parent_model import ParentModel
 from app.models.product_model import ProductModel
-from flask import jsonify, request, session
+from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import Query, Session
 from ipdb import set_trace
+from app.services.email_service import email_new_question
 
 from app.services.question_service import serialize_answer
 
@@ -53,10 +55,17 @@ def create_question(product_id: int):
             raise NotFoundError(product_id, "product")
         session.add(question)
         session.commit()
+
+        lead: ParentModel = session.query(ParentModel).filter_by(id=question.parent_id).first()
+        owner: ParentModel = session.query(ParentModel).filter_by(id=product.parent_id).first()
+        print(lead)
+        email_new_question(owner.username, product.title, owner.email, lead.username, question.question)
+    
+        return jsonify(question), HTTPStatus.CREATED
+    
     except NotFoundError as e:
         return e.message, e.status
 
-    return jsonify(question), HTTPStatus.CREATED
 
 
 @jwt_required()
