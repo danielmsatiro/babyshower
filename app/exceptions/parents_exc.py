@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-class EmailAlreadyExists(Exception):
+class DataAlreadyExists(Exception):
     ...
 
 class InvalidTypeValueError(Exception):
