@@ -7,6 +7,8 @@ from app.exceptions.products_exceptions import InvalidDataError
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import backref, relationship, validates
 
+from app.exceptions import InvalidKeyError
+
 
 @dataclass
 class ProductModel(db.Model):
@@ -59,6 +61,30 @@ class ProductModel(db.Model):
                 )
 
         return value
+
+    @validates(
+        "title",
+        "price",
+        "parent_id", 
+        "description", 
+        "image",
+        "categories"
+    )
+    def validates_product_keys(self, key, value):
+        valid_keys = [
+            "title",
+            "price",
+            "parent_id", 
+            "description", 
+            "image",
+            "categories"
+        ]
+
+        if key not in valid_keys:
+            raise InvalidKeyError(received_key=key, expected_key=(i for i in valid_keys))
+
+
+
 
     # questions = relationship(
     #     'QuestionModel',

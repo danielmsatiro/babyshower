@@ -6,6 +6,7 @@ from app.exceptions.products_exceptions import (
     NonexistentParentProductsError,
     NonexistentProductError,
 )
+from app.exceptions import InvalidKeyError
 from app.models import CategoryModel, ProductModel, category_product
 from app.models.parent_model import ParentModel
 from app.services.email_service import email_new_product
@@ -96,37 +97,42 @@ def get_by_parent(parent_id: int):
 
 @jwt_required()
 def create_product():
-    user_logged = get_jwt_identity()
+    try:
+        user_logged = get_jwt_identity()
 
-    data: dict = request.get_json()
-    data["parent_id"] = user_logged["id"]
+        data: dict = request.get_json()
+        data["parent_id"] = user_logged["id"]
 
-    query: Query = db.session.query(CategoryModel)
+        query: Query = db.session.query(CategoryModel)
 
-    categories = data.pop("categories")
+        categories = data.pop("categories")
 
-    product = ProductModel(**data)
+        product = ProductModel(**data)
 
-    for category in categories:
-        response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
-        if response:
-            product.categories.append(response)
+        for category in categories:
+            response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
+            if response:
+                product.categories.append(response)
 
-    parent: ParentModel = ParentModel.query.get(product.parent_id)
+        parent: ParentModel = ParentModel.query.get(product.parent_id)
 
-    session: Session = db.session
-    session.add(product)
-    session.commit()
+        session: Session = db.session
+        session.add(product)
+        session.commit()
 
-    email_new_product(parent.username, product.title, parent.email)
+        email_new_product(parent.username, product.title, parent.email)
 
-    product_serialized = serialize_product(product)
+        product_serialized = serialize_product(product)
 
-    return jsonify(product_serialized), HTTPStatus.CREATED
+        return jsonify(product_serialized), HTTPStatus.CREATED
+    
+    except InvalidKeyError as err:
+        return err.message, HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 @jwt_required()
 def update_product(product_id: int):
+    
     try:
         user_logged = get_jwt_identity()
 
