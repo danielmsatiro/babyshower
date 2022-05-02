@@ -1,10 +1,21 @@
 from http import HTTPStatus
+from zoneinfo import available_timezones
+
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
+from app.exceptions.parents_exc import InvalidTypeValueError
+from app.exceptions.parents_exc import InvalidEmailLenghtError
+from app.exceptions.parents_exc import InvalidPhoneFormatError
+from app.exceptions import InvalidKeyError, InvalidTypeValueError
+
 from app.configs.database import db
 from app.models import ParentModel
 from flask import jsonify, request
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity
+from flask_jwt_extended import jwt_required
 from sqlalchemy.orm import Query, Session
+
+from app.services.email_service import email_to_new_user
 
 
 def pick_parents():
@@ -17,32 +28,55 @@ def pick_parents():
     response = query.all()
 
     response = [response._asdict() for response in query]
+    if response == []:
+        return {"msg": "No data found"}
 
     return {"users": response}, HTTPStatus.OK
 
 
 def new_parents():
 
-    session: Session = db.session
     data: dict = request.get_json()
 
-    # user_registered: dict = request.get_json()
+    received_key = set(data.keys())
+    available_keys = {"cpf", "username", "name", "email", "password", "phone"}
 
-    # municipio = data["municipio"]
-    # estado = data["municipio"]
-    # CityModel.first_by(
-    #     nome_municipio=municipio
-    #     ).first_by(estado=estado).first().point_id
+    try:
+        if not received_key == available_keys:
+            raise InvalidKeyError(received_key, available_keys)
 
-    # remover as props: municipio e estado
+        # Valida o tipo dos dados passados
 
-    # retornar user_registered
+        for value in list(data):
+            if type(data[value]) != str:
+                raise InvalidTypeValueError
 
-    parent = ParentModel(**data)
+        parent = ParentModel(**data)
 
-    session.add(parent)
+        session: Session = db.session
+        session.add(parent)
+        session.commit()
 
-    session.commit()
+    except InvalidKeyError as e:
+        return e.message, e.status
+
+    except InvalidTypeValueError as e:
+        return e.message, e.status
+
+    except InvalidEmailLenghtError as e:
+        return e.message, e.status
+
+    except InvalidPhoneFormatError as e:
+        return e.message, e.status
+
+    except IntegrityError as e:
+        if type(e.orig) == UniqueViolation:
+            return {"error": f"""{
+                e.args[0].split(" ")[-4:-2]
+                } already exists"""}, HTTPStatus.CONFLICT
+
+    print(parent.username, parent.email)
+    email_to_new_user(parent.username, parent.email)
 
     return jsonify(parent), HTTPStatus.CREATED
 
@@ -75,21 +109,39 @@ def login():
 @jwt_required()
 def update_parents():
 
-    user_logged = get_jwt_identity()
-
     data: dict = request.get_json()
 
-    session: Session = db.session
+    user_logged = get_jwt_identity()
 
-    parent: Query = session.query(ParentModel)
-    parent = parent.filter_by(id=user_logged["id"]).first()
+    received_key = set(data.keys())
+    available_keys = {"username", "name", "email", "password", "phone"}
 
-    for key, value in data.items():
-        setattr(parent, key, value)
+    try:
+        if received_key - available_keys:
+            raise InvalidKeyError(received_key, available_keys)
 
-    session.add(parent)
+        # Valida o tipo dos dados
+        for value in list(data):
+            if type(data[value]) != str:
+                raise InvalidTypeValueError
 
-    session.commit()
+        session: Session = db.session
+
+        parent: Query = session.query(ParentModel)
+        parent = parent.filter_by(id=user_logged["id"]).first()
+
+        for key, value in data.items():
+            setattr(parent, key, value)
+
+            session.add(parent)
+            session.commit()
+
+    except InvalidKeyError as e:
+        return e.message, e.status
+
+    # Valida o formato de telefone
+    except InvalidPhoneFormatError as e:
+        return e.message, e.status
 
     return jsonify(parent)
 
