@@ -97,10 +97,26 @@ def get_by_parent(parent_id: int):
 
 @jwt_required()
 def create_product():
+    data: dict = request.get_json()
+
+    avaible_keys = {
+            "title",
+            "price",
+            "parent_id", 
+            "description", 
+            "image",
+            "categories"
+    }
+
+    received_keys = set(data.keys())
+
     try:
+
         user_logged = get_jwt_identity()
 
-        data: dict = request.get_json()
+        if not received_keys == avaible_keys:
+            raise InvalidKeyError(received_keys, avaible_keys)
+        
         data["parent_id"] = user_logged["id"]
 
         query: Query = db.session.query(CategoryModel)
@@ -132,11 +148,24 @@ def create_product():
 
 @jwt_required()
 def update_product(product_id: int):
+    data: dict = request.get_json()
+
+    avaible_keys = {
+            "title",
+            "price",
+            "parent_id", 
+            "description", 
+            "image",
+            "categories"
+    }
+
+    received_keys = set(data.keys())
     
     try:
         user_logged = get_jwt_identity()
 
-        data: dict = request.get_json()
+        if not received_keys == avaible_keys:
+            raise InvalidKeyError(received_keys, avaible_keys)
 
         session: Session = db.session
         product: Query = (

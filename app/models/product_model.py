@@ -37,7 +37,14 @@ class ProductModel(db.Model):
         "CategoryModel", secondary="product_category", backref=backref("products")
     )
 
-    @validates("title", "price", "description", "image")
+    @validates(
+        "title",
+        "price",
+        "parent_id", 
+        "description", 
+        "image",
+        "categories"
+    )
     def validates_product_values(self, key, value):
 
         str_values = ["title", "description", "image"]
@@ -61,30 +68,6 @@ class ProductModel(db.Model):
                 )
 
         return value
-
-    @validates(
-        "title",
-        "price",
-        "parent_id", 
-        "description", 
-        "image",
-        "categories"
-    )
-    def validates_product_keys(self, key, value):
-        valid_keys = [
-            "title",
-            "price",
-            "parent_id", 
-            "description", 
-            "image",
-            "categories"
-        ]
-
-        if key not in valid_keys:
-            raise InvalidKeyError(received_key=key, expected_key=(i for i in valid_keys))
-
-
-
 
     # questions = relationship(
     #     'QuestionModel',
