@@ -35,9 +35,9 @@ def get_product_questions(product_id: int):
 def create_question(product_id: int):
     data: dict = request.get_json()
 
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
-    data["parent_id"] = parent["id"]
+    data["parent_id"] = user_logged["id"]
 
     data["product_id"] = product_id
 
@@ -64,7 +64,7 @@ def update_question(question_id: int):
     data: dict = request.get_json()
     received_key = set(data.keys())
     expected_key = {"question"}
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
     session: Session = db.session
 
@@ -80,7 +80,7 @@ def update_question(question_id: int):
         if not question:
             raise NotFoundError(question_id, "question")
 
-        if parent["id"] == question.parent_id:
+        if user_logged["id"] == question.parent_id:
             for key, value in data.items():
                 setattr(question, key, value)
             session.commit()
@@ -103,7 +103,7 @@ def update_question(question_id: int):
 def delete_question(question_id: int):
     session: Session = db.session
 
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
     question = session.query(QuestionModel).filter_by(id=question_id).first()
 
@@ -111,7 +111,7 @@ def delete_question(question_id: int):
         if not question:
             raise NotFoundError(question_id, "question")
 
-        if parent["id"] == question.parent_id:
+        if user_logged["id"] == question.parent_id:
 
             session.delete(question)
 

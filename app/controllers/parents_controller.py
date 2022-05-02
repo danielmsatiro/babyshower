@@ -1,4 +1,5 @@
 from http import HTTPStatus
+
 from app.configs.database import db
 from app.models import ParentModel
 from flask import jsonify, request
