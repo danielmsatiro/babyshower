@@ -1,9 +1,19 @@
 from http import HTTPStatus
+from zoneinfo import available_timezones
+
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
+from app.exceptions.parents_exc import InvalidTypeValueError, InvalidEmailLenghtError, InvalidPhoneFormatError
+from app.exceptions import InvalidKeyError, InvalidTypeValueError
+
 from app.configs.database import db
 from app.models import ParentModel
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
+
+from app.services.email_service import email_to_new_user
+
 
 
 def pick_parents():
@@ -13,6 +23,9 @@ def pick_parents():
     response = query.all()
 
     response = [response._asdict() for response in query]
+    
+    if response == []:
+        return {"msg": "No data found"}
 
     return {"users": response}, HTTPStatus.OK
 
@@ -21,13 +34,42 @@ def new_parents():
 
     data: dict = request.get_json()
 
-    parent = ParentModel(**data)
+    received_key = set(data.keys())
+    available_keys = {"cpf", "username", "name", "email", "password", "phone"}
+    
+    try:
+        if not received_key == available_keys:
+            raise InvalidKeyError(received_key, available_keys)
+        
+        #Valida o tipo dos dados passados
+        for value in list(data):
+            if type(data[value]) != str:
+                raise InvalidTypeValueError
 
-    session: Session = db.session
+        parent = ParentModel(**data)
 
-    session.add(parent)
+        session: Session = db.session
+        session.add(parent)
+        session.commit()
 
-    session.commit()
+    except InvalidKeyError as e:
+        return e.message, e.status
+    
+    except InvalidTypeValueError as e:
+        return e.message, e.status
+
+    except InvalidEmailLenghtError as e:
+        return e.message, e.status
+
+    except InvalidPhoneFormatError as e:
+        return e.message, e.status     
+
+    except IntegrityError as e:
+        if type(e.orig) == UniqueViolation:
+            return {"error": f"""{e.args[0].split(" ")[-4:-2]} already exists"""}, HTTPStatus.CONFLICT
+
+    print(parent.username, parent.email)
+    email_to_new_user(parent.username, parent.email)
 
     return jsonify(parent), HTTPStatus.CREATED
 
@@ -60,21 +102,39 @@ def login():
 @jwt_required()
 def update_parents():
 
+    data: dict = request.get_json()             
+
     user_logged = get_jwt_identity()
 
-    data: dict = request.get_json()
+    received_key = set(data.keys())
+    available_keys = {"username", "name", "email", "password", "phone"}
+ 
+    try: 
+        if received_key - available_keys:
+            raise InvalidKeyError(received_key, available_keys)
 
-    session: Session = db.session
+        #Valida o tipo dos dados
+        for value in list(data):
+            if type(data[value]) != str:
+                raise InvalidTypeValueError
 
-    parent: Query = session.query(ParentModel)
-    parent = parent.filter_by(id=user_logged["id"]).first()
+        session: Session = db.session
 
-    for key, value in data.items():
-        setattr(parent, key, value)
+        parent: Query = session.query(ParentModel)
+        parent = parent.filter_by(id=user_logged["id"]).first()
 
-    session.add(parent)
+        for key, value in data.items():
+            setattr(parent, key, value)
+    
+            session.add(parent)
+            session.commit()
+    
+    except InvalidKeyError as e:
+        return e.message, e.status
 
-    session.commit()
+    #Valida o formato de telefone
+    except InvalidPhoneFormatError as e:
+        return e.message, e.status
 
     return jsonify(parent)
 

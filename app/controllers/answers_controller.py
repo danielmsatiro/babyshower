@@ -8,9 +8,11 @@ from ipdb import set_trace
 
 from app.configs.database import db
 from app.models.answer_model import AnswerModel
+from app.models.parent_model import ParentModel
 from app.models.question_model import QuestionModel
 from app.models.product_model import ProductModel
 from app.services.answer_service import serialize_answer
+from app.services.email_service import email_new_answer
 
 
 @jwt_required()
@@ -46,11 +48,18 @@ def create_answer(question_id: int):
         data["parent_id"] = user_logged["id"]
         data["question_id"] = question_id
 
-        new_answer = AnswerModel(**data)
+        new_answer: AnswerModel = AnswerModel(**data)
 
         session.add(new_answer)
         session.commit()
 
+        lead: ParentModel = session.query(ParentModel).filter_by(id=question.parent_id).first()
+        owner: ParentModel = session.query(ParentModel).filter_by(id=product.parent_id).first()
+
+        email_new_answer(lead.username, product.title, lead.email, owner.username, new_answer.answer)
+
+        return jsonify(serialize_answer(new_answer)), HTTPStatus.CREATED
+    
     except NotFoundError as e:
         return e.message, e.status
     except NotAuthorizedError as e:
@@ -60,7 +69,6 @@ def create_answer(question_id: int):
     except InvalidTypeValueError as e:
         return e.message, e.status
 
-    return jsonify(serialize_answer(new_answer)), HTTPStatus.CREATED
 
 
 def read_answer(answer_id: int):

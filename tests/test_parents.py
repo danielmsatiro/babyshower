@@ -1,4 +1,4 @@
-import pymongo
+""" import pymongo
 
 
 def test_route_get_exists(app_get_routes):
@@ -8,4 +8,4 @@ def test_route_get_exists(app_get_routes):
 
     client = pymongo.MongoClient("mongodb://localhost:27017/")
 
-    db = client["kenzie"]
+    db = client["kenzie"] """

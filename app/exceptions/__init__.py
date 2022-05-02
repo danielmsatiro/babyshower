@@ -5,7 +5,7 @@ class InvalidKeyError(Exception):
     def __init__(self, received_key, expected_key):
         self.message = {
             "expected_keys": list(expected_key),
-            "wrong_keys": list(received_key),
+            "received_keys": list(received_key),
         }
         self.status = HTTPStatus.UNPROCESSABLE_ENTITY
 
