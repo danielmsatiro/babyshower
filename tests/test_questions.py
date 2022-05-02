@@ -1,4 +1,4 @@
-from flask.testing import FlaskClient
+""" from flask.testing import FlaskClient
 
 # POST
 def test_create_question(client: FlaskClient):
@@ -56,4 +56,4 @@ def test_delete_question(client: FlaskClient):
     ), "Check your status code at route 'patch questions/<question_id>'"
     assert (
         response.json == expected
-    ), "Something went wrong at route 'patch questions/<product_id>'"
+    ), "Something went wrong at route 'patch questions/<product_id>'" """
