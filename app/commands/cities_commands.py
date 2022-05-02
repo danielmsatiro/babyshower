@@ -8,8 +8,7 @@ def cities_cli():
     city_group = AppGroup("cities", help="Create cities")
 
     @city_group.command("create")
-    @click.argument("quantity")
-    def create_cities(quantity):
-        CityModel.create_all(quantity)
+    def create_cities():
+        CityModel.create_all()
 
     return city_group

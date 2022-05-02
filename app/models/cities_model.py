@@ -33,20 +33,16 @@ class CityModel(db.Model):
         return cities
 
     @classmethod
-    def create_all(cls, limite):
+    def create_all(cls):
         with open("app/commands/cities.json", "r") as json_file:
             database = load(json_file)
-            for x in range(int(limite)):
-                data: dict = database[x]
+            for city in database:
+                city: dict
                 session: Session = db.session
-                longitude = data["longitude"]
-                latitude = data["latitude"]
+                longitude = city["longitude"]
+                latitude = city["latitude"]
                 geo = "POINT({} {})".format(longitude, latitude)
-                data.update({"geom": geo})
-                city = CityModel(**data)
-                print(type(city.geom))
-                print((city.geom))
-                print((city))
-                # break
+                city.update({"geom": geo})
+                city = CityModel(**city)
                 session.add(city)
                 session.commit()

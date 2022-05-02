@@ -71,6 +71,8 @@ def get_all():
         page = int(params.get("page", 1)) - 1
         per_page = int(params.get("per_page", 8))
 
+        print("this page is:", page)
+
         return products_per_geolocalization(
             query, page, per_page, user_municipio, user_estado)
 

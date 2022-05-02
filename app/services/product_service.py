@@ -1,7 +1,7 @@
 from ipdb import set_trace
 from dataclasses import asdict
 
-from flask import jsonify, request, session, url_for
+from flask import jsonify, request, url_for
 from app.models.cities_model import CityModel
 from app.models.parent_model import ParentModel
 
@@ -41,6 +41,8 @@ def products_per_geolocalization(
 
     products_list = []
 
+    print(per_page, "per_page")
+
     try:
         if user_estado and user_municipio:
             city_current = query_city.filter_by(
@@ -63,7 +65,6 @@ def products_per_geolocalization(
             cities = city_current.get_cities_within_radius(int(distance))
         else:
             cities = city_current.get_cities_within_radius()
-
         for city in cities:
             city: CityModel
             for product in products:
@@ -74,10 +75,15 @@ def products_per_geolocalization(
                     and product not in products_list
                 ):
                     products_list.append(product)
-        if page and per_page:
+        if (page or page == 0) and per_page:
+            if page == 0:
+                page = 1
             date_response = {"products": []}
             products_limit = page * per_page
-            for x in range(products_limit-per_page, products_limit):
+            if products_limit > len(products_list):
+                products_limit = len(products_list)
+            for x in range(products_limit-products_limit, products_limit):
+                print("passei do for")
                 date_response["products"].append(products_list[x])
             return date_response, 200
 
