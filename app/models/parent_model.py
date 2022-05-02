@@ -1,10 +1,10 @@
-from dataclasses import dataclass
 import re
-
-from app.exceptions.parents_exc import InvalidEmailLenghtError, InvalidTypeValueError, InvalidPhoneFormatError
+from dataclasses import dataclass
 
 from app.configs.database import db
-from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
+from app.exceptions import InvalidTypeValueError
+from app.exceptions.parents_exc import InvalidCpfLenghtError, InvalidPhoneFormatError
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import backref, relationship, validates
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -47,20 +47,20 @@ class ParentModel(db.Model):
     @validates("cpf")
     def validate_cpf_type(self, key, cpf_to_be_tested):
         if type(cpf_to_be_tested) != str:
-            raise InvalidTypeValueError
-        
+            raise InvalidTypeValueError(cpf_to_be_tested)
+
         if len(cpf_to_be_tested) != 11:
-            raise  InvalidEmailLenghtError
+            raise InvalidCpfLenghtError
 
         return cpf_to_be_tested
-    
+
     @validates("email")
     def validate_email_type(self, key, email_to_be_tested):
         if type(email_to_be_tested) != str:
             raise InvalidTypeValueError
 
         return email_to_be_tested
-    
+
     @validates("phone")
     def validate_phone_type(self, key, phone_to_be_tested):
         valid = re.compile(r"^\(\d{2}\)\s\d{4,5}\-\d{4}")

@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 
 from app.configs.database import db
-
-# Exceptions Importations
-from app.exceptions.products_exceptions import InvalidDataError
+from app.exceptions import InvalidTypeValueError
+from app.exceptions.products_exceptions import InvalidTypeNumberError
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import backref, relationship, validates
 
@@ -43,20 +42,12 @@ class ProductModel(db.Model):
         if key in str_values:
 
             if type(value) != str:
-                raise InvalidDataError(
-                    description={
-                        "error": f"The value of keys: {str_values} needs to be String!"
-                    }
-                )
+                raise InvalidTypeValueError(key)
 
         if key == "price":
 
             if type(value) != float:
-                raise InvalidDataError(
-                    description={
-                        "error": f"The value of key: 'price' needs to be Float!"
-                    }
-                )
+                raise InvalidTypeNumberError(key)
 
         return value
 

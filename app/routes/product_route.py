@@ -1,7 +1,6 @@
 from app.controllers import product_controller
 from flask import Blueprint
 
-
 bp = Blueprint("bp_products", __name__, url_prefix="/products")
 
 bp.post("")(product_controller.create_product)
