@@ -15,7 +15,7 @@ class CityModel(db.Model):
 
     point_id: int = Column(Integer, primary_key=True, autoincrement=True)
     code_ibge: int = Column(Integer)
-    name_county: str = Column(String)
+    city: str = Column(String)
     capital: str = Column(Boolean, default=False)
     code_uf: int = Column(Integer)
     uf: str = Column(String)

@@ -73,7 +73,7 @@ def get_all():
         per_page = int(params.get("per_page", 8))
 
         return products_per_geolocalization(
-            query, page, per_page, user_municipio, user_estado)
+            query, page, per_page, user_municipio, user_estado, data)
 
 
 def get_by_id(product_id: int):
