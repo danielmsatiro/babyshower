@@ -24,15 +24,14 @@ def get_all():
     # Se o token for fornecido automaticamente é possível obter o id
     # e buscar a cidade e o estado do do usuário para a localização.
     user_logged = get_jwt_identity()
-    user_municipio = None
-    user_estado = None
+    localization = None
     if user_logged:
         session: Session = db.session
-        query: Query = session.query(ParentModel)
-        user = query.filter_by(id=user_logged["id"]).first()
-        user: ParentModel
-        user_municipio = user.nome_municipio
-        user_estado = user.estado
+        parents: Query = session.query(ParentModel)
+        cities: Query = session.query(CityModel)
+        user: ParentModel = parents.filter_by(id=user_logged.id).first()
+        localization: CityModel = cities.filter_by(
+            point_id=user.city_point_id).first()
 
     params = dict(request.args.to_dict().items())
 
@@ -73,7 +72,7 @@ def get_all():
         per_page = int(params.get("per_page", 8))
 
         return products_per_geolocalization(
-            query, page, per_page, user_municipio, user_estado, data)
+            query, page, per_page, localization, data)
 
 
 def get_by_id(product_id: int):
@@ -132,7 +131,7 @@ def create_product():
     session.add(product)
     session.commit()
 
-    email_new_product(parent.username, product.title, parent.email)
+    # email_new_product(parent.username, product.title, parent.email)
 
     product_serialized = serialize_product(product)
 

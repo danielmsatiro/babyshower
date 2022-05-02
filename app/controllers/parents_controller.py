@@ -23,8 +23,7 @@ from app.services.email_service import email_to_new_user
 def pick_parents():
 
     query: Query = db.session.query(
-        ParentModel.id, ParentModel.username, ParentModel.name,
-        ParentModel.estado, ParentModel.nome_municipio
+        ParentModel.id, ParentModel.username, ParentModel.name
     )
 
     response = query.all()

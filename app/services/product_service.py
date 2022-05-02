@@ -31,9 +31,8 @@ def serialize_product(product: ProductModel) -> dict:
 
 def products_per_geolocalization(
         products: ProductModel,
-        page, per_page, user_municipio, user_estado):
+        page, per_page, localization: CityModel, data: dict):
 
-    params = dict(request.args.to_dict().items())
     session: Session = db.session
 
     query_city = session.query(CityModel)
@@ -41,51 +40,56 @@ def products_per_geolocalization(
 
     products_list = []
 
-    print(per_page, "per_page")
-
     try:
-        if user_estado and user_municipio:
+        if localization:
+            user_city = localization.city
+            user_state = localization.state
+            if user_state and user_city:
+                city_current = query_city.filter_by(
+                    city=user_city).filter_by(
+                        state=user_state).first()
+        if "latitude" and "longitude" in data.keys():
             city_current = query_city.filter_by(
-                nome_municipio=user_municipio).filter_by(
-                    estado=user_estado).first()
-        if params.get("latitude") and params.get("longitude"):
-            latitude = float(params.get("latitude"))
-            longitude = float(params.get("longitude"))
+                latitude=float(data["latitude"])).filter_by(
+                    longitude=float(data["longitude"])).first()
+        if "state" and "city" in data.keys():
             city_current = query_city.filter_by(
-                latitude=latitude).filter_by(
-                    longitude=longitude).first()
-        if params.get("municipio") and params.get("estado"):
-            municipio = params.get("municipio")
-            estado = params.get("estado")
-            city_current = query_city.filter_by(
-                nome_municipio=municipio).filter_by(
-                    estado=estado).first()
-        if params.get("distance"):
-            distance = params.get("distance")
+                city=data["city"]).filter_by(
+                    state=data["state"]).first()
+        if "distance" in data.keys():
+            distance = data["distance"]
             cities = city_current.get_cities_within_radius(int(distance))
         else:
             cities = city_current.get_cities_within_radius()
-        for city in cities:
-            city: CityModel
-            for product in products:
-                product_onwer = parents.filter_by(id=product.parent_id).first()
-                product_onwer: ProductModel
-                if (
-                    city.nome_municipio == product_onwer.nome_municipio
-                    and product not in products_list
-                ):
-                    products_list.append(product)
-        if (page or page == 0) and per_page:
-            if page == 0:
-                page = 1
-            date_response = {"products": []}
-            products_limit = page * per_page
-            if products_limit > len(products_list):
-                products_limit = len(products_list)
-            for x in range(products_limit-products_limit, products_limit):
-                print("passei do for")
-                date_response["products"].append(products_list[x])
-            return date_response, 200
+
+        # parents_id = session.query(ParentModel.id).filter_by(city_id==point_id).all() 
+        parents_id: Query = session.query(ParentModel.id).all()
+
+        print(parents_id)
+
+        return ""
+
+        # for city in cities:
+        #     city: CityModel
+        #     for product in products:
+        #         product_onwer = parents.filter_by(id=product.parent_id).first()
+        #         product_onwer: ProductModel
+        #         if (
+        #             city.nome_municipio == product_onwer.nome_municipio
+        #             and product not in products_list
+        #         ):
+        #             products_list.append(product)
+        # if (page or page == 0) and per_page:
+        #     if page == 0:
+        #         page = 1
+        #     date_response = {"products": []}
+        #     products_limit = page * per_page
+        #     if products_limit > len(products_list):
+        #         products_limit = len(products_list)
+        #     for x in range(products_limit-products_limit, products_limit):
+        #         print("passei do for")
+        #         date_response["products"].append(products_list[x])
+        #     return date_response, 200
 
     except Exception:
         products: Query = products.offset(
