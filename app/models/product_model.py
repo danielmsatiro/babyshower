@@ -34,7 +34,7 @@ class ProductModel(db.Model):
         "CategoryModel", secondary="product_category", backref=backref("products")
     )
 
-    @validates("title", "price", "description", "image")
+    @validates("title", "price", "parent_id", "description", "image")
     def validates_product_values(self, key, value):
 
         str_values = ["title", "description", "image"]

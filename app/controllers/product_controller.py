@@ -8,6 +8,7 @@ from app.exceptions.products_exceptions import (
     InvalidTypeNumberError,
 )
 from app.models import CategoryModel, ProductModel
+from app.models import CategoryModel, ProductModel
 from app.models.parent_model import ParentModel
 from app.services.email_service import email_new_product
 from app.services.product_service import serialize_product
@@ -101,11 +102,11 @@ def create_product():
 
         data: dict = request.get_json()
         received_key = set(data.keys())
+        
         available_keys = {
             "title",
             "description",
             "price",
-            "title",
             "image",
             "categories",
         }
@@ -147,10 +148,24 @@ def create_product():
 
 @jwt_required()
 def update_product(product_id: int):
+    data: dict = request.get_json()
+
+    avaible_keys = {
+            "title",
+            "price",
+            "parent_id", 
+            "description", 
+            "image",
+            "categories"
+    }
+
+    received_keys = set(data.keys())
+    
     try:
         user_logged = get_jwt_identity()
 
-        data: dict = request.get_json()
+        if not received_keys == avaible_keys:
+            raise InvalidKeyError(received_keys, avaible_keys)
 
         session: Session = db.session
         product: Query = (
