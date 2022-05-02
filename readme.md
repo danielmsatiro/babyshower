@@ -26,62 +26,135 @@ Não é necessário um corpo da requisição.
 
 ```json
 {
-  "products": [
-    {
-      "price": "100.0",
-      "description": "Para crianças de até 2",
-      "id": 1,
-      "sold": false,
-      "title": "Bebe conforto",
-      "parent_id": 1,
-      "image": "https://google.com"
-    },
-    {
-      "price": "150.97",
-      "description": "Para crianças de até 2",
-      "id": 2,
-      "sold": false,
-      "title": "Carrinho de bebe",
-      "parent_id": 1,
-      "image": "https://google.com"
-    }
-  ]
+	"products": [
+		{
+			"id": 1,
+			"title": "body tamanho M",
+			"price": "36.0",
+			"parent_id": 4,
+			"description": "Lorem (...) book.",
+			"image": "https://imagem/320x240",
+			"sold": false,
+			"categories": [
+				"roupas"
+			],
+			"questions": "/api/questions/1"
+		},
+		(...)
+	]
 }
 ```
+### <u>Realizando filtros nesta rota:</u>
 
-Podemos utilizar os query params para mudar a lista, mudando a paginação, podemos alterar quantos produtos queremos no perPage e alterar a página no parâmetro page. Podemos também acrescentar parametros para fazer filtragens. Uma requisição apenas no /products irá trazer 5 produtos na página 1.
+Podem ser realizados filtros de duas formas a seguir:
+- Via Query Params: Para paginações utilizando **'page'(deault=1)** e/ou **'per_page' (default=8)**
+- Via Body da requisição: 
+  - Para título do produto (podendo ser parcial);
+  - Para lista de categorias do produto;
+  - Para preços.
+
+
+> **Via Query Params sem body na requisição:**
+>
+`GET /api/products?perPage=3&page=1&price=100.0 - FORMATO DA REQUISIÇÃO`
+
+Caso dê tudo certo, a resposta será assim:
 
 `GET /api/products?perPage=3&page=1&price=100.0 - FORMATO DA RESPOSTA - STATUS 200`
 
 ```json
 {
-  "products": {
-    {
-      "price": "100.0",
-      "description": "Para crianças de até 2",
-      "id": 1,
-      "sold": false,
-      "title": "Bebe conforto",
-      "parent_id": 1,
-      "image": "https://google.com"
-    },{
-      "price": "100.0",
-      "description": "Para crianças de até 3",
-      "id": 2,
-      "sold": false,
-      "title": "Bebe conforto",
-      "parent_id": 1,
-      "image": "https://google.com"
-    },{
-      "price": "100.0",
-      "description": "Para crianças de até 4",
-      "id": 4,
-      "sold": false,
-      "title": "Bebe conforto",
-      "parent_id": 1,
-      "image": "https://google.com"
-    }
-  }
+	"products": [
+		{
+			"id": 1,
+			"title": "body tamanho M",
+			"price": "36.0",
+			"parent_id": 4,
+			"description": "Lorem (...) book.",
+			"image": "https://imagem/320x240",
+			"sold": false,
+			"categories": [
+				"roupas"
+			],
+			"questions": "/api/questions/1"
+		},
+		{
+			"id": 2,
+			"title": "babá eletrônica",
+			"price": "250.0",
+			"parent_id": 5,
+			"description": "Lorem (...) book.",
+			"image": "https://imagem/320x240",
+			"sold": false,
+			"categories": [
+				"0 a 3 meses",
+				"4 a 6 meses",
+				"7 a 9 meses",
+				"10 meses a 1 ano",
+				"2 anos",
+				"3 a 5 anos",
+				"segurança para bebê"
+			],
+			"questions": "/api/questions/2"
+		},
+		{
+			"id": 3,
+			"title": "berço",
+			"price": "560.0",
+			"parent_id": 10,
+			"description": "Lorem (...) book.",
+			"image": "https://imagem/320x240",
+			"sold": false,
+			"categories": [
+				"0 a 3 meses",
+				"4 a 6 meses",
+				"7 a 9 meses",
+				"10 meses a 1 ano",
+				"2 anos",
+				"3 a 5 anos",
+				"quarto do bebê"
+			],
+			"questions": "/api/questions/3"
+		}
+	]
+}
+```
+
+> **Via Body na na requisição:**
+
+**Observação:** Poderia ter query params para a paginação em conjunto.
+
+`GET /api/products - FORMATO DA REQUISIÇÃO`
+
+```json
+{
+	"categories": ["roupas", "0 a 3 meses"],
+	"min_price": 30.0,
+	"max_price": 60.0,
+	"title_product": ""
+}
+```
+
+`GET /api/products - FORMATO DA RESPOSTA - STATUS 200`
+
+```json
+{
+	"products": [
+		{
+			"id": 9,
+			"title": "Tênis tam 16",
+			"price": "36.0",
+			"parent_id": 10,
+			"description": "Lorem (...) book.",
+			"image": "https://imagem/320x240",
+			"sold": false,
+			"categories": [
+				"0 a 3 meses",
+				"roupas"
+			],
+			"questions": "/api/questions/9"
+		}
+	]
 }
 ```
 
@@ -139,34 +212,6 @@ Não é necessário um corpo da requisição.
       "id": 2,
       "sold": false,
       "title": "Carrinho de bebe",
-      "parent_id": 1,
-      "image": "https://google.com"
-    }
-  ]
-}
-```
-
-<h2 align="center">Obter produto por query params</h2>
-
-`GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA REQUISIÇÃO`
-
-```
-Não é necessário um corpo da requisição.
-```
-
-#### Caso dê tudo certo, a resposta será assim:
-
-`GET /api/products/params?title=Bebe conforto&parent_id=1&price=100.0 - FORMATO DA RESPOSTA - STATUS 200`
-
-```json
-{
-  "products": [
-    {
-      "price": "100.0",
-      "description": "Para crianças de até 2",
-      "id": 1,
-      "sold": false,
-      "title": "Bebe conforto",
       "parent_id": 1,
       "image": "https://google.com"
     }

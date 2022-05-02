@@ -1,47 +1,65 @@
+from copy import deepcopy
 from http import HTTPStatus
 
 from app.configs.database import db
-from app.models import CategoryModel, ProductModel
+from app.exceptions.products_exceptions import (
+    NonexistentParentProductsError,
+    NonexistentProductError,
+)
+from app.models import CategoryModel, ProductModel, category_product
+from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from ipdb import set_trace
 from sqlalchemy.orm import Query, Session
 
-from app.services.product_service import serialize_product
-from app.exceptions.products_exceptions import (
-    NonexistentProductError,
-    NonexistentParentProductsError,
-)
 
-
+@jwt_required(optional=True)
 def get_all():
+    # Se o token for fornecido automaticamente é possível obter o id
+    # e buscar a cidade e o estado do do usuário para a localização.
+    user_logged = get_jwt_identity()
+
     params = dict(request.args.to_dict().items())
 
-    if "page" in params:
-        page = int(params.pop("page")) - 1
-    else:
-        page = 0
+    data = {}
 
-    if "per_page" in params:
-        per_page = int(params.pop("per_page"))
-    else:
-        per_page = 8
+    try:
+        data = request.get_json()  # add filter by categories too
+    finally:
+        session: Session = db.session
+        categories = []
 
-    query = ProductModel.query
+        for name in deepcopy(data.get("categories", [])):
+            categories.append(session.query(CategoryModel).filter_by(name=name).first())
 
-    for column, value in params.items():
-        if "price" in column:
-            print("entrou aqui")
-            query: Query = query.filter(ProductModel.price <= value)
-        elif "title" in column:
-            query: Query = query.filter(ProductModel.title in column)
+        query: Query = session.query(ProductModel)
 
-    products: Query = query.offset(page * per_page).limit(per_page).all()
+        if categories:
+            for category in categories:
+                query: Query = query.filter(ProductModel.categories.contains(category))
 
-    for i in range(len(products)):
-        product_serialized = serialize_product(products[i])
-        products[i] = product_serialized
+        min_price = data.get("min_price")
+        max_price = data.get("max_price")
+        title = data.get("title_product")
 
-    return {"products": products}, HTTPStatus.OK
+        if min_price:
+            query: Query = query.filter(ProductModel.price >= min_price)
+        if max_price:
+            query: Query = query.filter(ProductModel.price <= max_price)
+        if title:
+            query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
+
+        page = int(params.get("page", 1)) - 1
+        per_page = int(params.get("per_page", 8))
+
+        products: Query = query.offset(page * per_page).limit(per_page).all()
+
+        for i in range(len(products)):
+            product_serialized = serialize_product(products[i])
+            products[i] = product_serialized
+
+        return {"products": products}, HTTPStatus.OK
 
 
 def get_by_id(product_id: int):
@@ -53,10 +71,9 @@ def get_by_id(product_id: int):
             raise NonexistentProductError
 
         return jsonify(product_serialized), HTTPStatus.OK
-        
+
     except NonexistentProductError as err:
         return err.message, HTTPStatus.NOT_FOUND
-
 
 
 def get_by_parent(parent_id: int):
@@ -77,10 +94,10 @@ def get_by_parent(parent_id: int):
 
 @jwt_required()
 def create_product():
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
     data: dict = request.get_json()
-    data["parent_id"] = parent["id"]
+    data["parent_id"] = user_logged["id"]
 
     query: Query = db.session.query(CategoryModel)
 
@@ -96,7 +113,7 @@ def create_product():
     session: Session = db.session
     session.add(product)
     session.commit()
-    
+
     product_serialized = serialize_product(product)
 
     return jsonify(product_serialized), HTTPStatus.CREATED
@@ -105,7 +122,7 @@ def create_product():
 @jwt_required()
 def update_product(product_id: int):
     try:
-        parent = get_jwt_identity()
+        user_logged = get_jwt_identity()
 
         data: dict = request.get_json()
 
@@ -114,7 +131,7 @@ def update_product(product_id: int):
             session.query(ProductModel)
             .select_from(ProductModel)
             .filter(ProductModel.id == product_id)
-            .filter(ProductModel.parent_id == parent["id"])
+            .filter(ProductModel.parent_id == user_logged["id"])
             .first()
         )
 
@@ -130,7 +147,7 @@ def update_product(product_id: int):
         product_serialized = serialize_product(product)
 
         return jsonify(product_serialized), HTTPStatus.OK
-    
+
     except NonexistentProductError as err:
         return err.message, HTTPStatus.NOT_FOUND
 
@@ -138,14 +155,14 @@ def update_product(product_id: int):
 @jwt_required()
 def delete_product(product_id: int):
     try:
-        parent = get_jwt_identity()
+        user_logged = get_jwt_identity()
 
         session: Session = db.session
         product: Query = (
             session.query(ProductModel)
             .select_from(ProductModel)
             .filter(ProductModel.id == product_id)
-            .filter(ProductModel.parent_id == parent["id"])
+            .filter(ProductModel.parent_id == user_logged["id"])
             .first()
         )
 
