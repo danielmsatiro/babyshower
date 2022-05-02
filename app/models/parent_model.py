@@ -7,9 +7,10 @@ from app.exceptions.parents_exc import InvalidPhoneFormatError
 
 from app.configs.database import db
 from sqlalchemy.orm import backref, relationship
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import backref, relationship, validates
 from werkzeug.security import check_password_hash, generate_password_hash
+from app.models.cities_model import CityModel
 
 
 @dataclass
@@ -32,14 +33,16 @@ class ParentModel(db.Model):
     password_hash = Column(String, nullable=False)
     phone = Column(String, nullable=False)
 
-    nome_municipio: str = Column(String, nullable=False)
-    estado: str = Column(String, nullable=False)
+    city_point_id = Column(
+        Integer, ForeignKey(
+            "cities.point_id", ondelete="CASCADE"), nullable=False
+    )
 
-    products = relationship("ProductModel", backref=backref(
-        "parent", uselist=False))
+    products = relationship(
+        "ProductModel", backref=backref("parent", uselist=False))
 
-    questions = relationship("QuestionModel", backref=backref(
-        "parent", uselist=False))
+    questions = relationship(
+        "QuestionModel", backref=backref("parent", uselist=False))
 
     @property
     def password(self):

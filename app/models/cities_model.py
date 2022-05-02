@@ -11,15 +11,15 @@ from sqlalchemy.orm import relationship
 
 @dataclass
 class CityModel(db.Model):
-    _tablename_ = "cities"
+    __tablename__ = "cities"
 
     point_id: int = Column(Integer, primary_key=True, autoincrement=True)
-    codigo_ibge: int = Column(Integer)
-    nome_municipio: str = Column(String)
+    code_ibge: int = Column(Integer)
+    name_county: str = Column(String)
     capital: str = Column(Boolean, default=False)
-    codigo_uf: int = Column(Integer)
+    code_uf: int = Column(Integer)
     uf: str = Column(String)
-    estado: str = Column(String(30))
+    state: str = Column(String(30))
     longitude: float = Column(Float)
     latitude: float = Column(Float)
     geom: str = Column(Geometry("Point"))
