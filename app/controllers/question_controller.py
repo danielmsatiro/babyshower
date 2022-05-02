@@ -9,11 +9,13 @@ from app.configs.database import db
 from app.exceptions.question_exc import NotAuthorizedError
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotFoundError
 from app.models import QuestionModel
+from app.models.parent_model import ParentModel
 from app.models.product_model import ProductModel
-from flask import jsonify, request, session
+from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import Query, Session
 from ipdb import set_trace
+from app.services.email_service import email_new_question
 
 from app.services.question_service import serialize_answer
 
@@ -35,9 +37,9 @@ def get_product_questions(product_id: int):
 def create_question(product_id: int):
     data: dict = request.get_json()
 
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
-    data["parent_id"] = parent["id"]
+    data["parent_id"] = user_logged["id"]
 
     data["product_id"] = product_id
 
@@ -53,10 +55,17 @@ def create_question(product_id: int):
             raise NotFoundError(product_id, "product")
         session.add(question)
         session.commit()
+
+        lead: ParentModel = session.query(ParentModel).filter_by(id=question.parent_id).first()
+        owner: ParentModel = session.query(ParentModel).filter_by(id=product.parent_id).first()
+        print(lead)
+        email_new_question(owner.username, product.title, owner.email, lead.username, question.question)
+    
+        return jsonify(question), HTTPStatus.CREATED
+    
     except NotFoundError as e:
         return e.message, e.status
 
-    return jsonify(question), HTTPStatus.CREATED
 
 
 @jwt_required()
@@ -64,7 +73,7 @@ def update_question(question_id: int):
     data: dict = request.get_json()
     received_key = set(data.keys())
     expected_key = {"question"}
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
     session: Session = db.session
 
@@ -80,7 +89,7 @@ def update_question(question_id: int):
         if not question:
             raise NotFoundError(question_id, "question")
 
-        if parent["id"] == question.parent_id:
+        if user_logged["id"] == question.parent_id:
             for key, value in data.items():
                 setattr(question, key, value)
             session.commit()
@@ -103,7 +112,7 @@ def update_question(question_id: int):
 def delete_question(question_id: int):
     session: Session = db.session
 
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
     question = session.query(QuestionModel).filter_by(id=question_id).first()
 
@@ -111,7 +120,7 @@ def delete_question(question_id: int):
         if not question:
             raise NotFoundError(question_id, "question")
 
-        if parent["id"] == question.parent_id:
+        if user_logged["id"] == question.parent_id:
 
             session.delete(question)
 

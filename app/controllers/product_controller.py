@@ -7,6 +7,8 @@ from app.exceptions.products_exceptions import (
     NonexistentProductError,
 )
 from app.models import CategoryModel, ProductModel, category_product
+from app.models.parent_model import ParentModel
+from app.services.email_service import email_new_product
 from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -110,9 +112,13 @@ def create_product():
         if response:
             product.categories.append(response)
 
+    parent: ParentModel = ParentModel.query.get(product.parent_id)
+
     session: Session = db.session
     session.add(product)
     session.commit()
+
+    email_new_product(parent.username, product.title, parent.email)
 
     product_serialized = serialize_product(product)
 

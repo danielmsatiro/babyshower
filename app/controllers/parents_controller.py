@@ -12,6 +12,8 @@ from flask import jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
 
+from app.services.email_service import email_to_new_user
+
 
 
 def pick_parents():
@@ -65,6 +67,9 @@ def new_parents():
     except IntegrityError as e:
         if type(e.orig) == UniqueViolation:
             return {"error": f"""{e.args[0].split(" ")[-4:-2]} already exists"""}, HTTPStatus.CONFLICT
+
+    print(parent.username, parent.email)
+    email_to_new_user(parent.username, parent.email)
 
     return jsonify(parent), HTTPStatus.CREATED
 
