@@ -1,13 +1,16 @@
-from app.routes.product_route import bp as bp_products
-from app.routes.categories_route import bp as bp_categories
-from app.routes.question_route import bp as bp_questions
-from app.routes.parents_route import bp as bp_parents
 from app.routes.answer_route import bp as bp_answers
-
-from flask import Blueprint, Flask
-
+from app.routes.categories_route import bp as bp_categories
+from app.routes.parents_route import bp as bp_parents
+from app.routes.product_route import bp as bp_products
+from app.routes.question_route import bp as bp_questions
+from flask import Blueprint, Flask, render_template
 
 bp_api = Blueprint("bp_api", __name__, url_prefix="/api")
+
+
+@bp_api.get("")
+def home():
+    return render_template("base.html")
 
 
 def init_app(app: Flask) -> None:
