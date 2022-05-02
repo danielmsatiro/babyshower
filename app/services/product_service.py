@@ -63,6 +63,7 @@ def products_per_geolocalization(
             cities = city_current.get_cities_within_radius(int(distance))
         else:
             cities = city_current.get_cities_within_radius()
+
         for city in cities:
             city: CityModel
             for product in products:
@@ -73,6 +74,13 @@ def products_per_geolocalization(
                     and product not in products_list
                 ):
                     products_list.append(product)
+        if page and per_page:
+            date_response = {"products": []}
+            products_limit = page * per_page
+            for x in range(products_limit-per_page, products_limit):
+                date_response["products"].append(products_list[x])
+            return date_response, 200
+
     except Exception:
         products: Query = products.offset(
             page * per_page).limit(per_page).all()

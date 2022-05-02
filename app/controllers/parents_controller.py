@@ -26,6 +26,18 @@ def new_parents():
     session: Session = db.session
     data: dict = request.get_json()
 
+    # user_registered: dict = request.get_json()
+
+    # municipio = data["municipio"]
+    # estado = data["municipio"]
+    # CityModel.first_by(
+    #     nome_municipio=municipio
+    #     ).first_by(estado=estado).first().point_id
+
+    # remover as props: municipio e estado
+
+    # retornar user_registered
+
     parent = ParentModel(**data)
 
     session.add(parent)

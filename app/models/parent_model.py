@@ -29,6 +29,9 @@ class ParentModel(db.Model):
     nome_municipio: str = Column(String, nullable=False)
     estado: str = Column(String, nullable=False)
 
+    # remover columns nome_municipio e estado
+    # adicionar column point_id
+
     # products = relationship(
     # "ProductModel", backref=backref(
     # "parent", passive_deletes=True, uselist=False))
