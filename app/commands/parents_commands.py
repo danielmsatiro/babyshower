@@ -33,7 +33,6 @@ def parents_cli():
                     )
                 )
             except Exception:
-                print("print")
                 continue
 
         session.add_all(parents)

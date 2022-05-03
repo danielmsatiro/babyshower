@@ -78,7 +78,8 @@ def products_per_geolocalization(
         products = products.offset(page * per_page).limit(per_page).all()
 
     except Exception:
-        products: Query = products.offset(page * per_page).limit(per_page).all()
+        products: Query = products.offset(
+            page * per_page).limit(per_page).all()
         return jsonify(products), 200
 
     return jsonify(products), 200
