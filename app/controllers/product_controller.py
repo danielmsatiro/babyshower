@@ -6,6 +6,7 @@ from app.exceptions.products_exceptions import (
     NonexistentParentProductsError,
     NonexistentProductError,
 )
+from app.exceptions import InvalidKeyError
 from app.models import CategoryModel, ProductModel, category_product
 from app.models.parent_model import ParentModel
 from app.services.email_service import email_new_product
@@ -96,41 +97,75 @@ def get_by_parent(parent_id: int):
 
 @jwt_required()
 def create_product():
-    user_logged = get_jwt_identity()
-
     data: dict = request.get_json()
-    data["parent_id"] = user_logged["id"]
 
-    query: Query = db.session.query(CategoryModel)
+    avaible_keys = {
+            "title",
+            "price",
+            "parent_id", 
+            "description", 
+            "image",
+            "categories"
+    }
 
-    categories = data.pop("categories")
+    received_keys = set(data.keys())
 
-    product = ProductModel(**data)
+    try:
 
-    for category in categories:
-        response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
-        if response:
-            product.categories.append(response)
+        user_logged = get_jwt_identity()
 
-    parent: ParentModel = ParentModel.query.get(product.parent_id)
+        if not received_keys == avaible_keys:
+            raise InvalidKeyError(received_keys, avaible_keys)
+        
+        data["parent_id"] = user_logged["id"]
 
-    session: Session = db.session
-    session.add(product)
-    session.commit()
+        query: Query = db.session.query(CategoryModel)
 
-    email_new_product(parent.username, product.title, parent.email)
+        categories = data.pop("categories")
 
-    product_serialized = serialize_product(product)
+        product = ProductModel(**data)
 
-    return jsonify(product_serialized), HTTPStatus.CREATED
+        for category in categories:
+            response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
+            if response:
+                product.categories.append(response)
+
+        parent: ParentModel = ParentModel.query.get(product.parent_id)
+
+        session: Session = db.session
+        session.add(product)
+        session.commit()
+
+        email_new_product(parent.username, product.title, parent.email)
+
+        product_serialized = serialize_product(product)
+
+        return jsonify(product_serialized), HTTPStatus.CREATED
+    
+    except InvalidKeyError as err:
+        return err.message, HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 @jwt_required()
 def update_product(product_id: int):
+    data: dict = request.get_json()
+
+    avaible_keys = {
+            "title",
+            "price",
+            "parent_id", 
+            "description", 
+            "image",
+            "categories"
+    }
+
+    received_keys = set(data.keys())
+    
     try:
         user_logged = get_jwt_identity()
 
-        data: dict = request.get_json()
+        if not received_keys == avaible_keys:
+            raise InvalidKeyError(received_keys, avaible_keys)
 
         session: Session = db.session
         product: Query = (

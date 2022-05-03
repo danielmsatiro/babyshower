@@ -7,6 +7,8 @@ from app.exceptions.products_exceptions import InvalidDataError
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import backref, relationship, validates
 
+from app.exceptions import InvalidKeyError
+
 
 @dataclass
 class ProductModel(db.Model):
@@ -35,7 +37,14 @@ class ProductModel(db.Model):
         "CategoryModel", secondary="product_category", backref=backref("products")
     )
 
-    @validates("title", "price", "description", "image")
+    @validates(
+        "title",
+        "price",
+        "parent_id", 
+        "description", 
+        "image",
+        "categories"
+    )
     def validates_product_values(self, key, value):
 
         str_values = ["title", "description", "image"]
