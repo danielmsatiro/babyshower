@@ -25,20 +25,27 @@ def get_product_questions(product_id: int):
 
     serialized_questions = [serialize_answer(question) for question in questions]
 
-    return jsonify(serialized_questions), HTTPStatus.OK
+    return {"questions":serialized_questions}, HTTPStatus.OK
 
 
 @jwt_required()
 def create_question(product_id: int):
-    data: dict = request.get_json()
-
     user_logged = get_jwt_identity()
+    data: dict = request.get_json()
+    
+    available_keys = {"question"}
+
+    received_keys = set(data.keys())
+
 
     data["parent_id"] = user_logged["id"]
 
     data["product_id"] = product_id
 
     try:
+        if not received_keys == available_keys:
+            raise InvalidKeyError(received_keys, available_keys)
+
         question = QuestionModel(**data)
 
         session: Session = db.session
@@ -64,6 +71,8 @@ def create_question(product_id: int):
         return jsonify(question), HTTPStatus.CREATED
 
     except NotFoundError as e:
+        return e.message, e.status
+    except InvalidKeyError as e:
         return e.message, e.status
 
 

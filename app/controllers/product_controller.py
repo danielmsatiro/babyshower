@@ -3,10 +3,7 @@ from http import HTTPStatus
 
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, NotFoundError
-from app.exceptions.products_exceptions import (
-    InvalidTypeKeyCategoryError,
-    InvalidTypeNumberError,
-)
+from app.exceptions.products_exceptions import InvalidTypeNumberError
 from app.models import CategoryModel, ProductModel
 from app.models import CategoryModel, ProductModel
 from app.models.parent_model import ParentModel
@@ -142,8 +139,6 @@ def create_product():
         return e.message, e.status
     except InvalidKeyError as e:
         return e.message, e.status
-    except InvalidTypeKeyCategoryError as e:
-        return e.message, e.status
 
 
 @jwt_required()
@@ -164,7 +159,7 @@ def update_product(product_id: int):
     try:
         user_logged = get_jwt_identity()
 
-        if not received_keys == avaible_keys:
+        if received_keys - avaible_keys:
             raise InvalidKeyError(received_keys, avaible_keys)
 
         session: Session = db.session
@@ -191,10 +186,14 @@ def update_product(product_id: int):
 
     except NotFoundError as e:
         return e.message, e.status
+    except InvalidKeyError as e:
+        return e.message, e.status
 
 
 @jwt_required()
 def delete_product(product_id: int):
+    user_logged = get_jwt_identity()
+
     try:
         user_logged = get_jwt_identity()
 
@@ -208,6 +207,9 @@ def delete_product(product_id: int):
         )
 
         if not product:
+            raise NotFoundError(product_id, "product")
+
+        if ProductModel.parent_id == user_logged["id"]:
             raise NotFoundError(product_id, "product")
 
         session.delete(product)
