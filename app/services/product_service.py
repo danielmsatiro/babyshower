@@ -35,6 +35,8 @@ def products_per_geolocalization(
 
     session: Session = db.session
 
+    # set_trace()
+
     query_city = session.query(CityModel)
     parents_id = session.query(ParentModel)
 
@@ -46,10 +48,12 @@ def products_per_geolocalization(
                 city_current = query_city.filter_by(
                     city=user_city).filter_by(
                         state=user_state).first()
+        # set_trace()
         if "latitude" and "longitude" in data.keys():
             city_current = query_city.filter_by(
                 latitude=float(data["latitude"])).filter_by(
                     longitude=float(data["longitude"])).first()
+        # set_trace()
         if "state" and "city" in data.keys():
             city_current = query_city.filter_by(
                 city=data["city"]).filter_by(
@@ -61,7 +65,7 @@ def products_per_geolocalization(
             cities = city_current.get_cities_within_radius()
 
         cities_points_id = [city.point_id for city in cities]
-
+        # set_trace()
         for parent in parents_id:
             parent: ParentModel
             if parent.city_point_id in cities_points_id:
@@ -71,15 +75,19 @@ def products_per_geolocalization(
         parents_id = [parent.id for parent in parents_id.all()]
 
         products_parent_id = [product.parent_id for product in products.all()]
-
-        for parent_id in parents_id:
-            if parent_id in products_parent_id:
-                products = products.filter_by(parent_id=parent_id)
-        products = products.offset(page * per_page).limit(per_page).all()
-
+        # set_trace()
+        # for parent_id in parents_id:
+        #     if parent_id in products_parent_id:
+        # set_trace()
+        products = products.filter(ProductModel.parent_id.in_(parents_id))
+        # set_trace()
+        # print(products)
+        # products = products.offset(page * per_page).limit(per_page).all()
+        # set_trace()
     except Exception:
+        print("cheguei")
         products: Query = products.offset(
             page * per_page).limit(per_page).all()
         return jsonify(products), 200
 
-    return jsonify(products), 200
+    return jsonify(products.all()), 200

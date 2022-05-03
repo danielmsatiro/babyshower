@@ -15,9 +15,9 @@ def parents_cli():
     @click.argument("quantity")
     def create_parents(quantity):
         session: Session = db.session
-        parents = []
 
         for _ in range(int(quantity)):
+            parents = []
             number = fake.msisdn()
             phone_number = f"({number[2:4]}) {number[4:9]}-{8348}"
             try:
@@ -32,11 +32,11 @@ def parents_cli():
                         city_point_id=random.randint(1, 10 - 1),
                     )
                 )
+                print(f"{_} parent added")
+                session.add_all(parents)
+                session.commit()
             except Exception:
-                continue
-
-        session.add_all(parents)
-        session.commit()
+                break
 
         print(f"{quantity} parents added")
 
