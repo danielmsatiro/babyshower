@@ -27,7 +27,7 @@ def parents_cli():
                         name=fake.name(),
                         email=fake.email(),
                         password=fake.ean(length=8),
-                        phone=f"({phone[:2]}) {phone[2:7]}-{phone[7:]}",
+                        phone=f"(48) 98{phone[4:7]}-{phone[7:]}",
                     )
                 )
             except:
