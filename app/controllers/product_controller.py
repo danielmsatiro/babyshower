@@ -1,119 +1,208 @@
+from copy import deepcopy
 from http import HTTPStatus
 
 from app.configs.database import db
+from app.exceptions import InvalidKeyError, NotFoundError
+from app.exceptions.products_exceptions import InvalidTypeNumberError
 from app.models import CategoryModel, ProductModel
+from app.models.parent_model import ParentModel
+from app.services.email_service import email_new_product
+from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
 
 
+@jwt_required(optional=True)
 def get_all():
+    # Se o token for fornecido automaticamente é possível obter o id
+    # e buscar a cidade e o estado do do usuário para a localização.
+    user_logged = get_jwt_identity()
+
     params = dict(request.args.to_dict().items())
 
-    if "page" in params:
-        page = int(params.pop("page")) - 1
-    else:
-        page = 0
+    data = {}
 
-    if "per_page" in params:
-        per_page = int(params.pop("per_page"))
-    else:
-        per_page = 8
+    try:
+        data = request.get_json()  # add filter by categories too
+    finally:
+        session: Session = db.session
+        categories = []
 
-    query = ProductModel.query
+        for name in deepcopy(data.get("categories", [])):
+            categories.append(session.query(CategoryModel).filter_by(name=name).first())
 
-    for column, value in params.items():
-        if "price" in column:
-            print("entrou aqui")
-            query: Query = query.filter(ProductModel.price <= value)
-        elif "title" in column:
-            query: Query = query.filter(ProductModel.title in column)
+        query: Query = session.query(ProductModel)
 
-    products: Query = query.offset(page * per_page).limit(per_page).all()
+        if categories:
+            for category in categories:
+                query: Query = query.filter(ProductModel.categories.contains(category))
 
-    return {"products": products}, 200
+        min_price = data.get("min_price")
+        max_price = data.get("max_price")
+        title = data.get("title_product")
+
+        if min_price:
+            query: Query = query.filter(ProductModel.price >= min_price)
+        if max_price:
+            query: Query = query.filter(ProductModel.price <= max_price)
+        if title:
+            query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
+
+        page = int(params.get("page", 1)) - 1
+        per_page = int(params.get("per_page", 8))
+
+        products: Query = query.offset(page * per_page).limit(per_page).all()
+
+        for i in range(len(products)):
+            product_serialized = serialize_product(products[i])
+            products[i] = product_serialized
+
+        return {"products": products}, HTTPStatus.OK
 
 
 def get_by_id(product_id: int):
-    product = ProductModel.query.get(product_id)
-    return jsonify(product), 200
+    try:
+        product = ProductModel.query.get(product_id)
+        product_serialized = serialize_product(product)
+
+        if not product:
+            raise NotFoundError(product_id, "product")
+
+        return jsonify(product_serialized), HTTPStatus.OK
+
+    except NotFoundError as e:
+        return e.message, e.status
 
 
-def get_by_parent(parent_id):
-    products = ProductModel.query.filter(ProductModel.parent_id == parent_id).first()
-    return {"products": products}, 200
+def get_by_parent(parent_id: int):
+    try:
+        products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
+        if not products:
+            raise NotFoundError(parent_id, "parent")
+
+        for i in range(len(products)):
+            product_serialized = serialize_product(products[i])
+            products[i] = product_serialized
+
+        return {"products": products}, HTTPStatus.OK
+
+    except NotFoundError as e:
+        return e.message, e.status
 
 
 @jwt_required()
 def create_product():
-    parent = get_jwt_identity()
+    try:
+        user_logged = get_jwt_identity()
 
-    data: dict = request.get_json()
-    data["parent_id"] = parent["id"]
+        data: dict = request.get_json()
+        received_key = set(data.keys())
 
-    query: Query = db.session.query(CategoryModel)
+        available_keys = {
+            "title",
+            "description",
+            "price",
+            "image",
+            "categories",
+        }
 
-    categories = data.pop("categories")
+        if not received_key == available_keys:
+            raise InvalidKeyError(received_key, available_keys)
 
-    product = ProductModel(**data)
+        data["parent_id"] = user_logged["id"]
 
-    for category in categories:
-        response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
-        if response:
-            product.categories.append(response)
+        query: Query = db.session.query(CategoryModel)
 
-    session: Session = db.session
-    session.add(product)
-    session.commit()
+        categories = data.pop("categories")
 
-    return jsonify(product), HTTPStatus.CREATED
+        product = ProductModel(**data)
+
+        for category in categories:
+            response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
+            if response:
+                product.categories.append(response)
+
+        parent: ParentModel = ParentModel.query.get(product.parent_id)
+
+        session: Session = db.session
+        session.add(product)
+        session.commit()
+
+        email_new_product(parent.username, product.title, parent.email)
+        product_serialized = serialize_product(product)
+
+        return jsonify(product_serialized), HTTPStatus.CREATED
+
+    except InvalidTypeNumberError as e:
+        return e.message, e.status
+    except InvalidKeyError as e:
+        return e.message, e.status
+    except InvalidTypeKeyCategoryError as e:
+        return e.message, e.status
 
 
 @jwt_required()
-def update_product(product_id):
-    parent = get_jwt_identity()
-
-    session: Session = db.session
+def update_product(product_id: int):
     data: dict = request.get_json()
 
-    product: Query = (
-        session.query(ProductModel)
-        .select_from(ProductModel)
-        .filter(ProductModel.id == product_id)
-        .filter(ProductModel.parent_id == parent["id"])
-        .first()
-    )
+    avaible_keys = {"title", "price", "parent_id", "description", "image", "categories"}
 
-    if not product:
-        return {"Error": "UNAUTHORIZED"}, HTTPStatus.UNAUTHORIZED
+    received_keys = set(data.keys())
 
-    for key, value in data.items():
-        setattr(product, key, value)
+    try:
+        user_logged = get_jwt_identity()
 
-    session.add(product)
-    session.commit()
+        if not received_keys == avaible_keys:
+            raise InvalidKeyError(received_keys, avaible_keys)
 
-    return jsonify(product), HTTPStatus.OK
+        session: Session = db.session
+        product: Query = (
+            session.query(ProductModel)
+            .select_from(ProductModel)
+            .filter(ProductModel.id == product_id)
+            .filter(ProductModel.parent_id == user_logged["id"])
+            .first()
+        )
+
+        if not product:
+            raise NotFoundError(product_id, "product")
+
+        for key, value in data.items():
+            setattr(product, key, value)
+
+        session.add(product)
+        session.commit()
+
+        product_serialized = serialize_product(product)
+
+        return jsonify(product_serialized), HTTPStatus.OK
+
+    except NotFoundError as e:
+        return e.message, e.status
 
 
 @jwt_required()
-def delete_product(product_id):
-    parent = get_jwt_identity()
+def delete_product(product_id: int):
+    try:
+        user_logged = get_jwt_identity()
 
-    session: Session = db.session
+        session: Session = db.session
+        product: Query = (
+            session.query(ProductModel)
+            .select_from(ProductModel)
+            .filter(ProductModel.id == product_id)
+            .filter(ProductModel.parent_id == user_logged["id"])
+            .first()
+        )
 
-    product: Query = (
-        session.query(ProductModel)
-        .select_from(ProductModel)
-        .filter(ProductModel.id == product_id)
-        .filter(ProductModel.parent_id == parent["id"])
-        .first()
-    )
+        if not product:
+            raise NotFoundError(product_id, "product")
 
-    if not product:
-        return {"Error": "UNAUTHORIZED"}, HTTPStatus.UNAUTHORIZED
+        session.delete(product)
+        session.commit()
 
-    session.delete(product)
-    session.commit()
+        return "", HTTPStatus.NO_CONTENT
 
-    return "", HTTPStatus.NO_CONTENT
+    except NotFoundError as e:
+        return e.message, e.status

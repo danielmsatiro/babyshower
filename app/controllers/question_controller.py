@@ -1,14 +1,20 @@
-from bdb import set_trace
 from http import HTTPStatus
 
-from sqlalchemy.exc import IntegrityError
-
 from app.configs.database import db
+from app.exceptions import (
+    InvalidKeyError,
+    InvalidTypeValueError,
+    NotAuthorizedError,
+    NotFoundError,
+)
 from app.models import QuestionModel
-from flask import jsonify, request, session
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.models.parent_model import ParentModel
+from app.models.product_model import ProductModel
+from app.services.email_service import email_new_question
+from app.services.question_service import serialize_answer
+from flask import jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
-from ipdb import set_trace
 
 
 def get_product_questions(product_id: int):
@@ -17,9 +23,7 @@ def get_product_questions(product_id: int):
 
     questions = base_query.filter(QuestionModel.product_id == product_id).all()
 
-    serialized_questions = [question.__dict__ for question in questions]
-
-    [question.pop("_sa_instance_state") for question in serialized_questions]
+    serialized_questions = [serialize_answer(question) for question in questions]
 
     return jsonify(serialized_questions), HTTPStatus.OK
 
@@ -28,57 +32,103 @@ def get_product_questions(product_id: int):
 def create_question(product_id: int):
     data: dict = request.get_json()
 
-    parent = get_jwt_identity()
+    user_logged = get_jwt_identity()
 
-    data["parent_id"] = parent["id"]
+    data["parent_id"] = user_logged["id"]
 
     data["product_id"] = product_id
+
     try:
         question = QuestionModel(**data)
-    
+
         session: Session = db.session
-        
+
+        product: ProductModel = (
+            session.query(ProductModel).filter_by(id=product_id).first()
+        )
+        if not product:
+            raise NotFoundError(product_id, "product")
         session.add(question)
         session.commit()
-    except IntegrityError:
-        return {"Error": "Product not found"}
-    
-    return jsonify(question), HTTPStatus.CREATED
+
+        lead: ParentModel = (
+            session.query(ParentModel).filter_by(id=question.parent_id).first()
+        )
+        owner: ParentModel = (
+            session.query(ParentModel).filter_by(id=product.parent_id).first()
+        )
+        email_new_question(
+            owner.username, product.title, owner.email, lead.username, question.question
+        )
+
+        return jsonify(question), HTTPStatus.CREATED
+
+    except NotFoundError as e:
+        return e.message, e.status
 
 
 @jwt_required()
 def update_question(question_id: int):
     data: dict = request.get_json()
-
-    parent = get_jwt_identity()
+    received_key = set(data.keys())
+    expected_key = {"question"}
+    user_logged = get_jwt_identity()
 
     session: Session = db.session
 
-    question = session.query(QuestionModel).get(question_id)
+    try:
+        if not type(data["question"]) == str:
+            raise InvalidTypeValueError
 
-    if parent["id"] == question.parent_id:
-        for key, value in data.items():
-            setattr(question, key, value)
-        session.commit()
-    else:
-        return {"msg": "Unauthorized action"}, HTTPStatus.UNAUTHORIZED
+        if not received_key == expected_key:
+            raise InvalidKeyError(received_key, expected_key)
 
-    return jsonify(question), HTTPStatus.OK
+        question = session.query(QuestionModel).get(question_id)
+
+        if not question:
+            raise NotFoundError(question_id, "question")
+
+        if user_logged["id"] == question.parent_id:
+            for key, value in data.items():
+                setattr(question, key, value)
+            session.commit()
+        else:
+            raise NotAuthorizedError
+
+        return jsonify(question), HTTPStatus.OK
+
+    except NotFoundError as e:
+        return e.message, e.status
+    except NotAuthorizedError as e:
+        return e.message, e.status
+    except InvalidKeyError as e:
+        return e.message, e.status
+    except InvalidTypeValueError as e:
+        return e.message, e.status
 
 
 @jwt_required()
 def delete_question(question_id: int):
     session: Session = db.session
 
-    parent = get_jwt_identity()
-    
+    user_logged = get_jwt_identity()
+
     question = session.query(QuestionModel).filter_by(id=question_id).first()
-  
-    if parent["id"] == question.parent_id:
-        session.delete(question)
 
-        session.commit()
-    else:
-        return {"msg": "Unauthorized action"}, HTTPStatus.UNAUTHORIZED
+    try:
+        if not question:
+            raise NotFoundError(question_id, "question")
 
-    return "", HTTPStatus.NO_CONTENT
+        if user_logged["id"] == question.parent_id:
+            session.delete(question)
+            session.commit()
+
+        else:
+            raise NotAuthorizedError
+
+        return "", HTTPStatus.NO_CONTENT
+
+    except NotFoundError as e:
+        return e.message, e.status
+    except NotAuthorizedError as e:
+        return e.message, e.status
