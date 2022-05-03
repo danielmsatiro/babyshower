@@ -63,7 +63,9 @@ class ParentModel(db.Model):
 
     @validates("phone")
     def validate_phone_type(self, key, phone_to_be_tested):
-        valid = re.compile(r"^\(\d{2}\)\s\d{4,5}\-\d{4}")
+        valid = re.compile(
+            r"^\((?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])\) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4}$"
+        )
         if not valid.search(phone_to_be_tested):
             raise InvalidPhoneFormatError
 
