@@ -2,18 +2,18 @@ from copy import deepcopy
 from http import HTTPStatus
 
 from app.configs.database import db
+from app.exceptions import InvalidKeyError, NotFoundError
 from app.exceptions.products_exceptions import (
-    NonexistentParentProductsError,
-    NonexistentProductError,
+    InvalidTypeKeyCategoryError,
+    InvalidTypeNumberError,
 )
-from app.exceptions import InvalidKeyError
-from app.models import CategoryModel, ProductModel, category_product
+from app.models import CategoryModel, ProductModel
+from app.models import CategoryModel, ProductModel
 from app.models.parent_model import ParentModel
 from app.services.email_service import email_new_product
 from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from ipdb import set_trace
 from sqlalchemy.orm import Query, Session
 
 
@@ -71,19 +71,19 @@ def get_by_id(product_id: int):
         product_serialized = serialize_product(product)
 
         if not product:
-            raise NonexistentProductError
+            raise NotFoundError(product_id, "product")
 
         return jsonify(product_serialized), HTTPStatus.OK
 
-    except NonexistentProductError as err:
-        return err.message, HTTPStatus.NOT_FOUND
+    except NotFoundError as e:
+        return e.message, e.status
 
 
 def get_by_parent(parent_id: int):
     try:
         products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
         if not products:
-            raise NonexistentParentProductsError
+            raise NotFoundError(parent_id, "parent")
 
         for i in range(len(products)):
             product_serialized = serialize_product(products[i])
@@ -91,32 +91,29 @@ def get_by_parent(parent_id: int):
 
         return {"products": products}, HTTPStatus.OK
 
-    except NonexistentParentProductsError as err:
-        return err.message, HTTPStatus.NOT_FOUND
+    except NotFoundError as e:
+        return e.message, e.status
 
 
 @jwt_required()
 def create_product():
-    data: dict = request.get_json()
-
-    avaible_keys = {
-            "title",
-            "price",
-            "parent_id", 
-            "description", 
-            "image",
-            "categories"
-    }
-
-    received_keys = set(data.keys())
-
     try:
-
         user_logged = get_jwt_identity()
 
-        if not received_keys == avaible_keys:
-            raise InvalidKeyError(received_keys, avaible_keys)
+        data: dict = request.get_json()
+        received_key = set(data.keys())
         
+        available_keys = {
+            "title",
+            "description",
+            "price",
+            "image",
+            "categories",
+        }
+
+        if not received_key == available_keys:
+            raise InvalidKeyError(received_key, available_keys)
+
         data["parent_id"] = user_logged["id"]
 
         query: Query = db.session.query(CategoryModel)
@@ -137,13 +134,16 @@ def create_product():
         session.commit()
 
         email_new_product(parent.username, product.title, parent.email)
-
         product_serialized = serialize_product(product)
 
         return jsonify(product_serialized), HTTPStatus.CREATED
-    
-    except InvalidKeyError as err:
-        return err.message, HTTPStatus.UNPROCESSABLE_ENTITY
+
+    except InvalidTypeNumberError as e:
+        return e.message, e.status
+    except InvalidKeyError as e:
+        return e.message, e.status
+    except InvalidTypeKeyCategoryError as e:
+        return e.message, e.status
 
 
 @jwt_required()
@@ -177,7 +177,7 @@ def update_product(product_id: int):
         )
 
         if not product:
-            raise NonexistentProductError
+            raise NotFoundError(product_id, "product")
 
         for key, value in data.items():
             setattr(product, key, value)
@@ -189,8 +189,8 @@ def update_product(product_id: int):
 
         return jsonify(product_serialized), HTTPStatus.OK
 
-    except NonexistentProductError as err:
-        return err.message, HTTPStatus.NOT_FOUND
+    except NotFoundError as e:
+        return e.message, e.status
 
 
 @jwt_required()
@@ -208,12 +208,12 @@ def delete_product(product_id: int):
         )
 
         if not product:
-            raise NonexistentProductError
+            raise NotFoundError(product_id, "product")
 
         session.delete(product)
         session.commit()
 
         return "", HTTPStatus.NO_CONTENT
 
-    except NonexistentProductError as err:
-        return err.message, HTTPStatus.NOT_FOUND
+    except NotFoundError as e:
+        return e.message, e.status

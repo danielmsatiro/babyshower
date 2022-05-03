@@ -1,8 +1,7 @@
 from dataclasses import asdict
 
-from flask import url_for
-
 from app.models.product_model import ProductModel
+from flask import url_for
 
 
 def serialize_product(product: ProductModel) -> dict:

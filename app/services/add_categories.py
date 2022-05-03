@@ -1,6 +1,5 @@
 from app.configs.database import db
 from app.models.category_model import CategoryModel
-from flask.cli import AppGroup
 from sqlalchemy.orm.session import Session
 
 categories_names_list = [

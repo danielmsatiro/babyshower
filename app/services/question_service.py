@@ -1,15 +1,13 @@
 from dataclasses import asdict
-from flask import url_for
-from app.models import AnswerModel, ParentModel, ProductModel, QuestionModel
-from sqlalchemy.orm import Query, Session
+
 from app.configs.database import db
+from app.models import AnswerModel, ParentModel, ProductModel, QuestionModel
+from flask import url_for
+from sqlalchemy.orm import Query, Session
 
 
 def serialize_answer(question: QuestionModel) -> dict:
     question_serialized = asdict(question)
-    print("=" * 80)
-    print(question)
-    print("=" * 80)
 
     session: Session = db.session
 
@@ -42,7 +40,6 @@ def serialize_answer(question: QuestionModel) -> dict:
             .filter(QuestionModel.id == question_serialized["answer"]["question_id"])
         )
     result = query.first()
-    print(query)
 
     if question.answer:
         answer = {
@@ -57,7 +54,6 @@ def serialize_answer(question: QuestionModel) -> dict:
         answer = {"username": username[0], "answer": "A responder"}
 
     question_serialized.update(answer)
-    print(question_serialized)
     # question_serialized.pop('question_id')
 
     return question_serialized

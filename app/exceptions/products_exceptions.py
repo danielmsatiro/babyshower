@@ -1,19 +1,7 @@
-from werkzeug.exceptions import BadRequest
+from http import HTTPStatus
 
 
-class InvalidDataError(BadRequest):
-    ...
-
-
-class NonexistentProductError(Exception):
-    def __init__(self):
-        self.message = {"error": "Product not found."}
-
-        super().__init__(self.message)
-
-
-class NonexistentParentProductsError(Exception):
-    def __init__(self):
-        self.message = {"error": "No products found for this parent."}
-
-        super().__init__(self.message)
+class InvalidTypeNumberError(Exception):
+    def __init__(self, key) -> None:
+        self.message = {"Error": f"The value of keys '{key}' needs to be number!"}
+        self.status = HTTPStatus.UNPROCESSABLE_ENTITY
