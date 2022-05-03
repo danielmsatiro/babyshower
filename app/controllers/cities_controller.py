@@ -1,11 +1,11 @@
-from flask import request
-from ipdb import set_trace
 from http import HTTPStatus
 
-from sqlalchemy import desc, true
 from app.configs.database import db
-from sqlalchemy.orm import Query, Session
 from app.models.cities_model import CityModel
+from flask import request
+from ipdb import set_trace
+from sqlalchemy import desc, true
+from sqlalchemy.orm import Query, Session
 
 
 def retrieve():
@@ -19,14 +19,14 @@ def retrieve():
     if params.get("city") and params.get("state"):
         response: Query = (
             session.query(CityModel)
-            .filter_by(city=params.get("city"))
-            .filter_by(state=params.get("state"))
+            .filter(CityModel.city.ilike(f"%{params.get('city')}%"))
+            .filter(CityModel.state.ilike(f"%{params.get('state')}%"))
             .all()
         )
     elif params.get("city"):
         response: Query = (
             session.query(CityModel)
-            .filter_by(city=params.get("city"))
+            .filter(CityModel.city.ilike(f"%{params.get('city')}%"))
             .offset(page * per_page)
             .limit(per_page)
             .all()
@@ -34,7 +34,7 @@ def retrieve():
     elif params.get("state"):
         response: Query = (
             session.query(CityModel)
-            .filter_by(state=params.get("state"))
+            .filter(CityModel.state.ilike(f"%{params.get('state')}%"))
             .order_by(desc(CityModel.capital))
             .offset(page * per_page)
             .limit(per_page)
@@ -42,16 +42,9 @@ def retrieve():
         )
     cities = []
     for city in response:
-        city: CityModel
-        city = {
-            "code_ibge": city.code_ibge,
-            "city": city.city,
-            "capital": city.capital,
-            "code_uf": city.code_uf,
-            "uf": city.uf,
-            "state": city.state,
-            "latitude": city.latitude,
-            "longitude": city.longitude,
-        }
+        city = city.__dict__
+        city.pop("_sa_instance_state")
+        city.pop("geom")
         cities.append(city)
+
     return {"cities": cities}, HTTPStatus.OK

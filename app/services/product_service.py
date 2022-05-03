@@ -36,10 +36,8 @@ def products_per_geolocalization(
 
     session: Session = db.session
 
-    # set_trace()
-
     query_city = session.query(CityModel)
-    parents_id = session.query(ParentModel)
+    parents_id = session.query(ParentModel.id)
 
     try:
         if localization:
@@ -59,10 +57,11 @@ def products_per_geolocalization(
             )
         if "state" and "city" in data.keys():
             city_current = (
-                query_city.filter_by(city=data["city"])
-                .filter_by(state=data["state"])
+                query_city.filter(CityModel.city.ilike(f"%{data['city']}%"))
+                .filter(CityModel.state.ilike(f"%{data['state']}%"))
                 .first()
             )
+
         if "distance" in data.keys():
             distance = data["distance"]
             cities = city_current.get_cities_within_radius(int(distance))
@@ -71,12 +70,14 @@ def products_per_geolocalization(
 
         cities_points_id = [city.point_id for city in cities]
 
-        for parent in parents_id:
+        """ for parent in parents_id:
             parent: ParentModel
             if parent.city_point_id in cities_points_id:
-                parents_id = parents_id.filter_by(city_point_id=parent.city_point_id)
+                parents_id = parents_id.filter_by(city_point_id=parent.city_point_id) """
 
-        parents_id = [parent.id for parent in parents_id.all()]
+        parents_id = parents_id.filter(ParentModel.city_point_id.in_(cities_points_id))
+
+        # parents_id = [parent.id for parent in parents_id.all()]
 
         products = products.filter(ProductModel.parent_id.in_(parents_id))
     except Exception:
