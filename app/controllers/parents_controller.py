@@ -41,8 +41,9 @@ def new_parents():
 
     cities_query: Query = session.query(CityModel)
 
-    point_id_current = cities_query.filter_by(
-        city=city).filter_by(state=state).first().point_id
+    point_id_current = (
+        cities_query.filter_by(city=city).filter_by(state=state).first().point_id
+    )
 
     data.update({"city_point_id": point_id_current})
 
@@ -51,8 +52,15 @@ def new_parents():
 
     received_key = set(user_current.keys())
     available_keys = {
-        "cpf", "username", "name", "email", "password", "phone",
-        "city", "state"}
+        "cpf",
+        "username",
+        "name",
+        "email",
+        "password",
+        "phone",
+        "city",
+        "state",
+    }
 
     try:
         if not received_key == available_keys:

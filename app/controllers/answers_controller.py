@@ -42,8 +42,7 @@ def create_answer(question_id: int):
             raise NotFoundError(question_id, "Question")
 
         product: ProductModel = (
-            session.query(ProductModel).filter_by(
-                id=question.product_id).first()
+            session.query(ProductModel).filter_by(id=question.product_id).first()
         )
 
         if user_logged["id"] != product.parent_id:
@@ -107,8 +106,7 @@ def update_answer(answer_id: int):
         if not received_key == expected_key:
             raise InvalidKeyError(received_key, expected_key)
 
-        answer: AnswerModel = session.query(
-            AnswerModel).filter_by(id=answer_id).first()
+        answer: AnswerModel = session.query(AnswerModel).filter_by(id=answer_id).first()
         if not answer:
             raise NotFoundError(answer_id, "answer")
 

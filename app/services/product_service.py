@@ -1,11 +1,12 @@
 from dataclasses import asdict
 
 from app.configs.database import db
+from app.exceptions import NotFoundError
+from app.models.category_model import CategoryModel
 from app.models.cities_model import CityModel
 from app.models.parent_model import ParentModel
 from app.models.product_model import ProductModel
 from flask import jsonify, request, url_for
-from ipdb import set_trace
 from sqlalchemy.orm import Query, Session
 
 
@@ -20,8 +21,7 @@ def serialize_product(product: ProductModel) -> dict:
     product_serialized.update(url)
 
     for i in range(len(product_serialized["categories"])):
-        product_serialized[
-            "categories"][i] = product_serialized["categories"][i][
+        product_serialized["categories"][i] = product_serialized["categories"][i][
             "name"
         ]
 
@@ -74,15 +74,32 @@ def products_per_geolocalization(
         for parent in parents_id:
             parent: ParentModel
             if parent.city_point_id in cities_points_id:
-                parents_id = parents_id.filter_by(
-                    city_point_id=parent.city_point_id)
+                parents_id = parents_id.filter_by(city_point_id=parent.city_point_id)
 
         parents_id = [parent.id for parent in parents_id.all()]
 
         products = products.filter(ProductModel.parent_id.in_(parents_id))
     except Exception:
-        products: Query = products.offset(
-            page * per_page).limit(per_page).all()
+        products: Query = products.offset(page * per_page).limit(per_page).all()
         return jsonify(products), 200
 
     return jsonify(products.all()), 200
+
+
+def verify_product_categories(data):
+    received_categories = data["categories"]
+
+    db_categories: CategoryModel = CategoryModel.query.all()
+
+    categories_by_name = []
+
+    for item in db_categories:
+        categories_by_name.append(item.name)
+
+    unfinded_categories = []
+
+    for categorie in received_categories:
+        if categorie not in categories_by_name:
+            unfinded_categories.append(categorie)
+
+    return {"categories": categories_by_name, "unfinded": unfinded_categories}

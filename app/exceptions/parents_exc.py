@@ -6,7 +6,6 @@ class InvalidCpfLenghtError(Exception):
     status = HTTPStatus.BAD_REQUEST
 
 
-
 class InvalidPhoneFormatError(Exception):
     message = {
         "Error": "The phone number is not valid",

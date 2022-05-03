@@ -41,4 +41,5 @@ def parents_cli():
                 break
 
         print(f"{all_parents_number} parents added with sucess")
+
     return parent_group

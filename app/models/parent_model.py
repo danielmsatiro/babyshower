@@ -31,15 +31,12 @@ class ParentModel(db.Model):
     phone = Column(String, nullable=False)
 
     city_point_id = Column(
-        Integer, ForeignKey(
-            "cities.point_id", ondelete="CASCADE"), nullable=False
+        Integer, ForeignKey("cities.point_id", ondelete="CASCADE"), nullable=False
     )
 
-    products = relationship(
-        "ProductModel", backref=backref("parent", uselist=False))
+    products = relationship("ProductModel", backref=backref("parent", uselist=False))
 
-    questions = relationship(
-        "QuestionModel", backref=backref("parent", uselist=False))
+    questions = relationship("QuestionModel", backref=backref("parent", uselist=False))
 
     @property
     def password(self):
@@ -50,8 +47,7 @@ class ParentModel(db.Model):
         self.password_hash = generate_password_hash(password_to_hash)
 
     def verify_password(self, password_to_compare):
-        return check_password_hash(
-            self.password_hash, password_to_compare)
+        return check_password_hash(self.password_hash, password_to_compare)
 
     @validates("cpf")
     def validate_cpf_type(self, key, cpf_to_be_tested):

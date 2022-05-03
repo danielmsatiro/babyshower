@@ -44,8 +44,7 @@ def create_question(product_id: int):
         session: Session = db.session
 
         product: ProductModel = (
-            session.query(
-                ProductModel).filter_by(id=product_id).first()
+            session.query(ProductModel).filter_by(id=product_id).first()
         )
         if not product:
             raise NotFoundError(product_id, "product")
