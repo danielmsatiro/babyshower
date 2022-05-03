@@ -10,7 +10,7 @@ bp_api = Blueprint("bp_api", __name__, url_prefix="/api")
 
 @bp_api.get("")
 def home():
-    return render_template("base.html")
+    return render_template("readme.html")
 
 
 def init_app(app: Flask) -> None:
