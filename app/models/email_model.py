@@ -1,9 +1,10 @@
+import smtplib
+import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import smtplib, ssl
 from os import getenv
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -26,9 +27,6 @@ class EmailModel:
         email.attach(MIMEText(self.message, "html"))
 
         context = ssl.create_default_context()
-        with smtplib.SMTP_SSL(
-            "smtp.gmail.com",
-             port=465, context=context) as server:
+        with smtplib.SMTP_SSL("smtp.gmail.com", port=465, context=context) as server:
             server.login(email["From"], self.password)
-            server.sendmail(email["From"], self.email_to_send,
-                            email.as_string())
+            server.sendmail(email["From"], self.email_to_send, email.as_string())

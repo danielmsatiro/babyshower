@@ -16,11 +16,13 @@ def parents_cli():
     def create_parents(quantity):
         session: Session = db.session
         parents = []
+        erro = False
 
-        for _ in range(int(quantity)):
+        for i in range(int(quantity)):
             number = fake.msisdn()
             phone_number = f"({number[2:4]}) {number[4:9]}-{8348}"
             try:
+                phone = fake.ean(length=13)[:11]
                 parents.append(
                     ParentModel(
                         cpf=fake.ean(length=13)[:11],
@@ -33,11 +35,15 @@ def parents_cli():
                     )
                 )
             except Exception:
+                erro = True
+                print(f"Erro ao gerar parent {i}")
                 continue
 
         session.add_all(parents)
         session.commit()
-
-        print(f"{quantity} parents added")
+        if erro:
+            print(f"Erro ao incluir")
+        else:
+            print(f"{quantity} parents added")
 
     return parent_group

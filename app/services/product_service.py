@@ -1,13 +1,12 @@
-from ipdb import set_trace
 from dataclasses import asdict
 
-from flask import jsonify, request, url_for
+from app.configs.database import db
 from app.models.cities_model import CityModel
 from app.models.parent_model import ParentModel
-
 from app.models.product_model import ProductModel
+from flask import jsonify, request, url_for
+from ipdb import set_trace
 from sqlalchemy.orm import Query, Session
-from app.configs.database import db
 
 
 def serialize_product(product: ProductModel) -> dict:
@@ -21,17 +20,18 @@ def serialize_product(product: ProductModel) -> dict:
     product_serialized.update(url)
 
     for i in range(len(product_serialized["categories"])):
-        product_serialized[
-            "categories"][i] = product_serialized["categories"][i][
+        product_serialized["categories"][i] = product_serialized["categories"][i][
             "name"
         ]
+
+    product_serialized["price"] = float(product_serialized["price"])
 
     return product_serialized
 
 
 def products_per_geolocalization(
-        products: ProductModel,
-        page, per_page, localization: CityModel, data: dict):
+    products: ProductModel, page, per_page, localization: CityModel, data: dict
+):
 
     session: Session = db.session
 
@@ -43,17 +43,23 @@ def products_per_geolocalization(
             user_city = localization.city
             user_state = localization.state
             if user_state and user_city:
-                city_current = query_city.filter_by(
-                    city=user_city).filter_by(
-                        state=user_state).first()
+                city_current = (
+                    query_city.filter_by(city=user_city)
+                    .filter_by(state=user_state)
+                    .first()
+                )
         if "latitude" and "longitude" in data.keys():
-            city_current = query_city.filter_by(
-                latitude=float(data["latitude"])).filter_by(
-                    longitude=float(data["longitude"])).first()
+            city_current = (
+                query_city.filter_by(latitude=float(data["latitude"]))
+                .filter_by(longitude=float(data["longitude"]))
+                .first()
+            )
         if "state" and "city" in data.keys():
-            city_current = query_city.filter_by(
-                city=data["city"]).filter_by(
-                    state=data["state"]).first()
+            city_current = (
+                query_city.filter_by(city=data["city"])
+                .filter_by(state=data["state"])
+                .first()
+            )
         if "distance" in data.keys():
             distance = data["distance"]
             cities = city_current.get_cities_within_radius(int(distance))
@@ -65,8 +71,7 @@ def products_per_geolocalization(
         for parent in parents_id:
             parent: ParentModel
             if parent.city_point_id in cities_points_id:
-                parents_id = parents_id.filter_by(
-                        city_point_id=parent.city_point_id)
+                parents_id = parents_id.filter_by(city_point_id=parent.city_point_id)
 
         parents_id = [parent.id for parent in parents_id.all()]
 
@@ -78,8 +83,7 @@ def products_per_geolocalization(
         products = products.offset(page * per_page).limit(per_page).all()
 
     except Exception:
-        products: Query = products.offset(
-            page * per_page).limit(per_page).all()
+        products: Query = products.offset(page * per_page).limit(per_page).all()
         return jsonify(products), 200
 
     return jsonify(products), 200

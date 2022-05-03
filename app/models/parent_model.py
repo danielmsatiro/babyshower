@@ -1,13 +1,10 @@
-from dataclasses import dataclass
 import re
-
-from app.exceptions.parents_exc import InvalidEmailLenghtError
-from app.exceptions.parents_exc import InvalidTypeValueError
-from app.exceptions.parents_exc import InvalidPhoneFormatError
+from dataclasses import dataclass
 
 from app.configs.database import db
-from sqlalchemy.orm import backref, relationship
-from sqlalchemy import Column, ForeignKey, Integer, String
+from app.exceptions import InvalidTypeValueError
+from app.exceptions.parents_exc import InvalidCpfLenghtError, InvalidPhoneFormatError
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import backref, relationship, validates
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.models.cities_model import CityModel
@@ -59,10 +56,10 @@ class ParentModel(db.Model):
     @validates("cpf")
     def validate_cpf_type(self, key, cpf_to_be_tested):
         if type(cpf_to_be_tested) != str:
-            raise InvalidTypeValueError
+            raise InvalidTypeValueError(cpf_to_be_tested)
 
         if len(cpf_to_be_tested) != 11:
-            raise InvalidEmailLenghtError
+            raise InvalidCpfLenghtError
 
         return cpf_to_be_tested
 
@@ -75,7 +72,9 @@ class ParentModel(db.Model):
 
     @validates("phone")
     def validate_phone_type(self, key, phone_to_be_tested):
-        valid = re.compile(r"^\(\d{2}\)\s\d{4,5}\-\d{4}")
+        valid = re.compile(
+            r"^\((?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])\) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4}$"
+        )
         if not valid.search(phone_to_be_tested):
             raise InvalidPhoneFormatError
 
