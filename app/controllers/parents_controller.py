@@ -1,21 +1,17 @@
 from ipdb import set_trace
 from http import HTTPStatus
-from zoneinfo import available_timezones
-
-from sqlalchemy.exc import IntegrityError
-from psycopg2.errors import UniqueViolation
-from app.exceptions.parents_exc import InvalidTypeValueError
-from app.exceptions.parents_exc import InvalidEmailLenghtError
-from app.exceptions.parents_exc import InvalidPhoneFormatError
-from app.exceptions import InvalidKeyError, InvalidTypeValueError
 
 from app.configs.database import db
+from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
+from app.exceptions.parents_exc import InvalidCpfLenghtError, InvalidPhoneFormatError
 from app.models import ParentModel
 from app.models.cities_model import CityModel
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity
 from flask_jwt_extended import jwt_required
 from sqlalchemy.orm import Query, Session
+from psycopg2.errors import UniqueViolation
+from sqlalchemy.exc import IntegrityError
 
 from app.services.email_service import email_to_new_user
 
@@ -80,7 +76,7 @@ def new_parents():
     except InvalidTypeValueError as e:
         return e.message, e.status
 
-    except InvalidEmailLenghtError as e:
+    except InvalidCpfLenghtError as e:
         return e.message, e.status
 
     except InvalidPhoneFormatError as e:
@@ -88,9 +84,9 @@ def new_parents():
 
     except IntegrityError as e:
         if type(e.orig) == UniqueViolation:
-            return {"error": f"""{
-                e.args[0].split(" ")[-4:-2]
-                } already exists"""}, HTTPStatus.CONFLICT
+            return {
+                "error": f"""{e.args[0].split(" ")[-4:-2]} already exists"""
+            }, HTTPStatus.CONFLICT
 
     email_to_new_user(parent.username, parent.email)
 
@@ -109,8 +105,12 @@ def login():
     if not found_parent:
         return {"message": "User not found"}, HTTPStatus.NOT_FOUND
 
-    if not found_parent.verify_password(parent_data["password"]):
-        return {"message": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+    try:
+        if not found_parent.verify_password(parent_data["password"]):
+            raise NotAuthorizedError
+
+    except NotAuthorizedError as e:
+        return e.message, e.status
 
     information_for_encoding = {
         "id": found_parent.id,
@@ -136,10 +136,9 @@ def update_parents():
         if received_key - available_keys:
             raise InvalidKeyError(received_key, available_keys)
 
-        # Valida o tipo dos dados
-        for value in list(data):
-            if type(data[value]) != str:
-                raise InvalidTypeValueError
+        for key, value in data.items():
+            if type(value) != str:
+                raise InvalidTypeValueError(key)
 
         session: Session = db.session
 
@@ -154,8 +153,8 @@ def update_parents():
 
     except InvalidKeyError as e:
         return e.message, e.status
-
-    # Valida o formato de telefone
+    except InvalidTypeValueError as e:
+        return e.message, e.status
     except InvalidPhoneFormatError as e:
         return e.message, e.status
 

@@ -1,13 +1,13 @@
 from dataclasses import asdict
-from flask import url_for
-from app.models import AnswerModel, ParentModel, ProductModel, QuestionModel
-from sqlalchemy.orm import Query, Session
+
 from app.configs.database import db
+from app.models import AnswerModel, ParentModel, ProductModel, QuestionModel
+from flask import url_for
+from sqlalchemy.orm import Query, Session
 
 
 def serialize_answer(answer: AnswerModel) -> dict:
     answer_serialized = asdict(answer)
-    print(f"{answer_serialized=}")
 
     username = (
         db.session.query(ParentModel.username)

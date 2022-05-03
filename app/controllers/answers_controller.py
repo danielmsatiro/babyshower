@@ -1,18 +1,21 @@
-from sqlalchemy.orm import Query, Session
-from app.exceptions.answer_exc import NotAuthorizedError
-from app.exceptions import InvalidKeyError, InvalidTypeValueError
-from app.exceptions import NotFoundError
-from flask import request, current_app, jsonify
 from http import HTTPStatus
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.configs.database import db
+from app.exceptions import (
+    InvalidKeyError,
+    InvalidTypeValueError,
+    NotAuthorizedError,
+    NotFoundError,
+)
 from app.models.answer_model import AnswerModel
 from app.models.parent_model import ParentModel
-from app.models.question_model import QuestionModel
 from app.models.product_model import ProductModel
+from app.models.question_model import QuestionModel
 from app.services.answer_service import serialize_answer
 from app.services.email_service import email_new_answer
+from flask import jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy.orm import Session
 
 
 @jwt_required()
@@ -54,17 +57,18 @@ def create_answer(question_id: int):
         session.add(new_answer)
         session.commit()
 
-        lead: ParentModel = session.query(
-            ParentModel).filter_by(id=question.parent_id).first()
-        owner: ParentModel = session.query(
-            ParentModel).filter_by(id=product.parent_id).first()
+        lead: ParentModel = (
+            session.query(ParentModel).filter_by(id=question.parent_id).first()
+        )
+        owner: ParentModel = (
+            session.query(ParentModel).filter_by(id=product.parent_id).first()
+        )
 
         email_new_answer(
-            lead.username, product.title, lead.email,
-            owner.username, new_answer.answer)
+            lead.username, product.title, lead.email, owner.username, new_answer.answer
+        )
 
-        return jsonify(serialize_answer(
-            new_answer)), HTTPStatus.CREATED
+        return jsonify(serialize_answer(new_answer)), HTTPStatus.CREATED
 
     except NotFoundError as e:
         return e.message, e.status
@@ -77,9 +81,13 @@ def create_answer(question_id: int):
 
 
 def read_answer(answer_id: int):
-    answer = AnswerModel.query.filter_by(id=answer_id).first()
-
-    return jsonify(serialize_answer(answer)), HTTPStatus.OK
+    try:
+        answer = AnswerModel.query.filter_by(id=answer_id).first()
+        if not answer:
+            raise NotFoundError(answer_id, "answer")
+        return jsonify(serialize_answer(answer)), HTTPStatus.OK
+    except NotFoundError as e:
+        return e.message, e.status
 
 
 @jwt_required()
@@ -113,6 +121,8 @@ def update_answer(answer_id: int):
         session.add(answer)
         session.commit()
 
+        return jsonify(serialize_answer(answer)), HTTPStatus.OK
+
     except AttributeError:
         return {"Error": "Answer not found"}, HTTPStatus.NOT_FOUND
     except NotAuthorizedError as e:
@@ -124,29 +134,25 @@ def update_answer(answer_id: int):
     except InvalidTypeValueError as e:
         return e.message, e.status
 
-    return jsonify(serialize_answer(answer)), HTTPStatus.OK
-
 
 @jwt_required()
 def delete_answer(answer_id: int):
     user_logged = get_jwt_identity()
 
     session: Session = db.session
-
-    answer: AnswerModel = session.query(
-        AnswerModel).filter_by(id=answer_id).first()
+    answer: AnswerModel = session.query(AnswerModel).filter_by(id=answer_id).first()
 
     try:
         if not answer:
             raise NotFoundError(answer_id, "answer")
         if user_logged["id"] != answer.parent_id:
             raise NotAuthorizedError
+        session.delete(answer)
+        session.commit()
+
+        return "", HTTPStatus.NO_CONTENT
+
     except NotAuthorizedError as e:
         return e.message, e.status
     except NotFoundError as e:
         return e.message, e.status
-
-    session.delete(answer)
-    session.commit()
-
-    return "", HTTPStatus.NO_CONTENT

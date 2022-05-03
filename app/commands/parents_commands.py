@@ -15,11 +15,11 @@ def parents_cli():
     @click.argument("quantity")
     def create_parents(quantity):
         session: Session = db.session
-
+        all_parents_number = 0
         for _ in range(int(quantity)):
             parents = []
             number = fake.msisdn()
-            phone_number = f"({number[2:4]}) {number[4:9]}-{8348}"
+            phone_number = f"({number[2:4]}) {number[4:9]}-{number[9:13]}"
             try:
                 parents.append(
                     ParentModel(
@@ -32,12 +32,13 @@ def parents_cli():
                         city_point_id=random.randint(1, 10 - 1),
                     )
                 )
-                print(f"{_} parent added")
+                all_parents_number += 1
+                print(f"{_+1} parent added")
                 session.add_all(parents)
                 session.commit()
             except Exception:
+                print(f"error generating parent current")
                 break
 
-        print(f"{quantity} parents added")
-
+        print(f"{all_parents_number} parents added with sucess")
     return parent_group
