@@ -11,11 +11,17 @@ class InvalidKeyError(Exception):
 
 
 class InvalidTypeValueError(Exception):
-    message = {"Error": "Check if type is a string"}
-    status = HTTPStatus.UNAUTHORIZED
+    def __init__(self, key) -> None:
+        self.message = {"Error": f"The value of keys '{key}' needs to be string!"}
+        self.status = HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 class NotFoundError(Exception):
     def __init__(self, id, modelclass):
         self.message = {"Error": f"{modelclass}: id {id} not found"}
         self.status = HTTPStatus.NOT_FOUND
+
+
+class NotAuthorizedError(Exception):
+    message = {"Error": "User not authorized"}
+    status = HTTPStatus.UNAUTHORIZED

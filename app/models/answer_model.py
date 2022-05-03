@@ -1,10 +1,7 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import backref, relationship
 from dataclasses import dataclass
 
 from app.configs.database import db
-from app.models.parent_model import ParentModel
-from app.models.question_model import QuestionModel
+from sqlalchemy import Column, ForeignKey, Integer, String
 
 
 @dataclass

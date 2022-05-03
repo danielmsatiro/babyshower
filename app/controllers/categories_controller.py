@@ -1,8 +1,8 @@
 from http import HTTPStatus
-from flask import jsonify
+
 from app.configs.database import db
-from sqlalchemy.orm import Query
 from app.models.category_model import CategoryModel
+from sqlalchemy.orm import Query
 
 
 def retrieve():
