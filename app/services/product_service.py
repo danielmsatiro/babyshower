@@ -1,7 +1,10 @@
 from dataclasses import asdict
 
 from app.models.product_model import ProductModel
+from app.models.category_model import CategoryModel
 from flask import url_for
+
+from app.exceptions import NotFoundError
 
 
 def serialize_product(product: ProductModel) -> dict:
@@ -22,3 +25,30 @@ def serialize_product(product: ProductModel) -> dict:
     product_serialized["price"] = float(product_serialized["price"])
 
     return product_serialized
+
+
+def verify_product_categories(data):
+    received_categories = data["categories"]
+
+    db_categories: CategoryModel = (
+        CategoryModel
+        .query
+        .all()
+    )
+
+    categories_by_name = []
+
+    for item in db_categories:
+        categories_by_name.append(item.name)
+
+    unfinded_categories = []
+
+    for categorie in received_categories:
+        if categorie not in categories_by_name:
+            unfinded_categories.append(categorie)
+
+    return {
+        "categories": categories_by_name,
+        "unfinded": unfinded_categories
+    }
+        
