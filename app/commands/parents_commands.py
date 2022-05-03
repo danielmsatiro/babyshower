@@ -1,3 +1,4 @@
+import random
 import click
 from app.configs.database import db
 from app.models.parent_model import ParentModel
@@ -17,6 +18,8 @@ def parents_cli():
         parents = []
 
         for _ in range(int(quantity)):
+            number = fake.msisdn()
+            phone_number = f"({number[2:4]}) {number[4:9]}-{8348}"
             try:
                 parents.append(
                     ParentModel(
@@ -25,10 +28,11 @@ def parents_cli():
                         name=fake.name(),
                         email=fake.email(),
                         password=fake.ean(length=8),
-                        phone=fake.phone_number(),
+                        phone=phone_number,
+                        city_point_id=random.randint(1, 10 - 1),
                     )
                 )
-            except:
+            except Exception:
                 continue
 
         session.add_all(parents)

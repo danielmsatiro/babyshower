@@ -13,5 +13,5 @@ class CategoryModel(db.Model):
     description: str
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(128), nullable=False)
+    name = Column(String(128), unique=True, nullable=False)
     description = Column(Text, default="")

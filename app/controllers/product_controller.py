@@ -8,12 +8,15 @@ from app.exceptions.products_exceptions import (
 )
 from app.models import CategoryModel, ProductModel, category_product
 from app.models.parent_model import ParentModel
+from app.services.product_service import products_per_geolocalization
 from app.services.email_service import email_new_product
 from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from ipdb import set_trace
 from sqlalchemy.orm import Query, Session
+from ipdb import set_trace
+from app.models.cities_model import CityModel
 
 
 @jwt_required(optional=True)
@@ -21,6 +24,14 @@ def get_all():
     # Se o token for fornecido automaticamente é possível obter o id
     # e buscar a cidade e o estado do do usuário para a localização.
     user_logged = get_jwt_identity()
+    localization = None
+    if user_logged:
+        session: Session = db.session
+        parents: Query = session.query(ParentModel)
+        cities: Query = session.query(CityModel)
+        user: ParentModel = parents.filter_by(id=user_logged.id).first()
+        localization: CityModel = cities.filter_by(
+            point_id=user.city_point_id).first()
 
     params = dict(request.args.to_dict().items())
 
@@ -33,35 +44,35 @@ def get_all():
         categories = []
 
         for name in deepcopy(data.get("categories", [])):
-            categories.append(session.query(CategoryModel).filter_by(name=name).first())
+            categories.append(session.query(
+                CategoryModel).filter_by(name=name).first())
 
         query: Query = session.query(ProductModel)
 
         if categories:
             for category in categories:
-                query: Query = query.filter(ProductModel.categories.contains(category))
+                query: Query = query.filter(
+                    ProductModel.categories.contains(category))
 
         min_price = data.get("min_price")
         max_price = data.get("max_price")
         title = data.get("title_product")
 
         if min_price:
-            query: Query = query.filter(ProductModel.price >= min_price)
+            query: Query = query.filter(
+                ProductModel.price >= min_price)
         if max_price:
-            query: Query = query.filter(ProductModel.price <= max_price)
+            query: Query = query.filter(
+                ProductModel.price <= max_price)
         if title:
-            query: Query = query.filter(ProductModel.title.ilike(f"%{title}%"))
+            query: Query = query.filter(
+                ProductModel.title.ilike(f"%{title}%"))
 
         page = int(params.get("page", 1)) - 1
         per_page = int(params.get("per_page", 8))
 
-        products: Query = query.offset(page * per_page).limit(per_page).all()
-
-        for i in range(len(products)):
-            product_serialized = serialize_product(products[i])
-            products[i] = product_serialized
-
-        return {"products": products}, HTTPStatus.OK
+        return products_per_geolocalization(
+            query, page, per_page, localization, data)
 
 
 def get_by_id(product_id: int):
@@ -80,7 +91,8 @@ def get_by_id(product_id: int):
 
 def get_by_parent(parent_id: int):
     try:
-        products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
+        products = ProductModel.query.filter(
+            ProductModel.parent_id == parent_id).all()
         if not products:
             raise NonexistentParentProductsError
 
@@ -108,7 +120,8 @@ def create_product():
     product = ProductModel(**data)
 
     for category in categories:
-        response = query.filter(CategoryModel.name.ilike(f"%{category}%")).first()
+        response = query.filter(
+            CategoryModel.name.ilike(f"%{category}%")).first()
         if response:
             product.categories.append(response)
 
@@ -118,7 +131,7 @@ def create_product():
     session.add(product)
     session.commit()
 
-    email_new_product(parent.username, product.title, parent.email)
+    # email_new_product(parent.username, product.title, parent.email)
 
     product_serialized = serialize_product(product)
 

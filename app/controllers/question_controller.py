@@ -7,7 +7,8 @@ from sqlalchemy.sql.traversals import COMPARE_SUCCEEDED
 
 from app.configs.database import db
 from app.exceptions.question_exc import NotAuthorizedError
-from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotFoundError
+from app.exceptions import InvalidKeyError, InvalidTypeValueError
+from app.exceptions import NotFoundError
 from app.models import QuestionModel
 from app.models.parent_model import ParentModel
 from app.models.product_model import ProductModel
@@ -26,9 +27,8 @@ def get_product_questions(product_id: int):
 
     questions = base_query.filter(QuestionModel.product_id == product_id).all()
 
-    serialized_questions = [serialize_answer(question) for question in questions]
-
-    # [question.pop("_sa_instance_state") for question in serialized_questions]
+    serialized_questions = [serialize_answer(
+        question) for question in questions]
 
     return jsonify(serialized_questions), HTTPStatus.OK
 
@@ -49,23 +49,25 @@ def create_question(product_id: int):
         session: Session = db.session
 
         product: ProductModel = (
-            session.query(ProductModel).filter_by(id=product_id).first()
+            session.query(
+                ProductModel).filter_by(id=product_id).first()
         )
         if not product:
             raise NotFoundError(product_id, "product")
         session.add(question)
         session.commit()
 
-        lead: ParentModel = session.query(ParentModel).filter_by(id=question.parent_id).first()
-        owner: ParentModel = session.query(ParentModel).filter_by(id=product.parent_id).first()
-        print(lead)
-        email_new_question(owner.username, product.title, owner.email, lead.username, question.question)
-    
+        lead: ParentModel = session.query(
+            ParentModel).filter_by(id=question.parent_id).first()
+        owner: ParentModel = session.query(
+            ParentModel).filter_by(id=product.parent_id).first()
+        email_new_question(
+            owner.username, product.title,
+            owner.email, lead.username, question.question)
         return jsonify(question), HTTPStatus.CREATED
-    
+
     except NotFoundError as e:
         return e.message, e.status
-
 
 
 @jwt_required()
