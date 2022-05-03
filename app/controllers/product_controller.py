@@ -4,6 +4,7 @@ from http import HTTPStatus
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, NotFoundError
 from app.exceptions.products_exceptions import InvalidTypeNumberError
+from app.exceptions.categories_exc import InvalidCategoryError
 from app.models import CategoryModel, ProductModel
 from app.models.parent_model import ParentModel
 from app.services.email_service import email_new_product
@@ -11,6 +12,7 @@ from app.services.product_service import serialize_product
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
+from app.services.product_service import verify_product_categories
 
 
 @jwt_required(optional=True)
@@ -107,6 +109,11 @@ def create_product():
             "categories",
         }
 
+        verified = verify_product_categories(data)
+
+        if len(verified["unfinded"]) > 0:
+            raise InvalidCategoryError(verified["unfinded"])
+
         if not received_key == available_keys:
             raise InvalidKeyError(received_key, available_keys)
 
@@ -138,8 +145,11 @@ def create_product():
         return e.message, e.status
     except InvalidKeyError as e:
         return e.message, e.status
+    except InvalidCategoryError as e:
+        return e.message, e.status
     """ except InvalidTypeKeyCategoryError as e:
         return e.message, e.status """
+    
 
 
 @jwt_required()
@@ -150,8 +160,13 @@ def update_product(product_id: int):
 
     received_keys = set(data.keys())
 
+    verified = verify_product_categories(data)
+
     try:
         user_logged = get_jwt_identity()
+
+        if len(verified["unfinded"]) > 0:
+            raise InvalidCategoryError(verified["unfinded"])
 
         if not received_keys.issubset(available_keys):
             raise InvalidKeyError(received_keys, available_keys)
@@ -193,6 +208,8 @@ def update_product(product_id: int):
         return jsonify(product_serialized), HTTPStatus.OK
 
     except NotFoundError as e:
+        return e.message, e.status
+    except InvalidCategoryError as e:
         return e.message, e.status
 
 
