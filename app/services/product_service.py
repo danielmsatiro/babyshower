@@ -19,4 +19,6 @@ def serialize_product(product: ProductModel) -> dict:
             "name"
         ]
 
+    product_serialized["price"] = float(product_serialized["price"])
+
     return product_serialized

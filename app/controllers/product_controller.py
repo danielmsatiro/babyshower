@@ -138,23 +138,23 @@ def create_product():
         return e.message, e.status
     except InvalidKeyError as e:
         return e.message, e.status
-    except InvalidTypeKeyCategoryError as e:
-        return e.message, e.status
+    """ except InvalidTypeKeyCategoryError as e:
+        return e.message, e.status """
 
 
 @jwt_required()
 def update_product(product_id: int):
     data: dict = request.get_json()
 
-    avaible_keys = {"title", "price", "parent_id", "description", "image", "categories"}
+    available_keys = {"title", "price", "description", "image", "categories"}
 
     received_keys = set(data.keys())
 
     try:
         user_logged = get_jwt_identity()
 
-        if not received_keys == avaible_keys:
-            raise InvalidKeyError(received_keys, avaible_keys)
+        if not received_keys.issubset(available_keys):
+            raise InvalidKeyError(received_keys, available_keys)
 
         session: Session = db.session
         product: Query = (
@@ -168,8 +168,22 @@ def update_product(product_id: int):
         if not product:
             raise NotFoundError(product_id, "product")
 
+        categories = data.pop("categories")
+
         for key, value in data.items():
             setattr(product, key, value)
+
+        # It's to change categories if informed
+        query_category: Query = db.session.query(CategoryModel)
+        if categories != None:
+            setattr(product, "categories", [])
+
+            for category in categories:
+                response = query_category.filter(
+                    CategoryModel.name.ilike(f"%{category}%")
+                ).first()
+                if response:
+                    product.categories.append(response)
 
         session.add(product)
         session.commit()
