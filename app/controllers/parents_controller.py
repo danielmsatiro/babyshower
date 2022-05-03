@@ -92,7 +92,7 @@ def new_parents():
                 e.args[0].split(" ")[-4:-2]
                 } already exists"""}, HTTPStatus.CONFLICT
 
-    email_to_new_user(parent.username, parent.email)
+    # email_to_new_user(parent.username, parent.email)
 
     return jsonify(user_current), HTTPStatus.CREATED
 

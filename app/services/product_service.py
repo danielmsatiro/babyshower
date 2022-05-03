@@ -36,9 +36,7 @@ def products_per_geolocalization(
     session: Session = db.session
 
     query_city = session.query(CityModel)
-    parents = session.query(ParentModel)
-
-    products_list = []
+    parents_id = session.query(ParentModel)
 
     try:
         if localization:
@@ -62,38 +60,25 @@ def products_per_geolocalization(
         else:
             cities = city_current.get_cities_within_radius()
 
-        # parents_id = session.query(ParentModel.id).filter_by(city_id==point_id).all() 
-        parents_id: Query = session.query(ParentModel.id).all()
+        cities_points_id = [city.point_id for city in cities]
 
-        print(parents_id)
+        for parent in parents_id:
+            parent: ParentModel
+            if parent.city_point_id in cities_points_id:
+                parents_id = parents_id.filter_by(
+                        city_point_id=parent.city_point_id)
 
-        return ""
+        parents_id = [parent.id for parent in parents_id.all()]
 
-        # for city in cities:
-        #     city: CityModel
-        #     for product in products:
-        #         product_onwer = parents.filter_by(id=product.parent_id).first()
-        #         product_onwer: ProductModel
-        #         if (
-        #             city.nome_municipio == product_onwer.nome_municipio
-        #             and product not in products_list
-        #         ):
-        #             products_list.append(product)
-        # if (page or page == 0) and per_page:
-        #     if page == 0:
-        #         page = 1
-        #     date_response = {"products": []}
-        #     products_limit = page * per_page
-        #     if products_limit > len(products_list):
-        #         products_limit = len(products_list)
-        #     for x in range(products_limit-products_limit, products_limit):
-        #         print("passei do for")
-        #         date_response["products"].append(products_list[x])
-        #     return date_response, 200
+        products_parent_id = [product.parent_id for product in products.all()]
+
+        for parent_id in parents_id:
+            if parent_id in products_parent_id:
+                products = products.filter_by(parent_id=parent_id)
+        products = products.offset(page * per_page).limit(per_page).all()
 
     except Exception:
-        products: Query = products.offset(
-            page * per_page).limit(per_page).all()
+        products: Query = products.offset(page * per_page).limit(per_page).all()
         return jsonify(products), 200
 
-    return jsonify(products_list), 200
+    return jsonify(products), 200
