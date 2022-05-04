@@ -1,25 +1,30 @@
+from ipdb import set_trace
 from http import HTTPStatus
 
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
 from app.exceptions.parents_exc import InvalidCpfLenghtError, InvalidPhoneFormatError
 from app.models import ParentModel
-from app.services.email_service import email_to_new_user
+from app.models.cities_model import CityModel
 from flask import jsonify, request
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity
+from flask_jwt_extended import jwt_required
+from sqlalchemy.orm import Query, Session
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Query, Session
+
+from app.services.email_service import email_to_new_user
 
 
 def pick_parents():
 
-    query: Query = db.session.query(ParentModel.id, ParentModel.username)
+    query: Query = db.session.query(
+        ParentModel.id, ParentModel.username, ParentModel.name
+    )
 
     response = query.all()
 
     response = [response._asdict() for response in query]
-
     if response == []:
         return {"msg": "No data found"}
 
@@ -27,19 +32,45 @@ def pick_parents():
 
 
 def new_parents():
-
+    session: Session = db.session
     data: dict = request.get_json()
+    user_current = data.copy()
 
-    received_key = set(data.keys())
-    available_keys = {"cpf", "username", "name", "email", "password", "phone"}
+    city = data["city"]
+    state = data["state"]
+
+    cities_query: Query = session.query(CityModel)
+
+    point_id_current = (
+        cities_query.filter_by(city=city).filter_by(state=state).first().point_id
+    )
+
+    data.update({"city_point_id": point_id_current})
+
+    data.pop("city")
+    data.pop("state")
+
+    received_key = set(user_current.keys())
+    available_keys = {
+        "cpf",
+        "username",
+        "name",
+        "email",
+        "password",
+        "phone",
+        "city",
+        "state",
+    }
 
     try:
         if not received_key == available_keys:
             raise InvalidKeyError(received_key, available_keys)
 
-        for key, value in data.items():
-            if type(value) != str:
-                raise InvalidTypeValueError(key)
+        # Valida o tipo dos dados passados
+
+        for value in list(user_current):
+            if type(user_current[value]) != str:
+                raise InvalidTypeValueError
 
         parent = ParentModel(**data)
 
@@ -67,7 +98,7 @@ def new_parents():
 
     email_to_new_user(parent.username, parent.email)
 
-    return jsonify(parent), HTTPStatus.CREATED
+    return jsonify(user_current), HTTPStatus.CREATED
 
 
 def login():

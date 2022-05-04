@@ -3,12 +3,17 @@ from http import HTTPStatus
 
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, NotFoundError
-from app.exceptions.products_exceptions import InvalidTypeNumberError
 from app.exceptions.categories_exc import InvalidCategoryError
+from app.exceptions.products_exceptions import InvalidTypeNumberError
 from app.models import CategoryModel, ProductModel
+from app.models.cities_model import CityModel
 from app.models.parent_model import ParentModel
 from app.services.email_service import email_new_product
-from app.services.product_service import serialize_product
+from app.services.product_service import (
+    products_per_geolocalization,
+    serialize_product,
+    verify_product_categories,
+)
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
@@ -20,9 +25,14 @@ from app.services.product_service import (
 
 @jwt_required(optional=True)
 def get_all():
-    # Se o token for fornecido automaticamente é possível obter o id
-    # e buscar a cidade e o estado do do usuário para a localização.
     user_logged = get_jwt_identity()
+    localization = None
+    if user_logged:
+        session: Session = db.session
+        parents: Query = session.query(ParentModel)
+        cities: Query = session.query(CityModel)
+        user: ParentModel = parents.filter_by(id=user_logged["id"]).first()
+        localization: CityModel = cities.filter_by(point_id=user.city_point_id).first()
 
     params = dict(request.args.to_dict().items())
 
@@ -56,14 +66,7 @@ def get_all():
 
         page = int(params.get("page", 1)) - 1
         per_page = int(params.get("per_page", 8))
-
-        products: Query = query.offset(page * per_page).limit(per_page).all()
-
-        for i in range(len(products)):
-            product_serialized = serialize_product(products[i])
-            products[i] = product_serialized
-
-        return {"products": products}, HTTPStatus.OK
+        return products_per_geolocalization(query, page, per_page, localization, data)
 
 
 def get_by_id(product_id: int):
@@ -152,9 +155,6 @@ def create_product():
         return e.message, e.status
     except InvalidCategoryError as e:
         return e.message, e.status
-    """ except InvalidTypeKeyCategoryError as e:
-        return e.message, e.status """
-    
 
 @jwt_required()
 def update_product(product_id: int):

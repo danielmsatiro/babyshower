@@ -4,9 +4,10 @@ from dataclasses import dataclass
 from app.configs.database import db
 from app.exceptions import InvalidTypeValueError
 from app.exceptions.parents_exc import InvalidCpfLenghtError, InvalidPhoneFormatError
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import backref, relationship, validates
 from werkzeug.security import check_password_hash, generate_password_hash
+from app.models.cities_model import CityModel
 
 
 @dataclass
@@ -24,10 +25,14 @@ class ParentModel(db.Model):
     id = Column(Integer, primary_key=True, nullable=False)
     cpf = Column(String, nullable=False, unique=True)
     username = Column(String, nullable=False, unique=True)
-    name = Column(String, nullable=False)
+    name: str = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
-    phone = Column(String, nullable=False, unique=True)
+    phone = Column(String, nullable=False)
+
+    city_point_id = Column(
+        Integer, ForeignKey("cities.point_id", ondelete="CASCADE"), nullable=False
+    )
 
     products = relationship("ProductModel", backref=backref("parent", uselist=False))
 
