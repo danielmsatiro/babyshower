@@ -17,6 +17,10 @@ from app.services.product_service import (
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
+from app.services.product_service import (
+    verify_product_categories,
+    data_format
+)
 
 
 @jwt_required(optional=True)
@@ -111,6 +115,8 @@ def create_product():
             "categories",
         }
 
+        data_format(data)
+
         verified = verify_product_categories(data)
 
         if len(verified["unfinded"]) > 0:
@@ -150,7 +156,6 @@ def create_product():
     except InvalidCategoryError as e:
         return e.message, e.status
 
-
 @jwt_required()
 def update_product(product_id: int):
     data: dict = request.get_json()
@@ -158,6 +163,8 @@ def update_product(product_id: int):
     available_keys = {"title", "price", "description", "image", "categories"}
 
     received_keys = set(data.keys())
+
+    data_format(data)
 
     verified = verify_product_categories(data)
 
