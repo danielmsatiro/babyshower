@@ -104,3 +104,12 @@ def verify_product_categories(data):
             unfinded_categories.append(categorie)
 
     return {"categories": categories_by_name, "unfinded": unfinded_categories}
+
+
+def data_format(data):
+    categories = list(data["categories"])
+
+    for i in range(len(categories)):
+        categories[i] = categories[i].lower()
+
+    data["categories"] = categories
