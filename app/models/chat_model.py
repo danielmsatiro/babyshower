@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 import datetime
-from email.policy import default
 
 from app.configs.database import db
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
 
 
 @dataclass
