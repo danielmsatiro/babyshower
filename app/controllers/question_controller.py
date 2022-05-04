@@ -18,10 +18,18 @@ from sqlalchemy.orm import Query, Session
 
 
 def get_product_questions(product_id: int):
+    params = request.args
+    page = int(params.get("page", 1)) - 1
+    per_page = int(params.get("per_page", 8))
 
     base_query: Query = db.session.query(QuestionModel)
 
-    questions = base_query.filter(QuestionModel.product_id == product_id).all()
+    questions = (
+        base_query.filter(QuestionModel.product_id == product_id)
+        .offset(page * per_page)
+        .limit(per_page)
+        .all()
+    )
 
     serialized_questions = [serialize_answer(question) for question in questions]
 

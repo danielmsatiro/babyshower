@@ -1,4 +1,3 @@
-from ipdb import set_trace
 from http import HTTPStatus
 
 from app.configs.database import db
@@ -6,23 +5,25 @@ from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorized
 from app.exceptions.parents_exc import InvalidCpfLenghtError, InvalidPhoneFormatError
 from app.models import ParentModel
 from app.models.cities_model import CityModel
+from app.services.email_service import email_to_new_user
 from flask import jsonify, request
-from flask_jwt_extended import create_access_token, get_jwt_identity
-from flask_jwt_extended import jwt_required
-from sqlalchemy.orm import Query, Session
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from ipdb import set_trace
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
-
-from app.services.email_service import email_to_new_user
+from sqlalchemy.orm import Query, Session
 
 
 def pick_parents():
+    params = request.args
+    page = int(params.get("page", 1)) - 1
+    per_page = int(params.get("per_page", 8))
 
     query: Query = db.session.query(
         ParentModel.id, ParentModel.username, ParentModel.name
     )
 
-    response = query.all()
+    query = query.offset(page * per_page).limit(per_page).all()
 
     response = [response._asdict() for response in query]
     if response == []:
