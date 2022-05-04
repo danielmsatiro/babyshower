@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from http import HTTPStatus
 
 from app.configs.database import db
@@ -42,8 +43,8 @@ def create_question(product_id: int):
 
     user_logged = get_jwt_identity()
 
+    data["created_at"] = dt.now()
     data["parent_id"] = user_logged["id"]
-
     data["product_id"] = product_id
 
     try:
@@ -97,6 +98,7 @@ def update_question(question_id: int):
             raise NotFoundError(question_id, "question")
 
         if user_logged["id"] == question.parent_id:
+            data["updated_at"] = dt.now()
             for key, value in data.items():
                 setattr(question, key, value)
             session.commit()
