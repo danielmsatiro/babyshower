@@ -109,8 +109,6 @@ def verify_product_categories(data):
 def data_format(data):
     categories = list(data["categories"])
 
-    print(categories)
-
     for i in range(len(categories)):
         categories[i] = categories[i].lower()
 
