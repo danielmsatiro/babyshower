@@ -148,11 +148,7 @@ def create_product():
 
         return jsonify(product_serialized), HTTPStatus.CREATED
 
-    except InvalidTypeNumberError as e:
-        return e.message, e.status
-    except InvalidKeyError as e:
-        return e.message, e.status
-    except InvalidCategoryError as e:
+    except (InvalidTypeNumberError, InvalidKeyError, InvalidCategoryError) as e:
         return e.message, e.status
 
 
@@ -213,9 +209,7 @@ def update_product(product_id: int):
 
         return jsonify(product_serialized), HTTPStatus.OK
 
-    except NotFoundError as e:
-        return e.message, e.status
-    except InvalidCategoryError as e:
+    except (NotFoundError, InvalidCategoryError) as e:
         return e.message, e.status
 
 

@@ -2,13 +2,16 @@ from http import HTTPStatus
 
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
-from app.exceptions.parents_exc import InvalidCpfLenghtError, InvalidPhoneFormatError
+from app.exceptions.parents_exc import (
+    InvalidCpfLenghtError,
+    InvalidEmailError,
+    InvalidPhoneFormatError,
+)
 from app.models import ParentModel
 from app.models.cities_model import CityModel
 from app.services.email_service import email_to_new_user
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from ipdb import set_trace
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Query, Session
@@ -79,16 +82,13 @@ def new_parents():
         session.add(parent)
         session.commit()
 
-    except InvalidKeyError as e:
-        return e.message, e.status
-
-    except InvalidTypeValueError as e:
-        return e.message, e.status
-
-    except InvalidCpfLenghtError as e:
-        return e.message, e.status
-
-    except InvalidPhoneFormatError as e:
+    except (
+        InvalidKeyError,
+        InvalidTypeValueError,
+        InvalidPhoneFormatError,
+        InvalidCpfLenghtError,
+        InvalidEmailError,
+    ) as e:
         return e.message, e.status
 
     except IntegrityError as e:
@@ -160,11 +160,7 @@ def update_parents():
             session.add(parent)
             session.commit()
 
-    except InvalidKeyError as e:
-        return e.message, e.status
-    except InvalidTypeValueError as e:
-        return e.message, e.status
-    except InvalidPhoneFormatError as e:
+    except (InvalidKeyError, InvalidTypeValueError, InvalidPhoneFormatError) as e:
         return e.message, e.status
 
     return jsonify(parent)

@@ -12,3 +12,8 @@ class InvalidPhoneFormatError(Exception):
         "expected": "(xx) xxxxx-xxxx Parentheses, hyphen and 11 numbers are required.",
     }
     status = HTTPStatus.BAD_REQUEST
+
+
+class InvalidEmailError(Exception):
+    message = {"Error": "Email is not valid"}
+    status = HTTPStatus.BAD_REQUEST
