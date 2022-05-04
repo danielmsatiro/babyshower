@@ -8,8 +8,10 @@ from app.exceptions.products_exceptions import InvalidTypeNumberError
 from app.models import CategoryModel, ProductModel
 from app.models.cities_model import CityModel
 from app.models.parent_model import ParentModel
+from app.services.add_categories import add_categories_if_empty
 from app.services.email_service import email_new_product
 from app.services.product_service import (
+    data_format,
     products_per_geolocalization,
     serialize_product,
     verify_product_categories,
@@ -17,10 +19,6 @@ from app.services.product_service import (
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
-from app.services.product_service import (
-    verify_product_categories,
-    data_format
-)
 
 
 @jwt_required(optional=True)
@@ -101,6 +99,7 @@ def get_by_parent(parent_id: int):
 
 @jwt_required()
 def create_product():
+    add_categories_if_empty()
     try:
         user_logged = get_jwt_identity()
 
@@ -155,6 +154,7 @@ def create_product():
         return e.message, e.status
     except InvalidCategoryError as e:
         return e.message, e.status
+
 
 @jwt_required()
 def update_product(product_id: int):
