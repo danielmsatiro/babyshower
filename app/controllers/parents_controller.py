@@ -2,14 +2,14 @@ from dataclasses import asdict
 from http import HTTPStatus
 from zoneinfo import available_timezones
 from copy import deepcopy
-
-
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
 from app.exceptions.parents_exc import (
     InvalidCpfLenghtError,
     InvalidEmailError,
     InvalidPhoneFormatError,
+    NotIsLoggedParentError,
+    NonexistentParentError
 )
 from app.models import ParentModel
 from app.models.cities_model import CityModel
@@ -38,24 +38,31 @@ def pick_parents():
 
     return {"users": response}, HTTPStatus.OK
 
+@jwt_required()
 def pick_parents_by_id(parent_id: int):
-
+    user_logged = get_jwt_identity()
+    
+    
     try:
-        parent: Query = ParentModel.query.get(parent_id)
-       
-        new_parent = asdict(parent)
-
-        new_parent["product"] = f"api/products/by_parent/{parent_id}"
-
         
+        parent: Query = ParentModel.query.get(parent_id)
+
         if not parent:
             raise NonexistentParentError
 
+        if not parent_id == user_logged["id"]:
+            raise NotIsLoggedParentError
+
+        new_parent = asdict(parent)
+
+        new_parent["product"] = f"api/products/by_parent/{parent_id}"
+        
         return jsonify(new_parent), HTTPStatus.OK
 
     except NonexistentParentError as err:
         return err.message, HTTPStatus.NOT_FOUND
-
+    except NotIsLoggedParentError as e:
+        return e.message, e.status
 
 def new_parents():
     session: Session = db.session
