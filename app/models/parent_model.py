@@ -67,6 +67,22 @@ class ParentModel(db.Model):
     def validate_email(self, key, email):
         if not re.search(r"[\w\-.]+@[\w\-]+\.\w+\.?\w*", email):
             raise InvalidEmailError
+
+        expected_providers = {
+            'mail.com',     'mail.com.br',
+            'gmail.com',    'gmail.com.br',
+            'hotmail.com',  'hotmail.com.br',
+            'kenzie.com',   'kenzie.com.br',
+            'outlook.com',  'outlook.com.br',
+            'live.com',     'live.com.br',
+            'yahoo.com',    'yahoo.com.br',
+        }
+
+        received_provider = {email.split("@")[1]}
+
+        if received_provider - expected_providers:
+            raise InvalidEmailError
+
         return email.lower()
 
     @validates("phone")
