@@ -5,3 +5,5 @@ from app.models.parent_model import ParentModel
 from app.models.product_model import ProductModel
 from app.models.question_model import QuestionModel
 from app.models.cities_model import CityModel
+from app.models.chat_model import ChatModel
+from app.models.message_model import MessageModel
