@@ -1,14 +1,15 @@
+from dataclasses import asdict
 from http import HTTPStatus
 from zoneinfo import available_timezones
-
+from copy import deepcopy
 from sqlalchemy.exc import IntegrityError
 from psycopg2.errors import UniqueViolation
-from app.exceptions.parents_exc import InvalidTypeValueError, InvalidEmailLenghtError, InvalidPhoneFormatError
+from app.exceptions.parents_exc import InvalidTypeValueError, InvalidEmailLenghtError, InvalidPhoneFormatError, NonexistentParentError
 from app.exceptions import InvalidKeyError, InvalidTypeValueError
 
 from app.configs.database import db
 from app.models import ParentModel
-from flask import jsonify, request
+from flask import jsonify, request, url_for
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.orm import Query, Session
 
@@ -28,6 +29,24 @@ def pick_parents():
         return {"msg": "No data found"}
 
     return {"users": response}, HTTPStatus.OK
+
+def pick_parents_by_id(parent_id: int):
+
+    try:
+        parent: Query = ParentModel.query.get(parent_id)
+       
+        new_parent = asdict(parent)
+
+        new_parent["product"] = f"api/products/by_parent/{parent_id}"
+
+        
+        if not parent:
+            raise NonexistentParentError
+
+        return jsonify(new_parent), HTTPStatus.OK
+
+    except NonexistentParentError as err:
+        return err.message, HTTPStatus.NOT_FOUND
 
 
 def new_parents():
