@@ -69,13 +69,13 @@ class ParentModel(db.Model):
             raise InvalidEmailError
 
         expected_providers = {
-            'mail.com',     'mail.com.br',
-            'gmail.com',    'gmail.com.br',
-            'hotmail.com',  'hotmail.com.br',
-            'kenzie.com',   'kenzie.com.br',
-            'outlook.com',  'outlook.com.br',
-            'live.com',     'live.com.br',
-            'yahoo.com',    'yahoo.com.br',
+            'mail.com',     'mail.com.br',      'mail.org.br',
+            'gmail.com',    'gmail.com.br',     'gmail.org.br',
+            'hotmail.com',  'hotmail.com.br',   'hotmail.org.br',
+            'kenzie.com',   'kenzie.com.br',    'kenzie.org.br',
+            'outlook.com',  'outlook.com.br',   'outlook.org.br',
+            'live.com',     'live.com.br',      'live.org.br',
+            'yahoo.com',    'yahoo.com.br',     'yahoo.org.br',
         }
 
         received_provider = {email.split("@")[1]}
