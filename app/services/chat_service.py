@@ -4,9 +4,9 @@ from app.configs.database import db
 from sqlalchemy.orm import Session
 
 
-def message_serialize(message: MessageModel, other_parent_id: int) -> dict:
+def message_serialize(message: MessageModel, user_logged_id: int, other_parent_id: int) -> dict:
     session: Session = db.session
-    if other_parent_id == message.parent_id:
+    if user_logged_id == other_parent_id or other_parent_id == message.parent_id:
         message.msg_read = True
         session.add(message)
         session.commit()

@@ -43,7 +43,7 @@ def read_chat(other_parent_id):
         per_page = int(params.get("per_page", 10))
         messages: Query = messages.offset(page * per_page).limit(per_page).all()
 
-        messages_serialize = [ message_serialize(msg, other_parent_id) for msg in messages ]
+        messages_serialize = [ message_serialize(msg, user_logged["id"], other_parent_id) for msg in messages ]
         
         return {"messages": messages_serialize}, 200
 
