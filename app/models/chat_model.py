@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-import datetime
-
+from datetime import datetime as dt
 from app.configs.database import db
 from sqlalchemy import Column, DateTime, ForeignKey, Integer
 
@@ -9,7 +8,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer
 class ChatModel(db.Model):
     __tablename__ = "chat"
 
-    now = datetime.datetime.utcnow().strftime('%d/%m/%Y')
+    now = dt
 
     id: int = Column(Integer, primary_key=True)
     data: str = Column(DateTime, nullable=False, default=now)

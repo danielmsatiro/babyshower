@@ -171,7 +171,7 @@ def login():
 
     token = create_access_token(information_for_encoding)
 
-    return {"access_token": token}, HTTPStatus.OK
+    return {"access_token": token, "id": found_parent.id}, HTTPStatus.OK
 
 
 @jwt_required()

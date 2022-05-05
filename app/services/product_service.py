@@ -2,6 +2,7 @@ from dataclasses import asdict
 
 from app.configs.database import db
 from app.exceptions import NotFoundError
+from app.exceptions.categories_exc import InvalidCategoryError
 from app.models.category_model import CategoryModel
 from app.models.cities_model import CityModel
 from app.models.parent_model import ParentModel
@@ -103,6 +104,28 @@ def products_per_geolocalization(
     return jsonify(products), 200
 
 
+def data_format(data):
+    categories = data.setdefault("categories", [])
+
+    for i in range(len(categories)):
+        categories[i] = categories[i].lower()
+
+    data["categories"] = categories
+
+
+def find_category(category_name):
+    query_category: Query = db.session.query(CategoryModel)
+    
+    response = query_category.filter(
+        CategoryModel.name.ilike(f"%{category_name}%")
+    ).first()
+
+    if not response:
+        category_not_found = [category_name]
+        raise InvalidCategoryError(category_not_found)
+
+    return response
+
 def verify_product_categories(data):
     received_categories = data["categories"] or []
 
@@ -120,12 +143,3 @@ def verify_product_categories(data):
             unfinded_categories.append(categorie)
 
     return {"categories": categories_by_name, "unfinded": unfinded_categories}
-
-
-def data_format(data):
-    categories = data.setdefault("categories", [])
-
-    for i in range(len(categories)):
-        categories[i] = categories[i].lower()
-
-    data["categories"] = categories

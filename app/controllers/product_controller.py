@@ -12,9 +12,10 @@ from app.services.add_categories import add_categories_if_empty
 from app.services.email_service import email_new_product
 from app.services.product_service import (
     data_format,
+    find_category,
     products_per_geolocalization,
     serialize_product,
-    verify_product_categories,
+    verify_product_categories
 )
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -162,16 +163,17 @@ def update_product(product_id: int):
 
     data_format(data)
 
-    verified = verify_product_categories(data)
-
+    user_logged = get_jwt_identity()
+    
     try:
-        user_logged = get_jwt_identity()
-
-        if len(verified["unfinded"]) > 0:
-            raise InvalidCategoryError(verified["unfinded"])
 
         if not received_keys.issubset(available_keys):
             raise InvalidKeyError(received_keys, available_keys)
+
+        if "categories" in data:
+            received_categories = data.pop("categories")
+            find_categories = [ find_category(category) for category in received_categories ]
+            data["categories"] = find_categories
 
         session: Session = db.session
         product: Query = (
@@ -185,22 +187,8 @@ def update_product(product_id: int):
         if not product:
             raise NotFoundError(product_id, "product")
 
-        categories = data.pop("categories")
-
         for key, value in data.items():
             setattr(product, key, value)
-
-        # It's to change categories if informed
-        query_category: Query = db.session.query(CategoryModel)
-        if categories != None:
-            setattr(product, "categories", [])
-
-            for category in categories:
-                response = query_category.filter(
-                    CategoryModel.name.ilike(f"%{category}%")
-                ).first()
-                if response:
-                    product.categories.append(response)
 
         session.add(product)
         session.commit()

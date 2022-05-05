@@ -30,24 +30,24 @@ Não é necessário um corpo da requisição.
 ```json
 [
   {
-		"id": 429,
-		"title": "bebê-conforto",
-		"price": 350.0,
-		"parent_id": 460,
-		"description": "Fugiat expedita eum qui dolorem a temporibus deserunt optio veritatis eius fuga blanditiis veniam ratione recusandae placeat nam atque aliquam impedit nisi dolorum.",
-		"image": "https://imagem/320x240",
-		"sold": false,
-		"categories": [
-			"segurança para bebê",
-			"0 a 3 meses",
-			"4 a 6 meses",
-			"7 a 9 meses",
-			"10 meses a 1 ano",
-			"2 anos"
-		],
-		"city/state": "Balneário Arroio do Silva/Santa Catarina",
-		"questions": "/api/questions/by_product/429"
-	},
+    "id": 429,
+    "title": "bebê-conforto",
+    "price": 350.0,
+    "parent_id": 460,
+    "description": "Fugiat expedita eum qui dolorem a temporibus deserunt optio veritatis eius fuga blanditiis veniam ratione recusandae placeat nam atque aliquam impedit nisi dolorum.",
+    "image": "https://imagem/320x240",
+    "sold": false,
+    "categories": [
+    	"segurança para bebê",
+    	"0 a 3 meses",
+    	"4 a 6 meses",
+    	"7 a 9 meses",
+    	"10 meses a 1 ano",
+    	"2 anos"
+    ],
+    "city/state": "Balneário Arroio do Silva/Santa Catarina",
+    "questions": "/api/questions/by_product/429"
+  },
   (...)
 ]
 ```
@@ -75,26 +75,26 @@ Caso dê tudo certo, a resposta será assim:
 
 ```json
 [
-	{
-		"id": 317,
-		"title": "Nanina",
-		"price": 15.0,
-		"parent_id": 339,
-		"description": "Ab in neque earum odio quia molestias minima eaque ratione eos illum.",
-		"image": "https://imagem/320x240",
-		"sold": false,
-		"categories": [
-			"brinquedos"
-		],
-		"city/state": "Araranguá/Santa Catarina",
-		"questions": "/api/questions/by_product/317"
-	},
-	{
-		"id": 360,
-		"title": "body tamanho M",
-		"price": 36.0,
-		(...)
-	}
+  {
+    "id": 317,
+    "title": "Nanina",
+    "price": 15.0,
+    "parent_id": 339,
+    "description": "Ab in neque earum odio quia molestias minima eaque ratione eos illum.",
+    "image": "https://imagem/320x240",
+    "sold": false,
+    "categories": [
+    	"brinquedos"
+    ],
+    "city/state": "Araranguá/Santa Catarina",
+    "questions": "/api/questions/by_product/317"
+  },
+  {
+  	"id": 360,
+  	"title": "body tamanho M",
+  	"price": 36.0,
+  	(...)
+  }
 ]
 ```
 
@@ -106,12 +106,12 @@ Caso dê tudo certo, a resposta será assim:
 
 ```json
 {
-	"categories": ["roupas", "0 a 3 meses"],
-	"min_price": 30.0,
-	"max_price": 60.0,
-	"title_product": "",
-	"city": "Cocal do Sul",
-	"state": "Santa catar",
+  "categories": ["roupas", "0 a 3 meses"],
+  "min_price": 30.0,
+  "max_price": 60.0,
+  "title_product": "",
+  "city": "Cocal do Sul",
+  "state": "Santa catar",
   "distance": 50000
 }
 ```
@@ -168,18 +168,18 @@ Não é necessário um corpo da requisição.
 
 ```json
 {
-	"id": 2,
-	"title": "Nanina",
-	"price": 15.0,
-	"parent_id": 2,
-	"description": "Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.",
-	"image": "https://imagem/320x240",
-	"sold": false,
-	"categories": [
-		"brinquedos"
-	],
-	"city/state": "Abadia dos Dourados/Minas Gerais",
-	"questions": "/api/questions/by_product/2"
+  "id": 2,
+  "title": "Nanina",
+  "price": 15.0,
+  "parent_id": 2,
+  "description": "Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.",
+  "image": "https://imagem/320x240",
+  "sold": false,
+  "categories": [
+  	"brinquedos"
+  ],
+  "city/state": "Abadia dos Dourados/Minas Gerais",
+  "questions": "/api/questions/by_product/2"
 }
 ```
 
@@ -197,23 +197,23 @@ Não é necessário um corpo da requisição.
 
 ```json
 {
-	"products": [
-		{
-			"id": 2,
-			"title": "Nanina",
-			"price": 15.0,
-			"parent_id": 2,
-			"description": "Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.",
-			"image": "https://imagem/320x240",
-			"sold": false,
-			"categories": [
-				"brinquedos"
-			],
-			"city/state": "Abadia dos Dourados/Minas Gerais",
-			"questions": "/api/questions/by_product/2"
-		},
-    (...)
-	]
+  "products": [
+  	{
+  	  "id": 2,
+  	  "title": "Nanina",
+  	  "price": 15.0,
+  	  "parent_id": 2,
+  	  "description": "Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.",
+  	  "image": "https://imagem/320x240",
+  	  "sold": false,
+  	  "categories": [
+  	  	"brinquedos"
+  	  ],
+  	  "city/state": "Abadia dos Dourados/Minas Gerais",
+  	  "questions": "/api/questions/by_product/2"
+  	},
+  (...)
+  ]
 }
 ```
 
@@ -255,6 +255,8 @@ Não é necessário um corpo da requisição.
 	"questions": "/api/questions/by_product/5542"
 }
 ```
+>**Obs.:** Quando o parent cadastra um novo produto, um email de confirmação é enviado para o seu respectivo email cadastrado.
+
 >**Obs.:** Um produto pode ser criado sem categoria. A categoria é buscada pela palavra aproximada na relação de categories desta api. Ao se inserir uma categoria não existente se obterá o seguinte erro:
 
 `POST /api/products - FORMATO DA RESPOSTA - STATUS 422`
@@ -262,11 +264,11 @@ Não é necessário um corpo da requisição.
 ```json
 
 {
-	"error": "Categories is invalid",
-	"invalid_options": [
-		"teste"
-	],
-	"valid_options": "api/categories"
+  "error": "Categories is invalid",
+  "invalid_options": [
+  	"teste"
+  ],
+  "valid_options": "api/categories"
 }
 ```
 
@@ -276,8 +278,8 @@ Não é necessário um corpo da requisição.
 
 ```JSON
 {
-	"price": 52.0,
-	"categories": ["4 a 6 meses"]
+  "price": 52.0,
+  "categories": ["4 a 6 meses"]
 }
 ```
 
@@ -287,18 +289,18 @@ Não é necessário um corpo da requisição.
 
 ```json
 {
-	"id": 5542,
-	"title": "tiptop",
-	"price": 52.0,
-	"parent_id": 5542,
-	"description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-	"image": "https://imagem/320x240",
-	"sold": false,
-	"categories": [
-		"4 a 6 meses"
-	],
-	"city/state": "Cocal do Sul/Santa Catarina",
-	"questions": "/api/questions/by_product/5542"
+  "id": 5542,
+  "title": "tiptop",
+  "price": 52.0,
+  "parent_id": 5542,
+  "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+  "image": "https://imagem/320x240",
+  "sold": false,
+  "categories": [
+  	"4 a 6 meses"
+  ],
+  "city/state": "Cocal do Sul/Santa Catarina",
+  "questions": "/api/questions/by_product/5542"
 }
 ```
 
@@ -421,6 +423,7 @@ Não é necessário um corpo da requisição.
 	"answer": null
 }
 ```
+>**Obs.:** É enviado uma mensagem para o e-mail do dono do produto o alertado sobre a nova pergunta enviado uma pergunta.
 
 <h2 align="center">Atualizar pergunta por id de pergunta</h2>
 
@@ -498,6 +501,7 @@ Sem corpo de resposta
 	}
 }
 ```
+>**Obs.:** É enviado uma mensagem para o e-mail do parent que fez a pergunta o alertado sobre a resposta.
 
 <h2 align="center">Editar uma resposta</h2>
 
@@ -707,16 +711,6 @@ Sem corpo de resposta
 ```
 # Rotas Cities
 >**Obs.:** Nesta rota além de query params para paginações ('page'-> deault=1 e/ou 'per_page' -> default=8). Podem ser utilizados "city" e "state" para filtrar os resultados.
-## **Rota não precisa de autenticação**
-
-<h2 align="center">Obter todos os parents(usernames)</h2>
-
-`GET /api/cities?state=<estado>&city=<cidade> - FORMATO DA REQUISIÇÃO`
-
-```
-Não é necessário um corpo da requisição.
-```
-
 #### Caso dê tudo certo, a resposta será assim:
 
 `GET /api/cities?state=Santa Catarina - FORMATO DA RESPOSTA - STATUS 200`
@@ -747,4 +741,96 @@ Não é necessário um corpo da requisição.
 			"latitude": -27.4087
 		},
 		(...)
+```
+## **Rota não precisa de autenticação**
+
+<h2 align="center">Obter todos os parents(usernames)</h2>
+
+`GET /api/cities?state=<estado>&city=<cidade> - FORMATO DA REQUISIÇÃO`
+
+
+# Rotas Chat
+
+<h2 align="center">Ver todas conversas já iniciadas</h2>
+
+`GET /api/chat - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+>**Obs:** Rota mostra apenas as conversas ligadas ao usuário logado.
+
+#### Caso dê tudo certo, a resposta será assim:
+
+>**Obs:** Propriedade "read" mostra se a mensagem já foi lida.
+
+`GET /api/chat - FORMATO DA RESPOSTA - STATUS 200`
+```json
+{
+  "chats": [
+    {
+      "other_parent_id": 1,
+      "messages": "chat/1",
+      "read": true
+    },
+    {
+      "other_parent_id": 2,
+      "messages": "chat/2",
+      "read": true
+    }
+  ]
+}
+```
+<h2 align="center">Enviar uma mensagem</h2>
+
+`POST /api/chat/<parent_id> - FORMATO DA REQUISIÇÃO`
+
+```
+Apenas necessário a mensagem no corpo de requisição.
+```
+
+>**Obs:** Usuário precisa estar logado para enviar a mensagem.
+
+```json
+{
+  "message": "Boa noite, vi seu anuncio do site. Será que podemos conversar melhor sobre o envio?"
+}
+```
+
+>**Obs:** Precisa passar id do parent logado ou de um outro parent existente.
+
+#### Caso dê tudo certo, a resposta será assim:
+
+`POST /api/chat/2 - FORMATO DA RESPOSTA - STATUS 201`
+```json
+{
+  "msg": "Mensagem enviada com sucesso!"
+}
+```
+
+<h2 align="center">Ver a conversa de um chat específico</h2>
+
+`GET /api/chat/<parent_id> - FORMATO DA REQUISIÇÃO`
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+
+`GET /api/chat/2 - FORMATO DA RESPOSTA - STATUS 200`
+
+>**Obs 1 :** propriedade "msg_read" mostra se o usuário já leu a mensagem.
+>**Obs 2 :** propriedade "parent" mostra a quem se destina a mensagem enviada
+
+```json
+{
+  "messages": [
+    {
+      "data": "Thu, 05 May 2022 19:20:28 GMT",
+      "message": "Boa noite, vi seu anuncio do site. Será que podemos conversar melhor sobre o envio?",
+      "msg_read": false,
+      "parent": "Hirton Santos"
+    }
+  ]
+}
 ```
