@@ -1,27 +1,24 @@
 from dataclasses import dataclass
-from datetime import datetime
+import datetime
 
 from app.configs.database import db
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
 
 
 @dataclass
 class ChatModel(db.Model):
-    id: int
-    data: datetime
-    message: str
-    confirmed_read: bool
-    reader_id: int
-    writer_id: int
-
     __tablename__ = "chat"
+
+    now = datetime.datetime.utcnow().strftime('%d/%m/%Y')
+
     id = Column(Integer, primary_key=True)
-    data = Column(DateTime, nullable=False)
-    message = Column(String, nullable=False)
-    confirmed_read = Column(Boolean, default=False)
-    reader_id = Column(
+    data: str = Column(DateTime, nullable=False, default=now)
+    last_data_update: str = Column(DateTime, nullable=False, default=now)
+
+    parent_id_main: int = Column(
         Integer, ForeignKey("parents.id", ondelete="CASCADE"), nullable=False
     )
-    writer_id = Column(
+
+    parent_id_retrieve: int = Column(
         Integer, ForeignKey("parents.id", ondelete="CASCADE"), nullable=False
     )
