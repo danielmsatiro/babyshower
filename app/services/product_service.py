@@ -13,6 +13,19 @@ from sqlalchemy.orm import Query, Session
 
 def serialize_product(product: ProductModel) -> dict:
     product_serialized = asdict(product)
+
+    session: Session = db.session
+
+    city_state = (
+        session.query(CityModel.city, CityModel.uf)
+        .filter_by(point_id=product_serialized["parent_id"])
+        .first()
+    )
+
+    city_state = {"city/state": f"{city_state[0]}/{city_state[1]}"}
+
+    product_serialized.update(city_state)
+
     url = {
         "questions": url_for(
             "bp_api.bp_questions.get_product_questions",
