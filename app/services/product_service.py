@@ -7,11 +7,25 @@ from app.models.cities_model import CityModel
 from app.models.parent_model import ParentModel
 from app.models.product_model import ProductModel
 from flask import jsonify, request, url_for
+from ipdb import set_trace
 from sqlalchemy.orm import Query, Session
 
 
 def serialize_product(product: ProductModel) -> dict:
     product_serialized = asdict(product)
+
+    session: Session = db.session
+
+    city_state = (
+        session.query(CityModel.city, CityModel.uf)
+        .filter_by(point_id=product_serialized["parent_id"])
+        .first()
+    )
+
+    city_state = {"city/state": f"{city_state[0]}/{city_state[1]}"}
+
+    product_serialized.update(city_state)
+
     url = {
         "questions": url_for(
             "bp_api.bp_questions.get_product_questions",
@@ -70,21 +84,22 @@ def products_per_geolocalization(
 
         cities_points_id = [city.point_id for city in cities]
 
-        """ for parent in parents_id:
-            parent: ParentModel
-            if parent.city_point_id in cities_points_id:
-                parents_id = parents_id.filter_by(city_point_id=parent.city_point_id) """
-
         parents_id = parents_id.filter(ParentModel.city_point_id.in_(cities_points_id))
 
-        # parents_id = [parent.id for parent in parents_id.all()]
-
-        products = products.filter(ProductModel.parent_id.in_(parents_id))
+        products = (
+            products.filter(ProductModel.parent_id.in_(parents_id))
+            .offset(page * per_page)
+            .limit(per_page)
+            .all()
+        )
     except Exception:
-        products: Query = products.offset(page * per_page).limit(per_page).all()
-        return jsonify(products), 200
+        products = products.offset(page * per_page).limit(per_page).all()
+        products = [serialize_product(product) for product in products]
 
-    return jsonify(products.all()), 200
+        return jsonify(products), 200
+    products = [serialize_product(product) for product in products]
+
+    return jsonify(products), 200
 
 
 def verify_product_categories(data):
@@ -104,3 +119,12 @@ def verify_product_categories(data):
             unfinded_categories.append(categorie)
 
     return {"categories": categories_by_name, "unfinded": unfinded_categories}
+
+
+def data_format(data):
+    categories = list(data["categories"])
+
+    for i in range(len(categories)):
+        categories[i] = categories[i].lower()
+
+    data["categories"] = categories

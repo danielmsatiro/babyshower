@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from http import HTTPStatus
 
 from app.configs.database import db
@@ -18,10 +19,18 @@ from sqlalchemy.orm import Query, Session
 
 
 def get_product_questions(product_id: int):
+    params = request.args
+    page = int(params.get("page", 1)) - 1
+    per_page = int(params.get("per_page", 8))
 
     base_query: Query = db.session.query(QuestionModel)
 
-    questions = base_query.filter(QuestionModel.product_id == product_id).all()
+    questions = (
+        base_query.filter(QuestionModel.product_id == product_id)
+        .offset(page * per_page)
+        .limit(per_page)
+        .all()
+    )
 
     serialized_questions = [serialize_answer(question) for question in questions]
 
@@ -34,8 +43,8 @@ def create_question(product_id: int):
 
     user_logged = get_jwt_identity()
 
+    data["created_at"] = dt.now()
     data["parent_id"] = user_logged["id"]
-
     data["product_id"] = product_id
 
     try:
@@ -89,6 +98,7 @@ def update_question(question_id: int):
             raise NotFoundError(question_id, "question")
 
         if user_logged["id"] == question.parent_id:
+            data["updated_at"] = dt.now()
             for key, value in data.items():
                 setattr(question, key, value)
             session.commit()

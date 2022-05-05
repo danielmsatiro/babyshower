@@ -8,8 +8,10 @@ from app.exceptions.products_exceptions import InvalidTypeNumberError
 from app.models import CategoryModel, ProductModel
 from app.models.cities_model import CityModel
 from app.models.parent_model import ParentModel
+from app.services.add_categories import add_categories_if_empty
 from app.services.email_service import email_new_product
 from app.services.product_service import (
+    data_format,
     products_per_geolocalization,
     serialize_product,
     verify_product_categories,
@@ -97,6 +99,7 @@ def get_by_parent(parent_id: int):
 
 @jwt_required()
 def create_product():
+    add_categories_if_empty()
     try:
         user_logged = get_jwt_identity()
 
@@ -110,6 +113,8 @@ def create_product():
             "image",
             "categories",
         }
+
+        data_format(data)
 
         verified = verify_product_categories(data)
 
@@ -143,11 +148,7 @@ def create_product():
 
         return jsonify(product_serialized), HTTPStatus.CREATED
 
-    except InvalidTypeNumberError as e:
-        return e.message, e.status
-    except InvalidKeyError as e:
-        return e.message, e.status
-    except InvalidCategoryError as e:
+    except (InvalidTypeNumberError, InvalidKeyError, InvalidCategoryError) as e:
         return e.message, e.status
 
 
@@ -158,6 +159,8 @@ def update_product(product_id: int):
     available_keys = {"title", "price", "description", "image", "categories"}
 
     received_keys = set(data.keys())
+
+    data_format(data)
 
     verified = verify_product_categories(data)
 
@@ -206,9 +209,7 @@ def update_product(product_id: int):
 
         return jsonify(product_serialized), HTTPStatus.OK
 
-    except NotFoundError as e:
-        return e.message, e.status
-    except InvalidCategoryError as e:
+    except (NotFoundError, InvalidCategoryError) as e:
         return e.message, e.status
 
 

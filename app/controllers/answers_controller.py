@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from http import HTTPStatus
 
 from app.configs.database import db
@@ -48,6 +49,7 @@ def create_answer(question_id: int):
         if user_logged["id"] != product.parent_id:
             raise NotAuthorizedError
 
+        data["created_at"] = dt.now()
         data["parent_id"] = user_logged["id"]
         data["question_id"] = question_id
 
@@ -69,13 +71,12 @@ def create_answer(question_id: int):
 
         return jsonify(serialize_answer(new_answer)), HTTPStatus.CREATED
 
-    except NotFoundError as e:
-        return e.message, e.status
-    except NotAuthorizedError as e:
-        return e.message, e.status
-    except InvalidKeyError as e:
-        return e.message, e.status
-    except InvalidTypeValueError as e:
+    except (
+        NotFoundError,
+        NotAuthorizedError,
+        InvalidKeyError,
+        InvalidTypeValueError,
+    ) as e:
         return e.message, e.status
 
 
@@ -113,6 +114,8 @@ def update_answer(answer_id: int):
         if user_logged["id"] != answer.parent_id:
             raise NotAuthorizedError
 
+        data["updated_at"] = dt.now()
+
         for key, value in data.items():
             setattr(answer, key, value)
 
@@ -123,13 +126,12 @@ def update_answer(answer_id: int):
 
     except AttributeError:
         return {"Error": "Answer not found"}, HTTPStatus.NOT_FOUND
-    except NotAuthorizedError as e:
-        return e.message, e.status
-    except NotFoundError as e:
-        return e.message, e.status
-    except InvalidKeyError as e:
-        return e.message, e.status
-    except InvalidTypeValueError as e:
+    except (
+        NotAuthorizedError,
+        NotFoundError,
+        InvalidKeyError,
+        InvalidTypeValueError,
+    ) as e:
         return e.message, e.status
 
 
@@ -150,7 +152,5 @@ def delete_answer(answer_id: int):
 
         return "", HTTPStatus.NO_CONTENT
 
-    except NotAuthorizedError as e:
-        return e.message, e.status
-    except NotFoundError as e:
+    except (NotAuthorizedError, NotFoundError) as e:
         return e.message, e.status
