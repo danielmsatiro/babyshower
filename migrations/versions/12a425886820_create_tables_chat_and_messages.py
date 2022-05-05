@@ -1,8 +1,8 @@
 """create tables chat and messages
 
-Revision ID: a527eb411a08
-Revises: 9e5d33ff6cfa
-Create Date: 2022-05-04 18:09:53.558611
+Revision ID: 12a425886820
+Revises: b53474150de5
+Create Date: 2022-05-04 23:22:32.907457
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a527eb411a08'
-down_revision = '9e5d33ff6cfa'
+revision = '12a425886820'
+down_revision = 'b53474150de5'
 branch_labels = None
 depends_on = None
 
@@ -32,8 +32,11 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('data', sa.DateTime(), nullable=False),
     sa.Column('message', sa.Text(), nullable=False),
+    sa.Column('msg_read', sa.Boolean(), nullable=False),
+    sa.Column('parent_id', sa.Integer(), nullable=False),
     sa.Column('chat_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['chat_id'], ['chat.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['parent_id'], ['parents.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     # op.drop_table('spatial_ref_sys')
