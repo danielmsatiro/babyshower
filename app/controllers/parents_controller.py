@@ -2,29 +2,37 @@ from dataclasses import asdict
 from http import HTTPStatus
 from zoneinfo import available_timezones
 from copy import deepcopy
-from sqlalchemy.exc import IntegrityError
-from psycopg2.errors import UniqueViolation
-from app.exceptions.parents_exc import InvalidTypeValueError, InvalidEmailLenghtError, InvalidPhoneFormatError, NonexistentParentError
-from app.exceptions import InvalidKeyError, InvalidTypeValueError
+
 
 from app.configs.database import db
+from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
+from app.exceptions.parents_exc import (
+    InvalidCpfLenghtError,
+    InvalidEmailError,
+    InvalidPhoneFormatError,
+)
 from app.models import ParentModel
-from flask import jsonify, request, url_for
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from sqlalchemy.orm import Query, Session
-
+from app.models.cities_model import CityModel
 from app.services.email_service import email_to_new_user
-
+from flask import jsonify, request
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from psycopg2.errors import UniqueViolation
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Query, Session
 
 
 def pick_parents():
+    params = request.args
+    page = int(params.get("page", 1)) - 1
+    per_page = int(params.get("per_page", 8))
 
-    query: Query = db.session.query(ParentModel.id, ParentModel.username)
+    query: Query = db.session.query(
+        ParentModel.id, ParentModel.username, ParentModel.name
+    )
 
-    response = query.all()
+    query = query.offset(page * per_page).limit(per_page).all()
 
     response = [response._asdict() for response in query]
-    
     if response == []:
         return {"msg": "No data found"}
 
@@ -50,19 +58,47 @@ def pick_parents_by_id(parent_id: int):
 
 
 def new_parents():
-
+    session: Session = db.session
     data: dict = request.get_json()
+    user_current = data.copy()
 
-    received_key = set(data.keys())
-    available_keys = {"cpf", "username", "name", "email", "password", "phone"}
-    
+    city = data["city"]
+    state = data["state"]
+
+    cities_query: Query = session.query(CityModel)
+
+    point_id_current = (
+        cities_query.filter(CityModel.state.ilike(f"%{data['state']}%"))
+        .filter(CityModel.city.ilike(f"%{data['city']}%"))
+        .first()
+        .point_id
+    )
+
+    data.update({"city_point_id": point_id_current})
+
+    data.pop("city")
+    data.pop("state")
+
+    received_key = set(user_current.keys())
+    available_keys = {
+        "cpf",
+        "username",
+        "name",
+        "email",
+        "password",
+        "phone",
+        "city",
+        "state",
+    }
+
     try:
         if not received_key == available_keys:
             raise InvalidKeyError(received_key, available_keys)
-        
-        #Valida o tipo dos dados passados
-        for value in list(data):
-            if type(data[value]) != str:
+
+        # Valida o tipo dos dados passados
+
+        for value in list(user_current):
+            if type(user_current[value]) != str:
                 raise InvalidTypeValueError
 
         parent = ParentModel(**data)
@@ -71,26 +107,35 @@ def new_parents():
         session.add(parent)
         session.commit()
 
-    except InvalidKeyError as e:
-        return e.message, e.status
-    
-    except InvalidTypeValueError as e:
-        return e.message, e.status
+        city_state = (
+            session.query(CityModel.city, CityModel.uf)
+            .filter_by(point_id=point_id_current)
+            .first()
+        )
 
-    except InvalidEmailLenghtError as e:
-        return e.message, e.status
+        city_state = {"city/state": f"{city_state[0]}/{city_state[1]}"}
+        user_current.pop("city")
+        user_current.pop("state")
+        user_current.update(city_state)
 
-    except InvalidPhoneFormatError as e:
-        return e.message, e.status     
+    except (
+        InvalidKeyError,
+        InvalidTypeValueError,
+        InvalidPhoneFormatError,
+        InvalidCpfLenghtError,
+        InvalidEmailError,
+    ) as e:
+        return e.message, e.status
 
     except IntegrityError as e:
         if type(e.orig) == UniqueViolation:
-            return {"error": f"""{e.args[0].split(" ")[-4:-2]} already exists"""}, HTTPStatus.CONFLICT
+            return {
+                "error": f"""{e.args[0].split(" ")[-4:-2]} already exists"""
+            }, HTTPStatus.CONFLICT
 
-    print(parent.username, parent.email)
-    email_to_new_user(parent.username, parent.email)
+    # email_to_new_user(parent.username, parent.email)
 
-    return jsonify(parent), HTTPStatus.CREATED
+    return jsonify(user_current), HTTPStatus.CREATED
 
 
 def login():
@@ -105,8 +150,12 @@ def login():
     if not found_parent:
         return {"message": "User not found"}, HTTPStatus.NOT_FOUND
 
-    if not found_parent.verify_password(parent_data["password"]):
-        return {"message": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+    try:
+        if not found_parent.verify_password(parent_data["password"]):
+            raise NotAuthorizedError
+
+    except NotAuthorizedError as e:
+        return e.message, e.status
 
     information_for_encoding = {
         "id": found_parent.id,
@@ -121,21 +170,20 @@ def login():
 @jwt_required()
 def update_parents():
 
-    data: dict = request.get_json()             
+    data: dict = request.get_json()
 
     user_logged = get_jwt_identity()
 
     received_key = set(data.keys())
     available_keys = {"username", "name", "email", "password", "phone"}
- 
-    try: 
+
+    try:
         if received_key - available_keys:
             raise InvalidKeyError(received_key, available_keys)
 
-        #Valida o tipo dos dados
-        for value in list(data):
-            if type(data[value]) != str:
-                raise InvalidTypeValueError
+        for key, value in data.items():
+            if type(value) != str:
+                raise InvalidTypeValueError(key)
 
         session: Session = db.session
 
@@ -144,15 +192,11 @@ def update_parents():
 
         for key, value in data.items():
             setattr(parent, key, value)
-    
+
             session.add(parent)
             session.commit()
-    
-    except InvalidKeyError as e:
-        return e.message, e.status
 
-    #Valida o formato de telefone
-    except InvalidPhoneFormatError as e:
+    except (InvalidKeyError, InvalidTypeValueError, InvalidPhoneFormatError) as e:
         return e.message, e.status
 
     return jsonify(parent)

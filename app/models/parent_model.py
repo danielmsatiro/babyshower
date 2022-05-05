@@ -1,10 +1,15 @@
-from dataclasses import dataclass
 import re
-
-from app.exceptions.parents_exc import InvalidEmailLenghtError, InvalidTypeValueError, InvalidPhoneFormatError
+from dataclasses import dataclass
 
 from app.configs.database import db
-from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
+from app.exceptions import InvalidTypeValueError
+from app.exceptions.parents_exc import (
+    InvalidCpfLenghtError,
+    InvalidEmailError,
+    InvalidPhoneFormatError,
+)
+from app.models.cities_model import CityModel
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import backref, relationship, validates
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -24,10 +29,14 @@ class ParentModel(db.Model):
     id = Column(Integer, primary_key=True, nullable=False)
     cpf = Column(String, nullable=False, unique=True)
     username = Column(String, nullable=False, unique=True)
-    name = Column(String, nullable=False)
+    name: str = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
-    phone = Column(String, nullable=False, unique=True)
+    phone = Column(String, nullable=False)
+
+    city_point_id = Column(
+        Integer, ForeignKey("cities.point_id", ondelete="CASCADE"), nullable=False
+    )
 
     products = relationship("ProductModel", backref=backref("parent", uselist=False))
 
@@ -47,24 +56,31 @@ class ParentModel(db.Model):
     @validates("cpf")
     def validate_cpf_type(self, key, cpf_to_be_tested):
         if type(cpf_to_be_tested) != str:
-            raise InvalidTypeValueError
-        
+            raise InvalidTypeValueError(cpf_to_be_tested)
+
         if len(cpf_to_be_tested) != 11:
-            raise  InvalidEmailLenghtError
+            raise InvalidCpfLenghtError
 
         return cpf_to_be_tested
-    
-    @validates("email")
-    def validate_email_type(self, key, email_to_be_tested):
-        if type(email_to_be_tested) != str:
-            raise InvalidTypeValueError
 
-        return email_to_be_tested
-    
+    @validates("email")
+    def validate_email(self, key, email):
+        if not re.search(r"[\w\-.]+@[\w\-]+\.\w+\.?\w*", email):
+            raise InvalidEmailError
+        return email.lower()
+
     @validates("phone")
     def validate_phone_type(self, key, phone_to_be_tested):
-        valid = re.compile(r"^\(\d{2}\)\s\d{4,5}\-\d{4}")
+        valid = re.compile(
+            r"^\((?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])\) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4}$"
+        )
         if not valid.search(phone_to_be_tested):
             raise InvalidPhoneFormatError
 
         return phone_to_be_tested
+
+    @validates("username", "name")
+    def normalization(self, key, value):
+        if key == "username":
+            return value.lower()
+        return value.title()
