@@ -320,7 +320,7 @@ Sem corpo de resposta
 
 # Rota Categories
 
-## **Rotas que não precisam de autenticação**
+## **Rota não precisa de autenticação**
 
 <h2 align="center">Obter todas as categories</h2>
 
@@ -657,7 +657,7 @@ Não é necessário um corpo da requisição.
 	"access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MTc3OTAxNywianRpIjoiOWJmOGM2M2QtNmFkYS00YTM1LTkxNDItY2FhNmU1NGIwYWM0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJpZCI6NTU0MiwidXNlcm5hbWUiOiJkX3NhdGlybzMifSwibmJmIjoxNjUxNzc5MDE3LCJleHAiOjE2NTE3Nzk5MTd9.DT8dcAjeSQnzsEw9DqImwqfF3Nm3Q8YIiLuFUTZ72JE"
 }
 ```
->**Obs.:** É possível obter o id do usuário através do JWT.
+>**Obs.:** É possível obter o id do usuário através do JWT. Token expira em 15 minutos.
 
 ## **Rotas que precisam de autenticação**
 
@@ -704,4 +704,47 @@ Não é necessário um corpo da requisição.
 
 ```json
 Sem corpo de resposta
+```
+# Rotas Cities
+>**Obs.:** Nesta rota além de query params para paginações ('page'-> deault=1 e/ou 'per_page' -> default=8). Podem ser utilizados "city" e "state" para filtrar os resultados.
+## **Rota não precisa de autenticação**
+
+<h2 align="center">Obter todos os parents(usernames)</h2>
+
+`GET /api/cities?state=<estado>&city=<cidade> - FORMATO DA REQUISIÇÃO`
+
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+
+`GET /api/cities?state=Santa Catarina - FORMATO DA RESPOSTA - STATUS 200`
+
+```json
+{
+	"cities": [
+		{
+			"point_id": 1786,
+			"capital": true,
+			"uf": "SC",
+			"longitude": -48.5477,
+			"code_uf": 42,
+			"code_ibge": 4205407,
+			"city": "Florianópolis",
+			"state": "Santa Catarina",
+			"latitude": -27.5945
+		},
+		{
+			"point_id": 43,
+			"capital": false,
+			"uf": "SC",
+			"longitude": -49.822,
+			"code_uf": 42,
+			"code_ibge": 4200200,
+			"city": "Agrolândia",
+			"state": "Santa Catarina",
+			"latitude": -27.4087
+		},
+		(...)
 ```
