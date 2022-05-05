@@ -46,7 +46,10 @@ def new_parents():
     cities_query: Query = session.query(CityModel)
 
     point_id_current = (
-        cities_query.filter_by(city=city).filter_by(state=state).first().point_id
+        cities_query.filter(CityModel.state.ilike(f"%{data['state']}%"))
+        .filter(CityModel.city.ilike(f"%{data['city']}%"))
+        .first()
+        .point_id
     )
 
     data.update({"city_point_id": point_id_current})
@@ -81,6 +84,17 @@ def new_parents():
         session: Session = db.session
         session.add(parent)
         session.commit()
+
+        city_state = (
+            session.query(CityModel.city, CityModel.uf)
+            .filter_by(point_id=point_id_current)
+            .first()
+        )
+
+        city_state = {"city/state": f"{city_state[0]}/{city_state[1]}"}
+        user_current.pop("city")
+        user_current.pop("state")
+        user_current.update(city_state)
 
     except (
         InvalidKeyError,
