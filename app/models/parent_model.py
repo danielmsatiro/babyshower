@@ -3,11 +3,15 @@ from dataclasses import dataclass
 
 from app.configs.database import db
 from app.exceptions import InvalidTypeValueError
-from app.exceptions.parents_exc import InvalidCpfLenghtError, InvalidPhoneFormatError
-from sqlalchemy import Column, Integer, String, ForeignKey
+from app.exceptions.parents_exc import (
+    InvalidCpfLenghtError,
+    InvalidEmailError,
+    InvalidPhoneFormatError,
+)
+from app.models.cities_model import CityModel
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import backref, relationship, validates
 from werkzeug.security import check_password_hash, generate_password_hash
-from app.models.cities_model import CityModel
 
 
 @dataclass
@@ -60,11 +64,10 @@ class ParentModel(db.Model):
         return cpf_to_be_tested
 
     @validates("email")
-    def validate_email_type(self, key, email_to_be_tested):
-        if type(email_to_be_tested) != str:
-            raise InvalidTypeValueError
-
-        return email_to_be_tested
+    def validate_email(self, key, email):
+        if not re.search(r"[\w\-.]+@[\w\-]+\.\w+\.?\w*", email):
+            raise InvalidEmailError
+        return email.lower()
 
     @validates("phone")
     def validate_phone_type(self, key, phone_to_be_tested):
@@ -75,3 +78,9 @@ class ParentModel(db.Model):
             raise InvalidPhoneFormatError
 
         return phone_to_be_tested
+
+    @validates("username", "name")
+    def normalization(self, key, value):
+        if key == "username":
+            return value.lower()
+        return value.title()
