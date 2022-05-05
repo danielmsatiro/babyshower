@@ -7,6 +7,7 @@ from app.models.chat_model import ChatModel
 from app.models.parent_model import ParentModel
 from app.models.message_model import MessageModel
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from ipdb import set_trace
 
 
 @jwt_required()
@@ -38,7 +39,7 @@ def read_chat(other_parent_id):
     # alterar para lido -> segue a lógica de um update
     # alterar model com data de lido
     ...
-    messages_serialize = [ asdict(msg) for msg in messages ]
+    messages_serialize = [ asdict(msg) for msg in messages]
     
     return {"messages": messages_serialize}, 200
 
@@ -64,16 +65,13 @@ def post_message(other_parent_id: int):
             parent_id_main=int(other_parent_id)
         ).first()
 
-    print(chat_refer)
-
     user_refer = parents_query.filter_by(id=int(other_parent_id)).first()
-    print(user_refer)
+
     if user_refer and not chat_refer:
         user_logged_id = user_logged["id"]
         chat_refer: ChatModel = ChatModel(
             parent_id_main=user_logged_id,
             parent_id_retrieve=other_parent_id)
-    print(chat_refer)
 
     now = datetime.datetime.utcnow().strftime('%d/%m/%Y')
 
@@ -85,10 +83,12 @@ def post_message(other_parent_id: int):
     message_current = MessageModel(
         message=data["message"],
         data=datetime.datetime.utcnow(),
-        chat_id=chat_refer.id
+        chat_id=chat_refer.id,
+        parent_id=user_logged["id"]
         )
 
     session.add(message_current)
+
     session.commit()
 
     return jsonify("Mensagem enviada com sucesso!"), 200
