@@ -104,7 +104,7 @@ def products_per_geolocalization(
 
 
 def verify_product_categories(data):
-    received_categories = data["categories"]
+    received_categories = data["categories"] or []
 
     db_categories: CategoryModel = CategoryModel.query.all()
 
@@ -123,7 +123,7 @@ def verify_product_categories(data):
 
 
 def data_format(data):
-    categories = list(data["categories"])
+    categories = data.setdefault("categories", [])
 
     for i in range(len(categories)):
         categories[i] = categories[i].lower()
