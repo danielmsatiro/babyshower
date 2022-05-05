@@ -1,12 +1,11 @@
-from json import load
-from sqlalchemy.orm import Session
-from sqlalchemy import Column, Integer, String, Float, Boolean
-from geoalchemy2.types import Geometry
-from app.configs.database import db
-from sqlalchemy.orm import Query, Session
-from geoalchemy2 import func
 from dataclasses import dataclass
-from sqlalchemy.orm import relationship
+from json import load
+
+from app.configs.database import db
+from geoalchemy2 import func
+from geoalchemy2.types import Geometry
+from sqlalchemy import Boolean, Column, Float, Integer, String
+from sqlalchemy.orm import Query, Session, relationship
 
 
 @dataclass
@@ -29,7 +28,8 @@ class CityModel(db.Model):
         query: Query = session.query(CityModel)
         cities = query.filter(
             func.ST_DistanceSphere(CityModel.geom, self.geom) < radius
-        ).all()
+        )
+
         return cities
 
     @classmethod

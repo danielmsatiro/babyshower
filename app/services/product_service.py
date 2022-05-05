@@ -16,13 +16,13 @@ def serialize_product(product: ProductModel) -> dict:
 
     session: Session = db.session
 
-    city_state = (
-        session.query(CityModel.city, CityModel.uf)
-        .filter_by(point_id=product_serialized["parent_id"])
-        .first()
+    parent_point_id = session.query(ParentModel.city_point_id).filter_by(
+        id=product_serialized["parent_id"]
     )
 
-    city_state = {"city/state": f"{city_state[0]}/{city_state[1]}"}
+    city_state = session.query(CityModel).filter_by(point_id=parent_point_id).first()
+
+    city_state = {"city/state": f"{city_state.city}/{city_state.state}"}
 
     product_serialized.update(city_state)
 
@@ -92,6 +92,7 @@ def products_per_geolocalization(
             .limit(per_page)
             .all()
         )
+
     except Exception:
         products = products.offset(page * per_page).limit(per_page).all()
         products = [serialize_product(product) for product in products]
