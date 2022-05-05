@@ -10,8 +10,9 @@ from app.models.parent_model import ParentModel
 from app.models.message_model import MessageModel
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import desc
+from dataclasses import asdict
 
-from app.services.chat_service import message_serialize
+from app.services.chat_service import message_serialize, serialize_chat
 
 
 @jwt_required()
@@ -116,3 +117,29 @@ def post_message(other_parent_id: int):
         return e.message, e.status
     except NotFoundError as e:
         return e.message, e.status
+
+
+@jwt_required()
+def chats_by_parent():
+    user_logged = get_jwt_identity()
+
+    session: Session = db.session
+    chat_refer_id_main = session.query(ChatModel).filter_by(
+            parent_id_main=user_logged["id"]
+    ).all()
+
+    chat_refer_id_main = [ asdict(chat) for chat in chat_refer_id_main ]
+
+    chat_refer_id_retrieve = session.query(ChatModel).filter_by(
+            parent_id_retrieve=user_logged["id"]
+    ).all()
+
+    chat_refer_id_retrieve = [ asdict(chat) for chat in chat_refer_id_retrieve ]
+
+    chat_refer_id_main.extend(chat_refer_id_retrieve)
+       
+    serialize_chats = [ serialize_chat(chat) for chat in chat_refer_id_main ]
+
+    print(serialize_chats)
+
+    return {"chats": serialize_chats}

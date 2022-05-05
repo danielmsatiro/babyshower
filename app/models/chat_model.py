@@ -11,7 +11,7 @@ class ChatModel(db.Model):
 
     now = datetime.datetime.utcnow().strftime('%d/%m/%Y')
 
-    id = Column(Integer, primary_key=True)
+    id: int = Column(Integer, primary_key=True)
     data: str = Column(DateTime, nullable=False, default=now)
     last_data_update: str = Column(DateTime, nullable=False, default=now)
 
