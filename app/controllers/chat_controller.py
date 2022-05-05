@@ -9,6 +9,7 @@ from app.models.chat_model import ChatModel
 from app.models.parent_model import ParentModel
 from app.models.message_model import MessageModel
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy import desc
 
 from app.services.chat_service import message_serialize
 
@@ -36,7 +37,7 @@ def read_chat(other_parent_id):
 
         messages: MessageModel = session.query(MessageModel).filter_by(
             chat_id=chat_refer.id
-        )
+        ).order_by(desc(MessageModel.data))
 
         page = int(params.get("page", 1)) - 1
         per_page = int(params.get("per_page", 10))

@@ -12,6 +12,7 @@ class MessageModel(db.Model):
 
     data: DateTime
     message: str
+    msg_read: bool
 
     id = Column(Integer, primary_key=True)
     data = Column(DateTime, nullable=False, default=now)
