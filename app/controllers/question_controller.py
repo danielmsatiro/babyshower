@@ -1,5 +1,8 @@
 from datetime import datetime as dt
 from http import HTTPStatus
+from sqlalchemy import exc
+
+from sqlalchemy.sql.traversals import COMPARE_SUCCEEDED
 
 from app.configs.database import db
 from app.exceptions import (
@@ -84,14 +87,16 @@ def update_question(question_id: int):
     user_logged = get_jwt_identity()
 
     session: Session = db.session
-
+    
     try:
-        if not type(data["question"]) == str:
-            raise InvalidTypeValueError
-
         if not received_key == expected_key:
             raise InvalidKeyError(received_key, expected_key)
-
+        
+        if not type(data.get("question")) == str:
+            raise InvalidTypeValueError
+        
+        
+        
         question = session.query(QuestionModel).get(question_id)
 
         if not question:
@@ -115,6 +120,8 @@ def update_question(question_id: int):
         return e.message, e.status
     except InvalidTypeValueError as e:
         return e.message, e.status
+     
+
 
 
 @jwt_required()
