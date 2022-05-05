@@ -34,7 +34,7 @@ def parents_cli():
                 )
                 all_parents_number += 1
                 print(f"{_+1} parent added")
-                session.add_all(parents)
+                session.add(parents)
                 session.commit()
             except Exception:
                 print(f"error generating parent current")

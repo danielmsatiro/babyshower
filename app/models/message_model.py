@@ -8,7 +8,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, Text, Boolean
 @dataclass
 class MessageModel(db.Model):
     __tablename__ = "messages"
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().strftime('%d/%m/%Y')
 
     data: DateTime
     message: str
