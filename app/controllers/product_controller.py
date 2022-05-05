@@ -14,7 +14,8 @@ from app.services.product_service import (
     data_format,
     find_category,
     products_per_geolocalization,
-    serialize_product
+    serialize_product,
+    verify_product_categories
 )
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -173,8 +174,6 @@ def update_product(product_id: int):
             received_categories = data.pop("categories")
             find_categories = [ find_category(category) for category in received_categories ]
             data["categories"] = find_categories
-
-            print(find_categories)
 
         session: Session = db.session
         product: Query = (
