@@ -1,5 +1,5 @@
 from bdb import set_trace
-import datetime
+from datetime import datetime as dt
 from http import HTTPStatus
 from flask import jsonify, request
 from sqlalchemy.orm import Query, Session
@@ -103,7 +103,7 @@ def post_message(other_parent_id: int):
 
         message_current = MessageModel(
             message=data["message"],
-            data=datetime.datetime.utcnow(),
+            data=dt.now(),
             chat_id=chat_refer.id,
             parent_id=user_logged["id"]
         )
