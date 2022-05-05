@@ -4,6 +4,7 @@ from flask import jsonify, request
 from sqlalchemy.orm import Query, Session
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotFoundError
+from app.exceptions.chat_exception import UserOrChatNotFoundError
 from app.models.chat_model import ChatModel
 from app.models.parent_model import ParentModel
 from app.models.message_model import MessageModel
@@ -14,35 +15,40 @@ from app.services.chat_service import message_serialize
 
 @jwt_required()
 def read_chat(other_parent_id):
-    user_logged = get_jwt_identity()
-    params = dict(request.args.to_dict().items())
+    try:
+        user_logged = get_jwt_identity()
+        params = dict(request.args.to_dict().items())
 
-    session: Session = db.session
-    chat_refer: ChatModel = session.query(ChatModel).filter_by(
-        parent_id_main=user_logged["id"]).filter_by(
-        parent_id_retrieve=other_parent_id
-    ).first()
-    if not chat_refer:
+        session: Session = db.session
         chat_refer: ChatModel = session.query(ChatModel).filter_by(
-            parent_id_retrieve=user_logged["id"]).filter_by(
-            parent_id_main=int(other_parent_id)
+            parent_id_main=user_logged["id"]).filter_by(
+            parent_id_retrieve=other_parent_id
         ).first()
-    print(chat_refer)
+        if not chat_refer:
+            chat_refer: ChatModel = session.query(ChatModel).filter_by(
+                parent_id_retrieve=user_logged["id"]).filter_by(
+                parent_id_main=int(other_parent_id)
+            ).first()
+        print(chat_refer)
 
-    if not chat_refer:
-        return {"details": "You do not have chat with this user or user not found"}, HTTPStatus.NOT_FOUND
+        if not chat_refer:
+            raise UserOrChatNotFoundError
 
-    messages: MessageModel = session.query(MessageModel).filter_by(
-        chat_id=chat_refer.id
-    )
+        messages: MessageModel = session.query(MessageModel).filter_by(
+            chat_id=chat_refer.id
+        )
 
-    page = int(params.get("page", 1)) - 1
-    per_page = int(params.get("per_page", 10))
-    messages: Query = messages.offset(page * per_page).limit(per_page).all()
+        page = int(params.get("page", 1)) - 1
+        per_page = int(params.get("per_page", 10))
+        messages: Query = messages.offset(page * per_page).limit(per_page).all()
 
-    messages_serialize = [ message_serialize(msg, other_parent_id) for msg in messages ]
+        messages_serialize = [ message_serialize(msg, other_parent_id) for msg in messages ]
+        
+        return {"messages": messages_serialize}, 200
+
+    except UserOrChatNotFoundError as e:
+        return e.message, e.status
     
-    return {"messages": messages_serialize}, 200
 
 
 @jwt_required()
