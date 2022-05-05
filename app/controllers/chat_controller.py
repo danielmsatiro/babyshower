@@ -1,3 +1,4 @@
+from bdb import set_trace
 import datetime
 from http import HTTPStatus
 from flask import jsonify, request
@@ -11,6 +12,7 @@ from app.models.message_model import MessageModel
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import desc
 from dataclasses import asdict
+from ipdb import set_trace
 
 from app.services.chat_service import message_serialize, serialize_chat
 
@@ -124,22 +126,52 @@ def chats_by_parent():
     user_logged = get_jwt_identity()
 
     session: Session = db.session
+
+    # Pegar chat de user_onwer para user_onwer
     chat_refer_id_main = session.query(ChatModel).filter_by(
             parent_id_main=user_logged["id"]
-    ).all()
+    )
 
-    chat_refer_id_main = [ asdict(chat) for chat in chat_refer_id_main ]
+    chat_refer_id_main = [chat.id for chat in chat_refer_id_main]
 
+    # Pegar chat de user_onwer para other_user
     chat_refer_id_retrieve = session.query(ChatModel).filter_by(
             parent_id_retrieve=user_logged["id"]
+    )
+
+    chat_refer_id_retrieve = [chat.id for chat in chat_refer_id_retrieve]
+
+    chat_refer_id_main.append(chat_refer_id_retrieve[0])
+
+    chat_refer_ids = set(chat_refer_id_main)
+    chat_refer_ids = list(chat_refer_ids)
+
+    chat_user = session.query(ChatModel).filter(
+            ChatModel.id.in_(chat_refer_ids)
     ).all()
 
-    chat_refer_id_retrieve = [ asdict(chat) for chat in chat_refer_id_retrieve ]
+    serialize_chats = []
 
-    chat_refer_id_main.extend(chat_refer_id_retrieve)
-       
-    serialize_chats = [ serialize_chat(chat) for chat in chat_refer_id_main ]
+    for chat in chat_user:
+        chat: ChatModel
+        new_messages = session.query(ChatModel).filter_by(
+                parent_id_main=chat.parent_id_main
+            ).filter_by(
+                parent_id_retrieve=chat.parent_id_retrieve
+            ).all()[0].id
+        new_messages = session.query(MessageModel).filter_by(
+            id=new_messages
+        )
+        if not new_messages:
+            new_messages = session.query(ChatModel).filter_by(
+                parent_id_retrieve=user_logged["id"]
+            )
+        if new_messages:
+            chat = {
+                "other_parent_id": chat.parent_id_retrieve,
+                "messages": f"chat/{chat.parent_id_retrieve}",
+                "read": new_messages.all()[0].msg_read
+            }
+            serialize_chats.append(chat)
 
-    print(serialize_chats)
-
-    return {"chats": serialize_chats}
+    return {"chats": serialize_chats}, 200
