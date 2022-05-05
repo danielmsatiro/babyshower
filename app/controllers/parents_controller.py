@@ -1,4 +1,8 @@
+from dataclasses import asdict
 from http import HTTPStatus
+from zoneinfo import available_timezones
+from copy import deepcopy
+
 
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
@@ -33,6 +37,24 @@ def pick_parents():
         return {"msg": "No data found"}
 
     return {"users": response}, HTTPStatus.OK
+
+def pick_parents_by_id(parent_id: int):
+
+    try:
+        parent: Query = ParentModel.query.get(parent_id)
+       
+        new_parent = asdict(parent)
+
+        new_parent["product"] = f"api/products/by_parent/{parent_id}"
+
+        
+        if not parent:
+            raise NonexistentParentError
+
+        return jsonify(new_parent), HTTPStatus.OK
+
+    except NonexistentParentError as err:
+        return err.message, HTTPStatus.NOT_FOUND
 
 
 def new_parents():
