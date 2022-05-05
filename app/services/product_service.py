@@ -121,6 +121,25 @@ def find_category(category_name):
     ).first()
 
     if not response:
-        raise InvalidCategoryError(category_name)
+        category_not_found = [category_name]
+        raise InvalidCategoryError(category_not_found)
 
     return response
+
+def verify_product_categories(data):
+    received_categories = data["categories"] or []
+
+    db_categories: CategoryModel = CategoryModel.query.all()
+
+    categories_by_name = []
+
+    for item in db_categories:
+        categories_by_name.append(item.name)
+
+    unfinded_categories = []
+
+    for categorie in received_categories:
+        if categorie not in categories_by_name:
+            unfinded_categories.append(categorie)
+
+    return {"categories": categories_by_name, "unfinded": unfinded_categories}
