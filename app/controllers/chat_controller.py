@@ -148,8 +148,8 @@ def chats_by_parent():
         )
         chat_refer_id_retrieve = [chat.id for chat in chat_refer_id_retrieve]
 
-        # Precisa unir ambas as listas
-        chat_refer_ids = chat_refer_id_main + chat_refer_id_retrieve
+        # Precisa unir ambas as listas e remover algum chat duplicado
+        chat_refer_ids = set(chat_refer_id_main + chat_refer_id_retrieve)
         # chat_refer_id_main.append(chat_refer_id_retrieve[0])
         # chat_refer_ids = set(chat_refer_id_main)
         # chat_refer_ids = list(chat_refer_ids)
