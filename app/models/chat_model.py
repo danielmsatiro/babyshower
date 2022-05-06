@@ -8,7 +8,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer
 class ChatModel(db.Model):
     __tablename__ = "chat"
 
-    now = dt
+    now = dt.now()
 
     id: int = Column(Integer, primary_key=True)
     data: str = Column(DateTime, nullable=False, default=now)

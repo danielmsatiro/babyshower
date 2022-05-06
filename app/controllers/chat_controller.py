@@ -52,7 +52,6 @@ def read_chat(other_parent_id):
 
     except UserOrChatNotFoundError as e:
         return e.message, e.status
-    
 
 
 @jwt_required()
@@ -74,14 +73,13 @@ def post_message(other_parent_id: int):
 
         session: Session = db.session
 
-        parents_query = session.query(ParentModel)
-        chat_query = session.query(ChatModel)
-
-        user_refer = parents_query.filter_by(id=other_parent_id).first()
+        user_refer = session.query(ParentModel).filter_by(id=other_parent_id).first()
         if not user_refer:
             raise NotFoundError(other_parent_id, "parent")
 
-        chat_refer: ChatModel = chat_query.filter_by(
+        chat_query = session.query(ChatModel)
+
+        chat_refer: ChatModel = db.session.query(ChatModel).filter_by(
             parent_id_main=user_logged["id"]).filter_by(
             parent_id_retrieve=int(other_parent_id)
         ).first()
@@ -97,9 +95,8 @@ def post_message(other_parent_id: int):
             chat_refer: ChatModel = ChatModel(
                 parent_id_main=user_logged_id,
                 parent_id_retrieve=other_parent_id)
-
-        session.add(chat_refer)
-        session.commit()
+            session.add(chat_refer)
+            session.commit()
 
         message_current = MessageModel(
             message=data["message"],
