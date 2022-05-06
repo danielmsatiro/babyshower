@@ -70,7 +70,8 @@ def get_all():
 
 def get_by_id(product_id: int):
     try:
-        product = ProductModel.query.get(product_id)
+        session: Session = db.session
+        product = session.query(ProductModel).filter(ProductModel.id==product_id).first()
         product_serialized = serialize_product(product)
 
         if not product:
@@ -84,7 +85,9 @@ def get_by_id(product_id: int):
 
 def get_by_parent(parent_id: int):
     try:
-        products = ProductModel.query.filter(ProductModel.parent_id == parent_id).all()
+        session: Session = db.session
+        products = session.query(ProductModel).filter(ProductModel.parent_id == parent_id).all()
+
         if not products:
             raise NotFoundError(parent_id, "parent")
 
@@ -144,7 +147,7 @@ def create_product():
         session.add(product)
         session.commit()
 
-        email_new_product(parent.username, product.title, parent.email)
+        # email_new_product(parent.username, product.title, parent.email)
         product_serialized = serialize_product(product)
 
         return jsonify(product_serialized), HTTPStatus.CREATED
