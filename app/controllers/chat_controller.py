@@ -136,23 +136,17 @@ def chats_by_parent():
     session: Session = db.session
 
     try:
-        # Pega todos os chats_id em que user_logged foi parent_id_main
         chat_refer_id_main = session.query(ChatModel).filter_by(
             parent_id_main=user_logged["id"]
         )
         chat_refer_id_main = [chat.id for chat in chat_refer_id_main]
 
-        # Pega todos os chats_id em que user_logged foi parent_id_retrieve
         chat_refer_id_retrieve = session.query(ChatModel).filter_by(
             parent_id_retrieve=user_logged["id"]
         )
         chat_refer_id_retrieve = [chat.id for chat in chat_refer_id_retrieve]
 
-        # Precisa unir ambas as listas e remover algum chat duplicado
         chat_refer_ids = set(chat_refer_id_main + chat_refer_id_retrieve)
-        # chat_refer_id_main.append(chat_refer_id_retrieve[0])
-        # chat_refer_ids = set(chat_refer_id_main)
-        # chat_refer_ids = list(chat_refer_ids)
 
         chat_user = (
             session.query(ChatModel).filter(ChatModel.id.in_(chat_refer_ids)).all()
@@ -163,15 +157,12 @@ def chats_by_parent():
         for chat in chat_user:
             chat: ChatModel
 
-            # Verifica se tem nova mensagem que não foi enviada por mim mesmo e que não tenha sido lida
             new_message = (
                 session.query(MessageModel)
                 .filter_by(chat_id=chat.id)
                 .filter_by(msg_read=False)
             ).all()
 
-            # verifica em qual lado eu fui registrado em chats para uma conversa com outro usuário
-            # supondo que nesta table eu serei registrado em só um lado específico em uma conversa para um usuário específico
             if user_logged["id"] == chat.parent_id_main:
                 other_parent_id = chat.parent_id_retrieve
             else:
@@ -186,21 +177,6 @@ def chats_by_parent():
             }
             serialize_chats.append(chat)
 
-            """ new_messages = (
-                session.query(ChatModel)
-                .filter_by(parent_id_main=chat.parent_id_main)
-                .filter_by(parent_id_retrieve=chat.parent_id_retrieve)
-                .all()[0]
-                .id
-            )
-            new_messages = session.query(MessageModel).filter_by(chat_id=new_messages)
-            if new_messages:
-                chat = {
-                    "other_parent_id": chat.parent_id_retrieve,
-                    "messages": f"chat/{chat.parent_id_retrieve}",
-                    "read": new_messages.all()[-1].msg_read,
-                }
-                serialize_chats.append(chat) """
     except IndexError:
         return {"details": "You do not have chat initialized"}, HTTPStatus.NOT_FOUND
 
