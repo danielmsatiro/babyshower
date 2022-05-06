@@ -111,7 +111,7 @@ def post_message(other_parent_id: int):
         session.add(message_current)
         session.commit()
 
-        return jsonify("Mensagem enviada com sucesso!"), HTTPStatus.OK
+        return jsonify({"msg": "Mensagem enviada com sucesso!"}), HTTPStatus.CREATED
     
     except InvalidKeyError as e:
         return e.message, e.status
@@ -127,51 +127,52 @@ def chats_by_parent():
 
     session: Session = db.session
 
-    # Pegar chat de user_onwer para user_onwer
-    chat_refer_id_main = session.query(ChatModel).filter_by(
-            parent_id_main=user_logged["id"]
-    )
-
-    chat_refer_id_main = [chat.id for chat in chat_refer_id_main]
-
-    # Pegar chat de user_onwer para other_user
-    chat_refer_id_retrieve = session.query(ChatModel).filter_by(
-            parent_id_retrieve=user_logged["id"]
-    )
-
-    chat_refer_id_retrieve = [chat.id for chat in chat_refer_id_retrieve]
-
-    chat_refer_id_main.append(chat_refer_id_retrieve[0])
-
-    chat_refer_ids = set(chat_refer_id_main)
-    chat_refer_ids = list(chat_refer_ids)
-
-    chat_user = session.query(ChatModel).filter(
-            ChatModel.id.in_(chat_refer_ids)
-    ).all()
-
-    serialize_chats = []
-
-    for chat in chat_user:
-        chat: ChatModel
-        new_messages = session.query(ChatModel).filter_by(
-                parent_id_main=chat.parent_id_main
-            ).filter_by(
-                parent_id_retrieve=chat.parent_id_retrieve
-            ).all()[0].id
-        new_messages = session.query(MessageModel).filter_by(
-            id=new_messages
+    try:
+        # Pegar chat de user_onwer para user_onwer
+        chat_refer_id_main = session.query(ChatModel).filter_by(
+                parent_id_main=user_logged["id"]
         )
-        if not new_messages:
-            new_messages = session.query(ChatModel).filter_by(
+
+        chat_refer_id_main = [chat.id for chat in chat_refer_id_main]
+
+        # Pegar chat de user_onwer para other_user
+        chat_refer_id_retrieve = session.query(ChatModel).filter_by(
                 parent_id_retrieve=user_logged["id"]
+        )
+
+        chat_refer_id_retrieve = [chat.id for chat in chat_refer_id_retrieve]
+
+        chat_refer_id_main.append(chat_refer_id_retrieve[0])
+
+        chat_refer_ids = set(chat_refer_id_main)
+        chat_refer_ids = list(chat_refer_ids)
+
+        chat_user = session.query(ChatModel).filter(
+                ChatModel.id.in_(chat_refer_ids)
+        ).all()
+
+        serialize_chats = []
+
+        for chat in chat_user:
+            chat: ChatModel
+            new_messages = session.query(ChatModel).filter_by(
+                    parent_id_main=chat.parent_id_main
+                ).filter_by(
+                    parent_id_retrieve=chat.parent_id_retrieve
+                ).all()[0].id
+            new_messages = session.query(MessageModel).filter_by(
+                chat_id=new_messages
             )
-        if new_messages:
-            chat = {
-                "other_parent_id": chat.parent_id_retrieve,
-                "messages": f"chat/{chat.parent_id_retrieve}",
-                "read": new_messages.all()[0].msg_read
-            }
-            serialize_chats.append(chat)
+            if new_messages:
+                chat = {
+                    "other_parent_id": chat.parent_id_retrieve,
+                    "messages": f"chat/{chat.parent_id_retrieve}",
+                    "read": new_messages.all()[-1].msg_read
+                }
+                serialize_chats.append(chat)
+    except IndexError:
+        return {
+            "details": "You do not have chat initialized"
+        }, HTTPStatus.NOT_FOUND
 
     return {"chats": serialize_chats}, 200
