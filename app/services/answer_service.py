@@ -1,13 +1,13 @@
 from dataclasses import asdict
-from flask import url_for
-from app.models import AnswerModel, ParentModel, ProductModel, QuestionModel
-from sqlalchemy.orm import Query, Session
+
 from app.configs.database import db
+from app.models import AnswerModel, ParentModel, ProductModel, QuestionModel
+from flask import url_for
+from sqlalchemy.orm import Query, Session
 
 
 def serialize_answer(answer: AnswerModel) -> dict:
     answer_serialized = asdict(answer)
-    print(f"{answer_serialized=}")
 
     username = (
         db.session.query(ParentModel.username)
@@ -19,7 +19,7 @@ def serialize_answer(answer: AnswerModel) -> dict:
 
     session: Session = db.session
     parent: Query = (
-        session.query(ParentModel.username, QuestionModel.question)
+        session.query(ParentModel.username, QuestionModel.question, ProductModel.id)
         .select_from(ParentModel)
         .join(ProductModel)
         .filter(ParentModel.id == ProductModel.parent_id)
@@ -33,9 +33,9 @@ def serialize_answer(answer: AnswerModel) -> dict:
         "question": {
             "link": url_for(
                 "bp_api.bp_questions.get_product_questions",
-                product_id=answer_serialized["question_id"],
+                product_id=parent[2],
             ),
-            "question": parent[0],
+            "question": parent[1],
             "username": username[0],
         }
     }

@@ -2,9 +2,8 @@ from os import getenv
 
 from flask import Flask
 
-from app import routes
-from app.configs import database, migration, jwt_auth
-from app import commands
+from app import commands, routes
+from app.configs import database, jwt_auth, migration
 
 
 def create_app() -> Flask:

@@ -1,3 +1,4 @@
+import random
 import click
 from app.configs.database import db
 from app.models.parent_model import ParentModel
@@ -14,9 +15,11 @@ def parents_cli():
     @click.argument("quantity")
     def create_parents(quantity):
         session: Session = db.session
-        parents = []
-
+        all_parents_number = 0
         for _ in range(int(quantity)):
+            parents = []
+            number = fake.msisdn()
+            phone_number = f"({number[2:4]}) {number[4:9]}-{number[9:13]}"
             try:
                 parents.append(
                     ParentModel(
@@ -25,15 +28,18 @@ def parents_cli():
                         name=fake.name(),
                         email=fake.email(),
                         password=fake.ean(length=8),
-                        phone=fake.phone_number(),
+                        phone=phone_number,
+                        city_point_id=random.randint(1, 10 - 1),
                     )
                 )
-            except:
-                continue
+                all_parents_number += 1
+                print(f"{_+1} parent added")
+                session.add(parents)
+                session.commit()
+            except Exception:
+                print(f"error generating parent current")
+                break
 
-        session.add_all(parents)
-        session.commit()
-
-        print(f"{quantity} parents added")
+        print(f"{all_parents_number} parents added with sucess")
 
     return parent_group
