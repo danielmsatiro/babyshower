@@ -7,9 +7,7 @@ from app.models import CategoryModel, CityModel, ParentModel, ProductModel
 from app.services.add_categories import add_categories_if_empty
 from faker import Faker
 from flask.cli import AppGroup
-from ipdb import set_trace
-from sqlalchemy import DDL
-from sqlalchemy.orm import Query, Session
+from sqlalchemy.orm import Session
 
 
 def total_cli():
@@ -30,15 +28,13 @@ def total_cli():
                     cpf=fake.ean(length=13)[:11],
                     username=f"{fake.user_name()}{point[0]}",
                     name=fake.name(),
-                    email=f"{point[0]}{fake.email()}",
+                    email=f"{point[0]}{'teste@gmail.com'}",
                     password=fake.ean(length=8),
                     phone=f"(21) 99999-9999",
                     city_point_id=point[0],
-                )
-
+                )  
                 session.add(parent)
                 session.commit()
-
                 # One product for each parent
                 random_product = random.randint(0, len(products_list) - 1)
 
