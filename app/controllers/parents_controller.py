@@ -1,15 +1,16 @@
+from copy import deepcopy
 from dataclasses import asdict
 from http import HTTPStatus
 from zoneinfo import available_timezones
-from copy import deepcopy
+
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
 from app.exceptions.parents_exc import (
     InvalidCpfLenghtError,
     InvalidEmailError,
     InvalidPhoneFormatError,
+    NonexistentParentError,
     NotIsLoggedParentError,
-    NonexistentParentError
 )
 from app.models import ParentModel
 from app.models.cities_model import CityModel
@@ -52,10 +53,14 @@ def pick_parents_by_id(parent_id: int):
 
         if not parent_id == user_logged["id"]:
             raise NotIsLoggedParentError
+        
+        city: Query = CityModel.query.get(parent.city_point_id)
 
         new_parent = asdict(parent)
 
-        new_parent["product"] = f"api/products/by_parent/{parent_id}"
+        new_parent["products"] = f"api/products/by_parent/{parent_id}"
+        new_parent["city"] = city.city
+        new_parent["state"] = city.state
         
         return jsonify(new_parent), HTTPStatus.OK
 
@@ -182,7 +187,7 @@ def update_parents():
     user_logged = get_jwt_identity()
 
     received_key = set(data.keys())
-    available_keys = {"username", "name", "email", "password", "phone"}
+    available_keys = {"username", "cpf", "name", "email", "password", "phone", "city", "state"}
 
     try:
         if received_key - available_keys:
