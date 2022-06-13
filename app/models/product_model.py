@@ -16,7 +16,10 @@ class ProductModel(db.Model):
     price: float
     parent_id: int
     description: str
-    image: str
+    image1: str
+    image2: str
+    image3: str
+    image4: str
     sold: bool
     categories: list
 
@@ -27,7 +30,10 @@ class ProductModel(db.Model):
         Integer, ForeignKey("parents.id", ondelete="CASCADE"), nullable=False
     )
     description = Column(String)
-    image = Column(String)
+    image1 = Column(String)
+    image2 = Column(String)
+    image3 = Column(String)
+    image4 = Column(String)
     sold = Column(Boolean, default=False)
 
     categories = relationship(

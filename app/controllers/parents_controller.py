@@ -26,26 +26,32 @@ def pick_parents():
     params = request.args
     page = int(params.get("page", 1)) - 1
     per_page = int(params.get("per_page", 8))
+    parent_id = params.get("parent_id", None)
 
     query: Query = db.session.query(
-        ParentModel.id, ParentModel.username, ParentModel.name
+        ParentModel.id, ParentModel.username, ParentModel.name, ParentModel.image
     )
 
-    query = query.offset(page * per_page).limit(per_page).all()
+    if parent_id:
+        response = query.filter_by(id=int(parent_id)).first()
+        if not response:
+            return {"msg": "No data found"}
+        return {"user": response._asdict()}, HTTPStatus.OK
 
+    query = query.offset(page * per_page).limit(per_page).all()
     response = [response._asdict() for response in query]
     if response == []:
         return {"msg": "No data found"}
 
     return {"users": response}, HTTPStatus.OK
 
+
 @jwt_required()
 def pick_parents_by_id(parent_id: int):
     user_logged = get_jwt_identity()
-    
-    
+
     try:
-        
+
         parent: Query = ParentModel.query.get(parent_id)
 
         if not parent:
@@ -53,7 +59,7 @@ def pick_parents_by_id(parent_id: int):
 
         if not parent_id == user_logged["id"]:
             raise NotIsLoggedParentError
-        
+
         city: Query = CityModel.query.get(parent.city_point_id)
 
         new_parent = asdict(parent)
@@ -61,13 +67,14 @@ def pick_parents_by_id(parent_id: int):
         new_parent["products"] = f"api/products/by_parent/{parent_id}"
         new_parent["city"] = city.city
         new_parent["state"] = city.state
-        
+
         return jsonify(new_parent), HTTPStatus.OK
 
     except NonexistentParentError as err:
         return err.message, HTTPStatus.NOT_FOUND
     except NotIsLoggedParentError as e:
         return e.message, e.status
+
 
 def new_parents():
     session: Session = db.session
@@ -187,7 +194,17 @@ def update_parents():
     user_logged = get_jwt_identity()
 
     received_key = set(data.keys())
-    available_keys = {"username", "cpf", "name", "email", "password", "phone", "city", "state"}
+    available_keys = {
+        "username",
+        "cpf",
+        "name",
+        "email",
+        "password",
+        "phone",
+        "city",
+        "state",
+        "image",
+    }
 
     try:
         if received_key - available_keys:
