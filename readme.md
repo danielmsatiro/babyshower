@@ -744,13 +744,16 @@ Não é necessário um corpo da requisição.
 
 ```json
 {
-  "id": 28,
-  "cpf": "12312312313",
-  "username": "fulano",
-  "email": "fulano@mail.com",
-  "name": "Fulano de Tal",
-  "phone": "99999999999",
-  "image": "http://..."
+	"id": 28,
+	"cpf": "12312312313",
+	"username": "fulano",
+	"email": "fulano@mail.com",
+	"name": "Fulano de Tal",
+	"phone": "99999999999",
+	"image": "http://...",
+	"products": "api/products/by_parent/28",
+	"city": "Cocal do Sul",
+	"state": "Santa Catarina"
 }
 ```
 

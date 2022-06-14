@@ -228,7 +228,15 @@ def update_parents():
     except (InvalidKeyError, InvalidTypeValueError, InvalidPhoneFormatError) as e:
         return e.message, e.status
 
-    return jsonify(parent)
+    city: Query = CityModel.query.get(parent.city_point_id)
+
+    updated_parent = asdict(parent)
+
+    updated_parent["products"] = f"api/products/by_parent/{updated_parent['id']}"
+    updated_parent["city"] = city.city
+    updated_parent["state"] = city.state
+
+    return jsonify(updated_parent)
 
 
 @jwt_required()
