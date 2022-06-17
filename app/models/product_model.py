@@ -17,9 +17,13 @@ class ProductModel(db.Model):
     parent_id: int
     description: str
     image1: str
+    image1_key: str
     image2: str
+    image2_key: str
     image3: str
+    image3_key: str
     image4: str
+    image4_key: str
     sold: bool
     categories: list
 
@@ -31,9 +35,13 @@ class ProductModel(db.Model):
     )
     description = Column(String)
     image1 = Column(String)
+    image1_key = Column(String)
     image2 = Column(String)
+    image2_key = Column(String)
     image3 = Column(String)
+    image3_key = Column(String)
     image4 = Column(String)
+    image4_key = Column(String)
     sold = Column(Boolean, default=False)
 
     categories = relationship(

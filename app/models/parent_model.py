@@ -19,22 +19,15 @@ class ParentModel(db.Model):
 
     __tablename__ = "parents"
 
-    id: int
-    cpf: str
-    username: str
-    email: str
-    name: str
-    phone: str
-    image: str
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    cpf = Column(String, nullable=False, unique=True)
-    username = Column(String, nullable=False, unique=True)
+    id: str = Column(Integer, primary_key=True, nullable=False)
+    cpf: str = Column(String, nullable=False, unique=True)
+    username: str = Column(String, nullable=False, unique=True)
     name: str = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
+    email: str = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
-    phone = Column(String, nullable=False)
-    image = Column(String)
+    phone: str = Column(String, nullable=False)
+    image: str = Column(String)
+    image_key: str = Column(String)
 
     city_point_id = Column(
         Integer, ForeignKey("cities.point_id", ondelete="CASCADE"), nullable=False
