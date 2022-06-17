@@ -3,6 +3,8 @@ asttokens==2.0.5
 attrs==21.4.0
 backcall==0.2.0
 black==22.3.0
+certifi==2022.6.15
+charset-normalizer==2.0.12
 click==8.1.2
 decorator==5.1.1
 executing==0.8.3
@@ -15,6 +17,7 @@ Flask-SQLAlchemy==2.5.1
 GeoAlchemy2==0.4.0
 greenlet==1.1.2
 gunicorn==20.1.0
+idna==3.3
 importlib-metadata==4.11.3
 iniconfig==1.1.1
 ipdb==0.13.9
@@ -44,6 +47,7 @@ pyparsing==3.0.8
 pytest==7.1.1
 python-dateutil==2.8.2
 python-dotenv==0.20.0
+requests==2.28.0
 six==1.16.0
 SQLAlchemy==1.4.35
 stack-data==0.2.0
@@ -51,6 +55,7 @@ toml==0.10.2
 tomli==2.0.1
 traitlets==5.1.1
 typing_extensions==4.2.0
+urllib3==1.26.9
 wcwidth==0.2.5
 Werkzeug==2.1.1
 zipp==3.8.0

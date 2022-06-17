@@ -4,7 +4,12 @@ from http import HTTPStatus
 from zoneinfo import available_timezones
 
 from app.configs.database import db
-from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
+from app.exceptions import (
+    InvalidKeyError,
+    InvalidTypeValueError,
+    NotAuthorizedError,
+    ServerError,
+)
 from app.exceptions.parents_exc import (
     InvalidCpfLenghtError,
     InvalidEmailError,
@@ -15,6 +20,7 @@ from app.exceptions.parents_exc import (
 from app.models import ParentModel
 from app.models.cities_model import CityModel
 from app.services.email_service import email_to_new_user
+from app.services.request_node_service import request_token_node
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from psycopg2.errors import UniqueViolation
@@ -172,8 +178,11 @@ def login():
     try:
         if not found_parent.verify_password(parent_data["password"]):
             raise NotAuthorizedError
+        token_node = request_token_node(found_parent.id)
 
     except NotAuthorizedError as e:
+        return e.message, e.status
+    except ServerError as e:
         return e.message, e.status
 
     information_for_encoding = {
@@ -183,7 +192,11 @@ def login():
 
     token = create_access_token(information_for_encoding)
 
-    return {"access_token": token, "id": found_parent.id}, HTTPStatus.OK
+    return {
+        "access_token": token,
+        "access_token_node": token_node,
+        "id": found_parent.id,
+    }, HTTPStatus.OK
 
 
 @jwt_required()
