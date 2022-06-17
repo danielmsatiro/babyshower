@@ -19,20 +19,15 @@ class ParentModel(db.Model):
 
     __tablename__ = "parents"
 
-    id: int
-    cpf: str
-    username: str
-    email: str
-    name: str
-    phone: str
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    cpf = Column(String, nullable=False, unique=True)
-    username = Column(String, nullable=False, unique=True)
+    id: str = Column(Integer, primary_key=True, nullable=False)
+    cpf: str = Column(String, nullable=False, unique=True)
+    username: str = Column(String, nullable=False, unique=True)
     name: str = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
+    email: str = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
-    phone = Column(String, nullable=False)
+    phone: str = Column(String, nullable=False)
+    image: str = Column(String)
+    image_key: str = Column(String)
 
     city_point_id = Column(
         Integer, ForeignKey("cities.point_id", ondelete="CASCADE"), nullable=False
@@ -69,13 +64,27 @@ class ParentModel(db.Model):
             raise InvalidEmailError
 
         expected_providers = {
-            'mail.com',     'mail.com.br',      'mail.org.br',
-            'gmail.com',    'gmail.com.br',     'gmail.org.br',
-            'hotmail.com',  'hotmail.com.br',   'hotmail.org.br',
-            'kenzie.com',   'kenzie.com.br',    'kenzie.org.br',
-            'outlook.com',  'outlook.com.br',   'outlook.org.br',
-            'live.com',     'live.com.br',      'live.org.br',
-            'yahoo.com',    'yahoo.com.br',     'yahoo.org.br',
+            "mail.com",
+            "mail.com.br",
+            "mail.org.br",
+            "gmail.com",
+            "gmail.com.br",
+            "gmail.org.br",
+            "hotmail.com",
+            "hotmail.com.br",
+            "hotmail.org.br",
+            "kenzie.com",
+            "kenzie.com.br",
+            "kenzie.org.br",
+            "outlook.com",
+            "outlook.com.br",
+            "outlook.org.br",
+            "live.com",
+            "live.com.br",
+            "live.org.br",
+            "yahoo.com",
+            "yahoo.com.br",
+            "yahoo.org.br",
         }
 
         received_provider = {email.split("@")[1]}

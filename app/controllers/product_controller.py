@@ -15,7 +15,7 @@ from app.services.product_service import (
     find_category,
     products_per_geolocalization,
     serialize_product,
-    verify_product_categories
+    verify_product_categories,
 )
 from flask import jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -71,7 +71,9 @@ def get_all():
 def get_by_id(product_id: int):
     try:
         session: Session = db.session
-        product = session.query(ProductModel).filter(ProductModel.id==product_id).first()
+        product = (
+            session.query(ProductModel).filter(ProductModel.id == product_id).first()
+        )
         product_serialized = serialize_product(product)
 
         if not product:
@@ -86,7 +88,11 @@ def get_by_id(product_id: int):
 def get_by_parent(parent_id: int):
     try:
         session: Session = db.session
-        products = session.query(ProductModel).filter(ProductModel.parent_id == parent_id).all()
+        products = (
+            session.query(ProductModel)
+            .filter(ProductModel.parent_id == parent_id)
+            .all()
+        )
 
         if not products:
             raise NotFoundError(parent_id, "parent")
@@ -114,7 +120,10 @@ def create_product():
             "title",
             "description",
             "price",
-            "image",
+            "image1",
+            "image2",
+            "image3",
+            "image4",
             "categories",
         }
 
@@ -160,14 +169,23 @@ def create_product():
 def update_product(product_id: int):
     data: dict = request.get_json()
 
-    available_keys = {"title", "price", "description", "image", "categories"}
+    available_keys = {
+        "title",
+        "price",
+        "description",
+        "image1",
+        "image2",
+        "image3",
+        "image4",
+        "categories",
+    }
 
     received_keys = set(data.keys())
 
     data_format(data)
 
     user_logged = get_jwt_identity()
-    
+
     try:
 
         if not received_keys.issubset(available_keys):
@@ -175,7 +193,9 @@ def update_product(product_id: int):
 
         if "categories" in data:
             received_categories = data.pop("categories")
-            find_categories = [ find_category(category) for category in received_categories ]
+            find_categories = [
+                find_category(category) for category in received_categories
+            ]
             data["categories"] = find_categories
 
         session: Session = db.session
