@@ -1,6 +1,7 @@
 from copy import deepcopy
 from dataclasses import asdict
 from http import HTTPStatus
+from urllib import response
 from zoneinfo import available_timezones
 
 from app.configs.database import db
@@ -21,7 +22,7 @@ from app.models import ParentModel
 from app.models.cities_model import CityModel
 from app.services.email_service import email_to_new_user
 from app.services.request_node_service import request_token_node
-from flask import jsonify, request
+from flask import jsonify, make_response, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
@@ -175,15 +176,16 @@ def login():
     if not found_parent:
         return {"message": "User not found"}, HTTPStatus.NOT_FOUND
 
+    token_node = None
+
     try:
         if not found_parent.verify_password(parent_data["password"]):
             raise NotAuthorizedError
         token_node = request_token_node(found_parent.id)
-
     except NotAuthorizedError as e:
         return e.message, e.status
-    except ServerError as e:
-        return e.message, e.status
+    """ except ServerError as e:
+        return e.message, e.status """
 
     information_for_encoding = {
         "id": found_parent.id,
@@ -217,15 +219,16 @@ def update_parents():
         "city",
         "state",
         "image",
+        "image_key"
     }
 
     try:
         if received_key - available_keys:
             raise InvalidKeyError(received_key, available_keys)
 
-        for key, value in data.items():
+        """ for key, value in list(data.items()):
             if type(value) != str:
-                raise InvalidTypeValueError(key)
+                raise InvalidTypeValueError(key) """
 
         session: Session = db.session
 
@@ -240,6 +243,11 @@ def update_parents():
 
     except (InvalidKeyError, InvalidTypeValueError, InvalidPhoneFormatError) as e:
         return e.message, e.status
+    except IntegrityError as e:
+        if type(e.orig) == UniqueViolation:
+            return {
+                "error": f"""{e.args[0].split(" ")[-4:-2]} already exists"""
+            }, HTTPStatus.CONFLICT
 
     city: Query = CityModel.query.get(parent.city_point_id)
 
