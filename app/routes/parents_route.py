@@ -1,12 +1,9 @@
+from crypt import methods
+
 from app.controllers import parents_controller
 from flask import Blueprint
 
 bp = Blueprint("bp_parents", __name__, url_prefix="/parents")
-
-
-def test_get_parents():
-    ...
-
 
 bp.get("")(parents_controller.pick_parents)
 bp.get("/<int:parent_id>")(parents_controller.pick_parents_by_id)
