@@ -25,3 +25,8 @@ class NotFoundError(Exception):
 class NotAuthorizedError(Exception):
     message = {"Error": "User not authorized"}
     status = HTTPStatus.UNAUTHORIZED
+
+
+class ServerError(Exception):
+    message = {"Error": "Servidor secundário não disponível"}
+    status = HTTPStatus.SERVICE_UNAVAILABLE

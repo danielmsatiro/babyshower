@@ -1,20 +1,28 @@
+from copy import deepcopy
 from dataclasses import asdict
 from http import HTTPStatus
+from urllib import response
 from zoneinfo import available_timezones
-from copy import deepcopy
+
 from app.configs.database import db
-from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
+from app.exceptions import (
+    InvalidKeyError,
+    InvalidTypeValueError,
+    NotAuthorizedError,
+    ServerError,
+)
 from app.exceptions.parents_exc import (
     InvalidCpfLenghtError,
     InvalidEmailError,
     InvalidPhoneFormatError,
+    NonexistentParentError,
     NotIsLoggedParentError,
-    NonexistentParentError
 )
 from app.models import ParentModel
 from app.models.cities_model import CityModel
 from app.services.email_service import email_to_new_user
-from flask import jsonify, request
+from app.services.request_node_service import request_token_node
+from flask import jsonify, make_response, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
@@ -25,26 +33,32 @@ def pick_parents():
     params = request.args
     page = int(params.get("page", 1)) - 1
     per_page = int(params.get("per_page", 8))
+    parent_id = params.get("parent_id", None)
 
     query: Query = db.session.query(
-        ParentModel.id, ParentModel.username, ParentModel.name
+        ParentModel.id, ParentModel.username, ParentModel.name, ParentModel.image
     )
 
-    query = query.offset(page * per_page).limit(per_page).all()
+    if parent_id:
+        response = query.filter_by(id=int(parent_id)).first()
+        if not response:
+            return {"msg": "No data found"}
+        return {"user": response._asdict()}, HTTPStatus.OK
 
+    query = query.offset(page * per_page).limit(per_page).all()
     response = [response._asdict() for response in query]
     if response == []:
         return {"msg": "No data found"}
 
     return {"users": response}, HTTPStatus.OK
 
+
 @jwt_required()
 def pick_parents_by_id(parent_id: int):
     user_logged = get_jwt_identity()
-    
-    
+
     try:
-        
+
         parent: Query = ParentModel.query.get(parent_id)
 
         if not parent:
@@ -53,16 +67,21 @@ def pick_parents_by_id(parent_id: int):
         if not parent_id == user_logged["id"]:
             raise NotIsLoggedParentError
 
+        city: Query = CityModel.query.get(parent.city_point_id)
+
         new_parent = asdict(parent)
 
-        new_parent["product"] = f"api/products/by_parent/{parent_id}"
-        
+        new_parent["products"] = f"api/products/by_parent/{parent_id}"
+        new_parent["city"] = city.city
+        new_parent["state"] = city.state
+
         return jsonify(new_parent), HTTPStatus.OK
 
     except NonexistentParentError as err:
         return err.message, HTTPStatus.NOT_FOUND
     except NotIsLoggedParentError as e:
         return e.message, e.status
+
 
 def new_parents():
     session: Session = db.session
@@ -157,12 +176,16 @@ def login():
     if not found_parent:
         return {"message": "User not found"}, HTTPStatus.NOT_FOUND
 
+    token_node = None
+
     try:
         if not found_parent.verify_password(parent_data["password"]):
             raise NotAuthorizedError
-
+        token_node = request_token_node(found_parent.id)
     except NotAuthorizedError as e:
         return e.message, e.status
+    """ except ServerError as e:
+        return e.message, e.status """
 
     information_for_encoding = {
         "id": found_parent.id,
@@ -171,7 +194,11 @@ def login():
 
     token = create_access_token(information_for_encoding)
 
-    return {"access_token": token, "id": found_parent.id}, HTTPStatus.OK
+    return {
+        "access_token": token,
+        "access_token_node": token_node,
+        "id": found_parent.id,
+    }, HTTPStatus.OK
 
 
 @jwt_required()
@@ -182,15 +209,26 @@ def update_parents():
     user_logged = get_jwt_identity()
 
     received_key = set(data.keys())
-    available_keys = {"username", "name", "email", "password", "phone"}
+    available_keys = {
+        "username",
+        "cpf",
+        "name",
+        "email",
+        "password",
+        "phone",
+        "city",
+        "state",
+        "image",
+        "image_key"
+    }
 
     try:
         if received_key - available_keys:
             raise InvalidKeyError(received_key, available_keys)
 
-        for key, value in data.items():
+        """ for key, value in list(data.items()):
             if type(value) != str:
-                raise InvalidTypeValueError(key)
+                raise InvalidTypeValueError(key) """
 
         session: Session = db.session
 
@@ -205,8 +243,21 @@ def update_parents():
 
     except (InvalidKeyError, InvalidTypeValueError, InvalidPhoneFormatError) as e:
         return e.message, e.status
+    except IntegrityError as e:
+        if type(e.orig) == UniqueViolation:
+            return {
+                "error": f"""{e.args[0].split(" ")[-4:-2]} already exists"""
+            }, HTTPStatus.CONFLICT
 
-    return jsonify(parent)
+    city: Query = CityModel.query.get(parent.city_point_id)
+
+    updated_parent = asdict(parent)
+
+    updated_parent["products"] = f"api/products/by_parent/{updated_parent['id']}"
+    updated_parent["city"] = city.city
+    updated_parent["state"] = city.state
+
+    return jsonify(updated_parent)
 
 
 @jwt_required()

@@ -27,6 +27,6 @@ class EmailModel:
         email.attach(MIMEText(self.message, "html"))
 
         context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", port=465, context=context) as server:
+        with smtplib.SMTP_SSL(getenv("EMAIL_SMTP"), port=int(getenv("EMAIL_PORT")), context=context) as server:
             server.login(email["From"], self.password)
             server.sendmail(email["From"], self.email_to_send, email.as_string())

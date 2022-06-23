@@ -35,7 +35,10 @@ Não é necessário um corpo da requisição.
     "price": 350.0,
     "parent_id": 460,
     "description": "Fugiat expedita eum qui dolorem a temporibus deserunt optio veritatis eius fuga blanditiis veniam ratione recusandae placeat nam atque aliquam impedit nisi dolorum.",
-    "image": "https://imagem/320x240",
+    "image1": "https://imagem/320x240",
+	"image2": null,
+	"image3": null,
+	"image4": null,
     "sold": false,
     "categories": [
     	"segurança para bebê",
@@ -81,7 +84,10 @@ Caso dê tudo certo, a resposta será assim:
     "price": 15.0,
     "parent_id": 339,
     "description": "Ab in neque earum odio quia molestias minima eaque ratione eos illum.",
-    "image": "https://imagem/320x240",
+    "image1": "https://imagem/320x240",
+	"image2": null,
+	"image3": null,
+	"image4": null,
     "sold": false,
     "categories": [
     	"brinquedos"
@@ -127,7 +133,10 @@ Caso dê tudo certo, a resposta será assim:
 		"price": 36.0,
 		"parent_id": 2987,
 		"description": "Accusamus nisi aspernatur nulla fuga enim velit quibusdam maxime voluptates vitae mollitia dolorum dolorum.",
-		"image": "https://imagem/320x240",
+		"image1": "https://imagem/320x240",
+		"image2": null,
+		"image3": null,
+		"image4": null,
 		"sold": false,
 		"categories": [
 			"roupas",
@@ -168,18 +177,21 @@ Não é necessário um corpo da requisição.
 
 ```json
 {
-  "id": 2,
-  "title": "Nanina",
-  "price": 15.0,
-  "parent_id": 2,
-  "description": "Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.",
-  "image": "https://imagem/320x240",
-  "sold": false,
-  "categories": [
-  	"brinquedos"
-  ],
-  "city/state": "Abadia dos Dourados/Minas Gerais",
-  "questions": "/api/questions/by_product/2"
+	"id": 2,
+	"title": "Nanina",
+	"price": 15.0,
+	"parent_id": 2,
+	"description": "Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.",
+	"image1": "https://imagem/320x240",
+	"image2": null,
+	"image3": null,
+	"image4": null,
+	"sold": false,
+	"categories": [
+		"brinquedos"
+	],
+	"city/state": "Abadia dos Dourados/Minas Gerais",
+	"questions": "/api/questions/by_product/2"
 }
 ```
 
@@ -198,20 +210,23 @@ Não é necessário um corpo da requisição.
 ```json
 {
   "products": [
-  	{
-  	  "id": 2,
-  	  "title": "Nanina",
-  	  "price": 15.0,
-  	  "parent_id": 2,
-  	  "description": "Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.",
-  	  "image": "https://imagem/320x240",
-  	  "sold": false,
-  	  "categories": [
-  	  	"brinquedos"
-  	  ],
-  	  "city/state": "Abadia dos Dourados/Minas Gerais",
-  	  "questions": "/api/questions/by_product/2"
-  	},
+	{
+		"id": 2,
+		"title": "Nanina",
+		"price": 15.0,
+		"parent_id": 2,
+		"description": "Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.",
+		"image1": "https://imagem/320x240",
+		"image2": null,
+		"image3": null,
+		"image4": null,
+		"sold": false,
+		"categories": [
+			"brinquedos"
+		],
+		"city/state": "Abadia dos Dourados/Minas Gerais",
+		"questions": "/api/questions/by_product/2"
+	},
   (...)
   ]
 }
@@ -228,7 +243,10 @@ Não é necessário um corpo da requisição.
 	"title": "tiptop",
 	"description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
 	"price": 610.69,
-	"image": "https://imagem/320x240",
+	"image1": "https://imagem/320x240",
+	"image2": null,
+	"image3": null,
+	"image4": null,
 	"categories": ["0 a 3 meses", "roupas"]
 }
 ```
@@ -245,7 +263,10 @@ Não é necessário um corpo da requisição.
 	"price": 610.69,
 	"parent_id": 5542,
 	"description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-	"image": "https://imagem/320x240",
+	"image1": "https://imagem/320x240",
+	"image2": null,
+	"image3": null,
+	"image4": null,
 	"sold": false,
 	"categories": [
 		"0 a 3 meses",
@@ -289,18 +310,21 @@ Não é necessário um corpo da requisição.
 
 ```json
 {
-  "id": 5542,
-  "title": "tiptop",
-  "price": 52.0,
-  "parent_id": 5542,
-  "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-  "image": "https://imagem/320x240",
-  "sold": false,
-  "categories": [
-  	"4 a 6 meses"
-  ],
-  "city/state": "Cocal do Sul/Santa Catarina",
-  "questions": "/api/questions/by_product/5542"
+	"id": 5542,
+	"title": "tiptop",
+	"price": 52.0,
+	"parent_id": 5542,
+	"description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+	"image1": "https://imagem/320x240",
+	"image2": null,
+	"image3": null,
+	"image4": null,
+	"sold": false,
+	"categories": [
+		"4 a 6 meses"
+	],
+	"city/state": "Cocal do Sul/Santa Catarina",
+	"questions": "/api/questions/by_product/5542"
 }
 ```
 
@@ -571,10 +595,12 @@ Não é necessário um corpo da requisição.
 }
 ```
 # Rotas Parents
->**Obs.:** Rotas de obtenção de dados, deleção e atualização só podem ser realizadas pelo próprio usuário.
+>**Obs.:** Rotas de obtenção de dados pessoais sensíveis, deleção e atualização só podem ser realizadas pelo próprio usuário.
 ## **Rotas que não precisam de autenticação**
 
-<h2 align="center">Obter todos os parents(usernames)</h2>
+<h2 align="center">Obter todos os parents(informação pública)</h2>
+
+>**Obs.:** A rota também permite paginação (page=1 e per_page=8), bem como o param "parent_id" retornando neste caso somente um usuário caso seja encontrado.
 
 `GET /api/parents - FORMATO DA REQUISIÇÃO`
 
@@ -590,17 +616,23 @@ Não é necessário um corpo da requisição.
 {
   "users": [
     {
-      "id": 1,
-      "username": "luiz-miguel90"
+		"id": 1,
+		"username": "luiz-miguel90",
+		"name": "Luiz Miguel",
+		"image": null
     },
     {
-      "id": 2,
-      "username": "kalmeida"
-    },
-    {
-      "id": 3,
-      "username": "ryanteixeira"
-    }
+		"id": 2,
+		"username": "marianacorreia2",
+		"name": "Heloísa Da Costa",
+		"image": null
+	},
+	{
+		"id": 3,
+		"username": "ana-luiza363",
+		"name": "Yuri Alves",
+		"image": null
+	},
   ]
 }
 ```
@@ -665,6 +697,35 @@ Não é necessário um corpo da requisição.
 
 ## **Rotas que precisam de autenticação**
 
+
+<h2 align="center">Get parent by id (usuário)<h2>
+
+`POST /api/parents/28 - FORMATO DA REQUISIÇÃO`
+
+```
+Não é necessário um corpo da requisição.
+```
+
+#### Caso dê tudo certo, a resposta será assim:
+
+`POST /api/parents/28 - FORMATO DA RESPOSTA - STATUS 201`
+
+```json
+{
+	"id": 28,
+	"cpf": "11111111119",
+	"username": "daniel6",
+	"email": "daniel6@yahoo.com.br",
+	"name": "Daniel",
+	"phone": "(21) 99999-9999",
+	"image": null,
+	"products": "api/products/by_parent/28",
+	"city": "Cocal do Sul",
+	"state": "Santa Catarina"
+}
+```
+
+
 <h2 align="center">Update de parent(usuário)<h2>
 
 `POST /api/parents - FORMATO DA REQUISIÇÃO`
@@ -683,12 +744,16 @@ Não é necessário um corpo da requisição.
 
 ```json
 {
-  "id": 28,
-  "cpf": "12312312313",
-  "username": "fulano",
-  "email": "fulano@mail.com",
-  "name": "Fulano de Tal",
-  "phone": "99999999999"
+	"id": 28,
+	"cpf": "12312312313",
+	"username": "fulano",
+	"email": "fulano@mail.com",
+	"name": "Fulano de Tal",
+	"phone": "99999999999",
+	"image": "http://...",
+	"products": "api/products/by_parent/28",
+	"city": "Cocal do Sul",
+	"state": "Santa Catarina"
 }
 ```
 
@@ -742,9 +807,6 @@ Sem corpo de resposta
 		},
 		(...)
 ```
-## **Rota não precisa de autenticação**
-
-<h2 align="center">Obter todos os parents(usernames)</h2>
 
 `GET /api/cities?state=<estado>&city=<cidade> - FORMATO DA REQUISIÇÃO`
 
