@@ -1,13 +1,15 @@
-![Captura de tela de 2022-04-27 00-08-14](https://user-images.githubusercontent.com/97132510/165432646-227a0248-12a9-4790-b366-c3d2f205ffa2.png)
+<h1 align="center">API - BabyShower (python*)</h1>
 
-<h1 align="center">API - BabyShower</h1>
-
-<h2 align="center">Este é o backend da aplicação BabyShower - O objetivo é desenvolver uma plataforma em que os pais possam se cadastrar e interagir com outros pais que passam por fases de vida similares às suas. Nessa plataforma eles se cadastram e também cadastram produtos que não precisa mais.</h2>
+<h2 align="center">Este é um dos backends da aplicação BabyShower - O objetivo é desenvolver uma plataforma em que os pais possam se cadastrar e interagir com outros pais que passam por fases de vida similares às suas. Nessa plataforma eles se cadastram e também cadastram produtos que não precisa mais.</h2>
 <h2 align="center">Também é possível fazer uso de recursos de <strong>geolocalização</strong> para obter os pais que estão mais próximos ao usuário para que o negócio tenha mais chances de ser concretizado.</h2>
 
-[Arquivo para o insomnia](**https**://drive.google.com/file/d/1Nia7ipq4zCmrQGLPfBY2ICDIZVlDih5N/view?usp=sharing)
+***IMPORTANTE:** Esta api desenvolvida em Python funciona em conjunto com outra api desenvolvida em Node.js que é utilizada para cadastro de empresas e anúncios, upload de imagens na AWS, banco de dados para chat com socket.io e cadastro de administradores de sistema da babyshower. Entretanto, as rotas para chat inicialmente desenvolvidas em python também foram mantidas nesta api.
 
-O url base da API é [baseUrl](https://share-babyshower.herokuapp.com/api)
+[Arquivo para o insomnia](https://drive.google.com/file/d/1Nia7ipq4zCmrQGLPfBY2ICDIZVlDih5N/view?usp=sharing)
+
+O url base da API-python no heroku: [baseUrl](https://share-babyshower.herokuapp.com/api)
+
+Repositório da api complementar em Node.js: https://github.com/hirtonsantos/Api_Babyshower_nodejs
 
 # Rotas Products
 
