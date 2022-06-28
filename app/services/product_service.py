@@ -115,7 +115,7 @@ def data_format(data):
 
 def find_category(category_name):
     query_category: Query = db.session.query(CategoryModel)
-    
+
     response = query_category.filter(
         CategoryModel.name.ilike(f"%{category_name}%")
     ).first()
@@ -125,6 +125,7 @@ def find_category(category_name):
         raise InvalidCategoryError(category_not_found)
 
     return response
+
 
 def verify_product_categories(data):
     received_categories = data["categories"] or []

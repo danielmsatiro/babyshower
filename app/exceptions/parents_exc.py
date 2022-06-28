@@ -28,3 +28,7 @@ class NonexistentParentError(Exception):
 class NotIsLoggedParentError(Exception):
     message = {"Error": "Not is logged user"}
     status = HTTPStatus.BAD_REQUEST
+    
+class InvalidStateOrCityError(Exception):
+    message = {"Error": "Invalid state or city"}
+    status = HTTPStatus.BAD_REQUEST

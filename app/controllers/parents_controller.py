@@ -5,16 +5,12 @@ from urllib import response
 from zoneinfo import available_timezones
 
 from app.configs.database import db
-from app.exceptions import (
-    InvalidKeyError,
-    InvalidTypeValueError,
-    NotAuthorizedError,
-    ServerError,
-)
+from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
 from app.exceptions.parents_exc import (
     InvalidCpfLenghtError,
     InvalidEmailError,
     InvalidPhoneFormatError,
+    InvalidStateOrCityError,
     NonexistentParentError,
     NotIsLoggedParentError,
 )
@@ -24,6 +20,7 @@ from app.services.email_service import email_to_new_user
 from app.services.request_node_service import request_token_node
 from flask import jsonify, make_response, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from ipdb import set_trace
 from psycopg2.errors import UniqueViolation
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Query, Session
@@ -184,8 +181,6 @@ def login():
         token_node = request_token_node(found_parent.id)
     except NotAuthorizedError as e:
         return e.message, e.status
-    """ except ServerError as e:
-        return e.message, e.status """
 
     information_for_encoding = {
         "id": found_parent.id,
@@ -205,6 +200,8 @@ def login():
 def update_parents():
 
     data: dict = request.get_json()
+    new_city = data.pop("city", None)
+    new_state = data.pop("state", None)
 
     user_logged = get_jwt_identity()
 
@@ -219,7 +216,7 @@ def update_parents():
         "city",
         "state",
         "image",
-        "image_key"
+        "image_key",
     }
 
     try:
@@ -234,6 +231,21 @@ def update_parents():
 
         parent: Query = session.query(ParentModel)
         parent = parent.filter_by(id=user_logged["id"]).first()
+        city: CityModel = CityModel.query.get(parent.city_point_id)
+
+        if new_city or new_state:
+            city_payload = new_city if new_city else city.city
+            state_payload = new_state if new_state else city.state
+            new_city: CityModel = (
+                CityModel.query.filter(CityModel.state.ilike(f"%{state_payload}%"))
+                .filter(CityModel.city.ilike(f"%{city_payload}%"))
+                .first()
+            )
+
+            if not new_city:
+                raise InvalidStateOrCityError
+
+        data["city_point_id"] = new_city.point_id
 
         for key, value in data.items():
             setattr(parent, key, value)
@@ -241,7 +253,12 @@ def update_parents():
             session.add(parent)
             session.commit()
 
-    except (InvalidKeyError, InvalidTypeValueError, InvalidPhoneFormatError) as e:
+    except (
+        InvalidKeyError,
+        InvalidTypeValueError,
+        InvalidPhoneFormatError,
+        InvalidStateOrCityError,
+    ) as e:
         return e.message, e.status
     except IntegrityError as e:
         if type(e.orig) == UniqueViolation:
@@ -249,13 +266,11 @@ def update_parents():
                 "error": f"""{e.args[0].split(" ")[-4:-2]} already exists"""
             }, HTTPStatus.CONFLICT
 
-    city: Query = CityModel.query.get(parent.city_point_id)
-
     updated_parent = asdict(parent)
 
     updated_parent["products"] = f"api/products/by_parent/{updated_parent['id']}"
-    updated_parent["city"] = city.city
-    updated_parent["state"] = city.state
+    updated_parent["city"] = new_city.city
+    updated_parent["state"] = new_city.state
 
     return jsonify(updated_parent)
 

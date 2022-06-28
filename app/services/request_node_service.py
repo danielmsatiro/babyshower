@@ -2,7 +2,6 @@ import os
 from json import dumps, load
 
 import requests
-from app.exceptions import ServerError
 
 
 def request_token_node(id: int):
@@ -28,6 +27,6 @@ def request_token_node(id: int):
             headers=headers,
         )
     except:
-        raise ServerError
+        return "Servidor secundário node não disponível"
 
     return r.json().get("access_token")
