@@ -5,11 +5,17 @@
 
 ***IMPORTANTE:** Esta api foi desenvolvida em Python e funciona em conjunto com outra api desenvolvida em Node.js que é utilizada para cadastro de empresas e anúncios, upload de imagens na AWS, banco de dados para chat com socket.io e cadastro de administradores de sistema da babyshower. Entretanto, as rotas para chat inicialmente desenvolvidas em python também foram mantidas nesta api.
 
-[Arquivo para o insomnia](https://drive.google.com/file/d/1Nia7ipq4zCmrQGLPfBY2ICDIZVlDih5N/view?usp=sharing)
-
 O url base da API-python no heroku: [baseUrl](https://share-babyshower.herokuapp.com/api)
 
-Repositório da api complementar em Node.js: https://github.com/hirtonsantos/Api_Babyshower_nodejs
+Repositório da api complementar em Node.js:[Api_Babyshower_nodejs](https://github.com/danielmsatiro/Api_Babyshower_nodejs)
+
+## Devs participantes:
+- Allan Verde Rodrigues (Product Owner),
+- Daniel Mateus Satiro (Tech Lead),
+- Felipe Foster (Scrum Master),
+- Guilherme Couto,
+- Hirton Silva Evangelista Santos,
+- Pedro Basilio.
 
 ## Tecnologias Utilizadas
 - FlaskSQLAlchemy;
