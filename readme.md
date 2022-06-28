@@ -1,6 +1,6 @@
 <h1 align="center">API - BabyShower (python*)</h1>
 
-<h2 align="center">Este é um dos backends da aplicação BabyShower - É uma plataforma em que os pais podem se cadastrar e interagir com outros pais que passam por fases de vida similares às suas. Nessa plataforma eles se cadastram e também cadastram produtos que não precisam mais.</h2>
+<h2 align="center">Este é um dos backends da aplicação BabyShower - É uma plataforma em que os pais podem se cadastrar e interagir com outros pais que passam por fases de vida similares as suas. Nessa plataforma eles se cadastram e também cadastram produtos que não precisam mais.</h2>
 <h3 align="center">Também é possível fazer uso de recursos de <strong>geolocalização</strong> para localizar os pais que estão mais próximos ao usuário de modo que o negócio tenha mais chances de ser concretizado.</h2>
 
 ***IMPORTANTE:** Esta api foi desenvolvida em Python e funciona em conjunto com outra api desenvolvida em Node.js que é utilizada para cadastro de empresas e anúncios, upload de imagens na AWS, banco de dados para chat com socket.io e cadastro de administradores de sistema da babyshower. Entretanto, as rotas para chat inicialmente desenvolvidas em python também foram mantidas nesta api.
@@ -706,7 +706,8 @@ Não é necessário um corpo da requisição.
 	"id": 3605
 }
 ```
->**Obs.:** É possível obter o id do usuário através do JWT. Token expira em 15 minutos. **A rota estará indisponível caso a api_node não emita um access token**.
+>**Obs.1:** É possível obter o id do usuário através do JWT. Token expira em 15 minutos.
+>**Obs.2:** Este backend faz um request para a api_node e caso tenha algum problema no servidor o access_token_node virá com este aviso.
 
 ## **Rotas que precisam de autenticação**
 
