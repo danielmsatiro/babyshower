@@ -77,639 +77,685 @@ body {margin: auto auto; max-width: 800px}
   </style>
 </head>
 <body>
-<figure>
-<img src="https://user-images.githubusercontent.com/97132510/165432646-227a0248-12a9-4790-b366-c3d2f205ffa2.png" alt="Captura de tela de 2022-04-27 00-08-14" />
-</figure>
-<h1 align="center">
-API - BabyShower
-</h1>
-<h2 align="center">
-Este é o backend da aplicação BabyShower - O objetivo é desenvolver uma plataforma em que os pais possam se cadastrar e interagir com outros pais que passam por fases de vida similares às suas. Nessa plataforma eles se cadastram e também cadastram produtos que não precisa mais.
-</h2>
-<h2 align="center">
-Também é possível fazer uso de recursos de <strong>geolocalização</strong> para obter os pais que estão mais próximos ao usuário para que o negócio tenha mais chances de ser concretizado.
-</h2>
-<p><a href="**https**://drive.google.com/file/d/1Nia7ipq4zCmrQGLPfBY2ICDIZVlDih5N/view?usp=sharing">Arquivo para o insomnia</a></p>
-<p>O url base da API é <a href="https://share-babyshower.herokuapp.com/api">baseUrl</a></p>
-<h1 id="rotas-products">Rotas Products</h1>
-<blockquote>
-<p><strong>Obs.:</strong> Alterações e deleções somente pode ser realizadas pelo parent que publicou o produto.</p>
-</blockquote>
-<h2 id="rotas-que-não-precisam-de-autenticação"><strong>Rotas que não precisam de autenticação</strong></h2>
-<h2 align="center">
-Obter todos os produtos
-</h2>
-<p><code>GET /api/products - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>GET /api/products - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb2-1" title="1"><span class="ot">[</span></a>
-<a class="sourceLine" id="cb2-2" title="2">  <span class="fu">{</span></a>
-<a class="sourceLine" id="cb2-3" title="3">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">429</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb2-4" title="4">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;bebê-conforto&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb2-5" title="5">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">350.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb2-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">460</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb2-7" title="7">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Fugiat expedita eum qui dolorem a temporibus deserunt optio veritatis eius fuga blanditiis veniam ratione recusandae placeat nam atque aliquam impedit nisi dolorum.&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb2-8" title="8">    <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb2-9" title="9">    <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb2-10" title="10">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb2-11" title="11">        <span class="st">&quot;segurança para bebê&quot;,</span></a>
-<a class="sourceLine" id="cb2-12" title="12"><span class="st">        &quot;</span><span class="dv">0</span> <span class="er">a</span> <span class="dv">3</span> <span class="er">meses</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb2-13" title="13"><span class="st">        &quot;</span><span class="dv">4</span> <span class="er">a</span> <span class="dv">6</span> <span class="er">meses</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb2-14" title="14"><span class="st">        &quot;</span><span class="dv">7</span> <span class="er">a</span> <span class="dv">9</span> <span class="er">meses</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="st">        &quot;</span><span class="dv">10</span> <span class="er">meses</span> <span class="er">a</span> <span class="dv">1</span> <span class="er">ano</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb2-16" title="16"><span class="st">        &quot;</span><span class="dv">2</span> <span class="er">anos</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb2-17" title="17"><span class="st">    ],</span></a>
-<a class="sourceLine" id="cb2-18" title="18"><span class="st">    &quot;</span><span class="er">city/state</span><span class="st">&quot;: &quot;</span><span class="er">Balneário</span> <span class="er">Arroio</span> <span class="er">do</span> <span class="er">Silva/Santa</span> <span class="er">Catarina</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb2-19" title="19"><span class="st">    &quot;</span><span class="er">questions</span><span class="st">&quot;: &quot;</span><span class="er">/api/questions/by_product/</span><span class="dv">429</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb2-20" title="20"><span class="st">  },</span></a>
-<a class="sourceLine" id="cb2-21" title="21"><span class="st">  (...)</span></a>
-<a class="sourceLine" id="cb2-22" title="22"><span class="st">]</span></a></code></pre></div>
-<h3 id="realizando-filtros-nesta-rota"><u>Realizando filtros nesta rota:</u></h3>
-<p>Podem ser realizados filtros de duas formas a seguir: - Via <strong>Query Params</strong>: Para paginações utilizando <strong>‘page’(deault=1)</strong> e/ou <strong>‘per_page’ (default=8)</strong> - Via <strong>Body</strong> da requisição: - Para título do produto (podendo ser parcial); - Para lista de categorias do produto; - Para preços máximos e mínimos; - Para cidade/estado referência para geolocalização; - Para latitude/longitude referência também para geolocalização; - Para raio de cobertura geográfica a partir do local de referência.</p>
-<blockquote>
-<p><strong>Obs.:</strong> Essa forma de paginar resultados via query params também pode ser utilizada nas rotas para <em>obter todos os parents(usuários)</em> ou para <em>obter todas as perguntas por id de produto</em>.</p>
-</blockquote>
-<p><strong>Via Query Params sem body na requisição:</strong></p>
-<p><code>GET /api/products?perPage=2&amp;page=1 - FORMATO DA REQUISIÇÃO</code></p>
-<p>Caso dê tudo certo, a resposta será assim:</p>
-<p><code>GET /api/products?perPage=2&amp;page=1 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb3-1" title="1"><span class="ot">[</span></a>
-<a class="sourceLine" id="cb3-2" title="2">  <span class="fu">{</span></a>
-<a class="sourceLine" id="cb3-3" title="3">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">317</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-4" title="4">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Nanina&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-5" title="5">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">15.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">339</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-7" title="7">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Ab in neque earum odio quia molestias minima eaque ratione eos illum.&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-8" title="8">    <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-9" title="9">    <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-10" title="10">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb3-11" title="11">        <span class="st">&quot;brinquedos&quot;</span></a>
-<a class="sourceLine" id="cb3-12" title="12">    <span class="ot">]</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-13" title="13">    <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Araranguá/Santa Catarina&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-14" title="14">    <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/317&quot;</span></a>
-<a class="sourceLine" id="cb3-15" title="15">  <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb3-16" title="16">  <span class="fu">{</span></a>
-<a class="sourceLine" id="cb3-17" title="17">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">360</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-18" title="18">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;body tamanho M&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-19" title="19">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">36.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb3-20" title="20">    <span class="er">(...)</span></a>
-<a class="sourceLine" id="cb3-21" title="21">  <span class="fu">}</span></a>
-<a class="sourceLine" id="cb3-22" title="22"><span class="ot">]</span></a></code></pre></div>
-<p><strong>Via Body na na requisição:</strong></p>
-<blockquote>
-<p><strong>Obs.:</strong> Pode ter query params para a paginação em conjunto.</p>
-</blockquote>
-<p><code>GET /api/products?page=1&amp;per_page=3 - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb4-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb4-2" title="2">  <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;roupas&quot;</span><span class="ot">,</span> <span class="st">&quot;0 a 3 meses&quot;</span><span class="ot">]</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb4-3" title="3">  <span class="dt">&quot;min_price&quot;</span><span class="fu">:</span> <span class="fl">30.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb4-4" title="4">  <span class="dt">&quot;max_price&quot;</span><span class="fu">:</span> <span class="fl">60.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb4-5" title="5">  <span class="dt">&quot;title_product&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb4-6" title="6">  <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb4-7" title="7">  <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;Santa catar&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb4-8" title="8">  <span class="dt">&quot;distance&quot;</span><span class="fu">:</span> <span class="dv">50000</span></a>
-<a class="sourceLine" id="cb4-9" title="9"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs.:</strong> Para categories, title_product, city e state é busca é por aproximação. Exemplo: Pode-se buscar “Santa Catarina” como “santa c” ou “catarina” na informação state.</p>
-</blockquote>
-<p><code>GET /api/products?page=1&amp;per_page=3 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb5-1" title="1"><span class="ot">[</span></a>
-<a class="sourceLine" id="cb5-2" title="2">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb5-3" title="3">        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2780</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-4" title="4">        <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Tênis tam 16&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-5" title="5">        <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">36.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-6" title="6">        <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">2987</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-7" title="7">        <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Accusamus nisi aspernatur nulla fuga enim velit quibusdam maxime voluptates vitae mollitia dolorum dolorum.&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-8" title="8">        <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-9" title="9">        <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-10" title="10">        <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb5-11" title="11">            <span class="st">&quot;roupas&quot;</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb5-12" title="12">            <span class="st">&quot;0 a 3 meses&quot;</span></a>
-<a class="sourceLine" id="cb5-13" title="13">        <span class="ot">]</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-14" title="14">        <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Meleiro/Santa Catarina&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb5-15" title="15">        <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/2780&quot;</span></a>
-<a class="sourceLine" id="cb5-16" title="16">    <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb5-17" title="17">  <span class="er">(...)</span></a>
-<a class="sourceLine" id="cb5-18" title="18"><span class="ot">]</span></a></code></pre></div>
-<h2 align="center">
-Outras informações sobre a geolocalização
-</h2>
-<p>Sobre a rota anterior, caso seja fornecido o <strong>Token Bearer</strong> no head da requisição a localização de referência para o raio de alcance da pesquisa serão a cidade e o estado no cadastro do usuário. Caso o usuário não esteja autenticado, ou não seja fornecido o token a pesquisa não considerará aspectos geográficos.</p>
-<p>Como mencionado anteriormente, podem ser fornecidos no body da requisição como referência para o raio de alcance: - Cidade E estado; OU - Latitude E Longitude</p>
-<h3 id="raio-de-alcance">Raio de alcance:</h3>
-<p>O raio de alcance quando não fornecido possui o valor padrão de 50 mil km. Deve-se utilizar a chave “distance” no body da requisição.</p>
-<blockquote>
-<p><strong>Obs.:</strong>: Esta área de cobertura só será utilizada se houver um ponto de referênica obtido pelos dados do usuário ou pelo body da requisição.</p>
-</blockquote>
-<h2 align="center">
-Obter produto por id
-</h2>
-<p><code>GET /api/products/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-1">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>GET /api/products/2 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb7-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb7-2" title="2">  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-3" title="3">  <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Nanina&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-4" title="4">  <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">15.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-5" title="5">  <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-6" title="6">  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-7" title="7">  <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-8" title="8">  <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-9" title="9">  <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb7-10" title="10">    <span class="st">&quot;brinquedos&quot;</span></a>
-<a class="sourceLine" id="cb7-11" title="11">  <span class="ot">]</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-12" title="12">  <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Abadia dos Dourados/Minas Gerais&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb7-13" title="13">  <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/2&quot;</span></a>
-<a class="sourceLine" id="cb7-14" title="14"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Obter produto pelo id do parent
-</h2>
-<p><code>GET /api/products/by_parent/&lt;parent_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-2">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>GET /api/products/by_parent/2 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb9-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb9-2" title="2">  <span class="dt">&quot;products&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb9-3" title="3">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb9-4" title="4">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-5" title="5">      <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Nanina&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-6" title="6">      <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">15.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-7" title="7">      <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-8" title="8">      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-9" title="9">      <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-10" title="10">      <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-11" title="11">      <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb9-12" title="12">        <span class="st">&quot;brinquedos&quot;</span></a>
-<a class="sourceLine" id="cb9-13" title="13">      <span class="ot">]</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-14" title="14">      <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Abadia dos Dourados/Minas Gerais&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb9-15" title="15">      <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/2&quot;</span></a>
-<a class="sourceLine" id="cb9-16" title="16">    <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb9-17" title="17">  <span class="er">(...)</span></a>
-<a class="sourceLine" id="cb9-18" title="18">  <span class="ot">]</span></a>
-<a class="sourceLine" id="cb9-19" title="19"><span class="fu">}</span></a></code></pre></div>
-<h2 id="rotas-que-precisam-de-autenticação"><strong>Rotas que precisam de autenticação</strong></h2>
-<h2 align="center">
-Criar novo produto
-</h2>
-<p><code>POST /api/products - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb10-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb10-2" title="2">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;tiptop&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb10-3" title="3">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Lorem Ipsum is simply dummy text of the printing and typesetting industry.&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb10-4" title="4">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">610.69</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb10-5" title="5">    <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb10-6" title="6">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;0 a 3 meses&quot;</span><span class="ot">,</span> <span class="st">&quot;roupas&quot;</span><span class="ot">]</span></a>
-<a class="sourceLine" id="cb10-7" title="7"><span class="fu">}</span></a></code></pre></div>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-3">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>POST /api/products - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb11-1" title="1"></a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb11-3" title="3">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-4" title="4">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;tiptop&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-5" title="5">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">610.69</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-7" title="7">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Lorem Ipsum is simply dummy text of the printing and typesetting industry.&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-8" title="8">    <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-9" title="9">    <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-10" title="10">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb11-11" title="11">        <span class="st">&quot;0 a 3 meses&quot;</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb11-12" title="12">        <span class="st">&quot;roupas&quot;</span></a>
-<a class="sourceLine" id="cb11-13" title="13">    <span class="ot">]</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-14" title="14">    <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul/Santa Catarina&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb11-15" title="15">    <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/5542&quot;</span></a>
-<a class="sourceLine" id="cb11-16" title="16"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs.:</strong> Quando o parent cadastra um novo produto, um email de confirmação é enviado para o seu respectivo email cadastrado.</p>
-</blockquote>
-<blockquote>
-<p><strong>Obs.:</strong> Um produto pode ser criado sem categoria. A categoria é buscada pela palavra aproximada na relação de categories desta api. Ao se inserir uma categoria não existente se obterá o seguinte erro:</p>
-</blockquote>
-<p><code>POST /api/products - FORMATO DA RESPOSTA - STATUS 422</code></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb12-1" title="1"></a>
-<a class="sourceLine" id="cb12-2" title="2"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb12-3" title="3">  <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Categories is invalid&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb12-4" title="4">  <span class="dt">&quot;invalid_options&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb12-5" title="5">    <span class="st">&quot;teste&quot;</span></a>
-<a class="sourceLine" id="cb12-6" title="6">  <span class="ot">]</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb12-7" title="7">  <span class="dt">&quot;valid_options&quot;</span><span class="fu">:</span> <span class="st">&quot;api/categories&quot;</span></a>
-<a class="sourceLine" id="cb12-8" title="8"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Atualizar produto por id
-</h2>
-<p><code>PATCH /api/products/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb13-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb13-2" title="2">  <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">52.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb13-3" title="3">  <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;4 a 6 meses&quot;</span><span class="ot">]</span></a>
-<a class="sourceLine" id="cb13-4" title="4"><span class="fu">}</span></a></code></pre></div>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-4">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>PATCH /api/products/5542 - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb14-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb14-2" title="2">  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-3" title="3">  <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;tiptop&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-4" title="4">  <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">52.0</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-5" title="5">  <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-6" title="6">  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-7" title="7">  <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-8" title="8">  <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-9" title="9">  <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb14-10" title="10">    <span class="st">&quot;4 a 6 meses&quot;</span></a>
-<a class="sourceLine" id="cb14-11" title="11">  <span class="ot">]</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-12" title="12">  <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul/Santa Catarina&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb14-13" title="13">  <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/5542&quot;</span></a>
-<a class="sourceLine" id="cb14-14" title="14"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Excluir produto por id
-</h2>
-<p><code>DELETE /api/products/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-5">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>DELETE /api/products/1 - FORMATO DA RESPOSTA - STATUS 204</code></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb16-1" title="1"><span class="er">Sem</span> <span class="er">corpo</span> <span class="er">de</span> <span class="er">resposta</span></a></code></pre></div>
-<h1 id="rota-categories">Rota Categories</h1>
-<h2 id="rota-não-precisa-de-autenticação"><strong>Rota não precisa de autenticação</strong></h2>
-<h2 align="center">
-Obter todas as categories
-</h2>
-<p><code>GET /api/categories - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-6">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>GET /api/categories - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb18-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb18-2" title="2">  <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb18-3" title="3">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb18-4" title="4">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb18-5" title="5">      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;até 3 meses&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb18-6" title="6">      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Tudo o que o seu bebê precisa até os seus 3 meses&quot;</span></a>
-<a class="sourceLine" id="cb18-7" title="7">    <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb18-8" title="8">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb18-9" title="9">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb18-10" title="10">      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;até 6 meses&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb18-11" title="11">      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Tudo o que o seu bebê precisa até os seus 6 meses&quot;</span></a>
-<a class="sourceLine" id="cb18-12" title="12">    <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb18-13" title="13">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb18-14" title="14">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb18-15" title="15">      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;até 9 meses&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb18-16" title="16">      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Tudo o que o seu bebê precisa até os seus 9 meses&quot;</span></a>
-<a class="sourceLine" id="cb18-17" title="17">    <span class="fu">}</span></a>
-<a class="sourceLine" id="cb18-18" title="18">  <span class="ot">]</span></a>
-<a class="sourceLine" id="cb18-19" title="19"><span class="fu">}</span></a></code></pre></div>
-<h1 id="rotas-questions">Rotas Questions</h1>
-<blockquote>
-<p><strong>Obs.:</strong> Todos os parents podem fazer perguntas em quaisquer outros produtos. Inclusive nos próprios produtos.</p>
-</blockquote>
-<h2 id="rotas-que-não-precisam-de-autenticação-1"><strong>Rotas que não precisam de autenticação</strong></h2>
-<h2 align="center">
-Obter todas as perguntas por id de produto
-</h2>
-<p><code>GET /api/questions/by_product/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-7">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>GET /api/questions/by_product/3001 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb20-1" title="1"><span class="ot">[</span></a>
-<a class="sourceLine" id="cb20-2" title="2">  <span class="fu">{</span></a>
-<a class="sourceLine" id="cb20-3" title="3">        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3001</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb20-4" title="4">        <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;teste&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb20-5" title="5">        <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Wed, 04 May 2022 21:12:02 GMT&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb20-6" title="6">        <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb20-7" title="7">        <span class="dt">&quot;product_id&quot;</span><span class="fu">:</span> <span class="dv">301</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb20-8" title="8">        <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">20</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb20-9" title="9">        <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="fu">{</span></a>
-<a class="sourceLine" id="cb20-10" title="10">            <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/answers/1&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb20-11" title="11">            <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;fdddgd5dfd&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb20-12" title="12">            <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;teste2&quot;</span></a>
-<a class="sourceLine" id="cb20-13" title="13">        <span class="fu">},</span></a>
-<a class="sourceLine" id="cb20-14" title="14">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;miguel83&quot;</span></a>
-<a class="sourceLine" id="cb20-15" title="15">    <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb20-16" title="16">  <span class="er">(...)</span></a>
-<a class="sourceLine" id="cb20-17" title="17"><span class="ot">]</span></a></code></pre></div>
-<h2 id="rotas-que-precisam-de-autenticação-1"><strong>Rotas que precisam de autenticação</strong></h2>
-<h2 align="center">
-Criar nova pergunta em um produto por id de produto
-</h2>
-<p><code>POST /api/questions/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb21-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb21-2" title="2">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta Teste?&quot;</span></a>
-<a class="sourceLine" id="cb21-3" title="3"><span class="fu">}</span></a></code></pre></div>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-8">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>POST /api/question/3 - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb22-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb22-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb22-3" title="3">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta teste?&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb22-4" title="4">    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Thu, 05 May 2022 15:41:42 GMT&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb22-5" title="5">    <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb22-6" title="6">    <span class="dt">&quot;product_id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb22-7" title="7">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb22-8" title="8">    <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="kw">null</span></a>
-<a class="sourceLine" id="cb22-9" title="9"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs.:</strong> É enviado uma mensagem para o e-mail do dono do produto o alertado sobre a nova pergunta enviado uma pergunta.</p>
-</blockquote>
-<h2 align="center">
-Atualizar pergunta por id de pergunta
-</h2>
-<p><code>PATCH /api/questions/&lt;question_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb23-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb23-2" title="2">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta Teste Atualizada?&quot;</span></a>
-<a class="sourceLine" id="cb23-3" title="3"><span class="fu">}</span></a></code></pre></div>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-9">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>PATCH /api/questions/1 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb24-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb24-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb24-3" title="3">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta teste atualizada?&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb24-4" title="4">    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Thu, 05 May 2022 10:29:22 GMT&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb24-5" title="5">    <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Thu, 05 May 2022 15:43:48 GMT&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb24-6" title="6">    <span class="dt">&quot;product_id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb24-7" title="7">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb24-8" title="8">    <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="kw">null</span></a>
-<a class="sourceLine" id="cb24-9" title="9"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Deletar pergunta por id de pergunta
-</h2>
-<p><code>DELETE /api/questions/&lt;question_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-10">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>DELETE /api/questions/1 - FORMATO DA RESPOSTA - STATUS 204</code></p>
-<pre><code>Sem corpo de resposta</code></pre>
-<h1 id="rotas-answers">Rotas Answers</h1>
-<blockquote>
-<p><strong>Obs.:</strong> Somente o parent que postou o produto pode responder as perguntas que estiverem vinculadas ao seu produto.</p>
-</blockquote>
-<h2 id="rotas-que-precisam-de-autenticação-2"><strong>Rotas que precisam de autenticação</strong></h2>
-<h2 align="center">
-Criar uma resposta
-</h2>
-<p><code>POST /api/answers/&lt;question_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb27-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb27-2" title="2">  <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste!&quot;</span></a>
-<a class="sourceLine" id="cb27-3" title="3"><span class="fu">}</span></a></code></pre></div>
-<h4 id="caso-tudo-dê-certo-a-resposta-será-assim">Caso tudo dê certo, a resposta será assim:</h4>
-<p><code>POST /api/answers/1 - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb28-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb28-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb28-3" title="3">    <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste!&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb28-4" title="4">    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Wed, 04 May 2022 21:13:16 GMT&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb28-5" title="5">    <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb28-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">19</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb28-7" title="7">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="fu">{</span></a>
-<a class="sourceLine" id="cb28-8" title="8">        <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/3001&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb28-9" title="9">        <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta Teste Atualizada?&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb28-10" title="10">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;Rita231&quot;</span></a>
-<a class="sourceLine" id="cb28-11" title="11">    <span class="fu">}</span></a>
-<a class="sourceLine" id="cb28-12" title="12"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs.:</strong> É enviado uma mensagem para o e-mail do parent que fez a pergunta o alertado sobre a resposta.</p>
-</blockquote>
-<h2 align="center">
-Editar uma resposta
-</h2>
-<p><code>PATCH /api/answers/&lt;answer_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb29-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb29-2" title="2">  <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste Editada!&quot;</span></a>
-<a class="sourceLine" id="cb29-3" title="3"><span class="fu">}</span></a></code></pre></div>
-<h4 id="caso-tudo-dê-certo-a-resposta-será-assim-1">Caso tudo dê certo, a resposta será assim:</h4>
-<p><code>PATCH /api/answers/1 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb30-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb30-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb30-3" title="3">    <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste Editada!&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb30-4" title="4">    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Wed, 04 May 2022 21:13:16 GMT&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb30-5" title="5">    <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Wed, 04 May 2022 21:16:26 GMT&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb30-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">19</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb30-7" title="7">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="fu">{</span></a>
-<a class="sourceLine" id="cb30-8" title="8">        <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/3001&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb30-9" title="9">        <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta Teste Atualizada?&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb30-10" title="10">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;Rita231&quot;</span></a>
-<a class="sourceLine" id="cb30-11" title="11">    <span class="fu">}</span></a>
-<a class="sourceLine" id="cb30-12" title="12"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Deletar uma resposta
-</h2>
-<p><code>DELETE /api/answers/&lt;answer_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb31-1" title="1"><span class="er">Não</span> <span class="er">é</span> <span class="er">necessário</span> <span class="er">um</span> <span class="er">corpo</span> <span class="er">da</span> <span class="er">requisição.</span></a></code></pre></div>
-<h4 id="caso-tudo-dê-certo-a-resposta-será-assim-2">Caso tudo dê certo, a resposta será assim:</h4>
-<p><code>DELETE /api/answers/1 - FORMATO DA RESPOSTA - STATUS 204</code></p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb32-1" title="1"><span class="er">Sem</span> <span class="er">corpo</span> <span class="er">de</span> <span class="er">resposta.</span></a></code></pre></div>
-<h2 id="rotas-que-não-precisam-de-autenticação-2"><strong>Rotas que não precisam de autenticação</strong></h2>
-<h2 align="center">
-Obter uma resposta
-</h2>
-<p><code>GET /api/answers/&lt;answer_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb33-1" title="1"><span class="er">Não</span> <span class="er">é</span> <span class="er">necessário</span> <span class="er">um</span> <span class="er">corpo</span> <span class="er">da</span> <span class="er">requisição.</span></a></code></pre></div>
-<h4 id="caso-tudo-dê-certo-a-resposta-será-assim-3">Caso tudo dê certo, a resposta será assim:</h4>
-<p><code>GET /api/answers/1 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb34-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb34-2" title="2">  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb34-3" title="3">  <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste Editada!&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb34-4" title="4">  <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb34-5" title="5">  <span class="dt">&quot;question_id&quot;</span><span class="fu">:</span> <span class="dv">1</span></a>
-<a class="sourceLine" id="cb34-6" title="6"><span class="fu">}</span></a></code></pre></div>
-<h1 id="rotas-parents">Rotas Parents</h1>
-<blockquote>
-<p><strong>Obs.:</strong> Rotas de obtenção de dados, deleção e atualização só podem ser realizadas pelo próprio usuário. ## <strong>Rotas que não precisam de autenticação</strong></p>
-</blockquote>
-<h2 align="center">
-Obter todos os parents(usernames)
-</h2>
-<p><code>GET /api/parents - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-11">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>GET /api/parents - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb36-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb36-2" title="2">  <span class="dt">&quot;users&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb36-3" title="3">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb36-4" title="4">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb36-5" title="5">      <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;luiz-miguel90&quot;</span></a>
-<a class="sourceLine" id="cb36-6" title="6">    <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb36-7" title="7">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb36-8" title="8">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb36-9" title="9">      <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;kalmeida&quot;</span></a>
-<a class="sourceLine" id="cb36-10" title="10">    <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb36-11" title="11">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb36-12" title="12">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb36-13" title="13">      <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;ryanteixeira&quot;</span></a>
-<a class="sourceLine" id="cb36-14" title="14">    <span class="fu">}</span></a>
-<a class="sourceLine" id="cb36-15" title="15">  <span class="ot">]</span></a>
-<a class="sourceLine" id="cb36-16" title="16"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Criar novo parent(usuário)
-<h2>
-<p><code>POST /api/parents - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb37-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb37-2" title="2">    <span class="dt">&quot;cpf&quot;</span><span class="fu">:</span> <span class="st">&quot;12345678910&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb37-3" title="3">    <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;marcos2345&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb37-4" title="4">    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Marcos&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb37-5" title="5">    <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;,marcos@yahoo.com.br&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb37-6" title="6">    <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;123456&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb37-7" title="7">    <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;(21) 99999-9999&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb37-8" title="8">    <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do s&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb37-9" title="9">    <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;Santa Catarina&quot;</span></a>
-<a class="sourceLine" id="cb37-10" title="10"><span class="fu">}</span></a></code></pre></div>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-12">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>POST /api/parents - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb38-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb38-2" title="2">    <span class="dt">&quot;cpf&quot;</span><span class="fu">:</span> <span class="st">&quot;12345678910&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb38-3" title="3">    <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;marcos2345&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb38-4" title="4">    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Marcos&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb38-5" title="5">    <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;,marcos@yahoo.com.br&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb38-6" title="6">    <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;123456&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb38-7" title="7">    <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;(21) 99999-9999&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb38-8" title="8">    <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul/SC&quot;</span></a>
-<a class="sourceLine" id="cb38-9" title="9"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs:</strong> Esta api não permite cpf, username ou email repetidos entre os usuários.</p>
-</blockquote>
-<h2 align="center">
-Fazer login
-<h2>
-<p><code>POST /api/parents/login - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb39-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb39-2" title="2">  <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;fulano&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb39-3" title="3">  <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;k3nz13&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb39-4" title="4"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs:</strong> Obrigatórios uma identificação do usuário e seu password. Além de “username” podem ser usados “cpf” ou “email”.</p>
-</blockquote>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-13">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>POST /api/parents - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb40-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb40-2" title="2">    <span class="dt">&quot;access_token&quot;</span><span class="fu">:</span> <span class="st">&quot;eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MTc3OTAxNywianRpIjoiOWJmOGM2M2QtNmFkYS00YTM1LTkxNDItY2FhNmU1NGIwYWM0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJpZCI6NTU0MiwidXNlcm5hbWUiOiJkX3NhdGlybzMifSwibmJmIjoxNjUxNzc5MDE3LCJleHAiOjE2NTE3Nzk5MTd9.DT8dcAjeSQnzsEw9DqImwqfF3Nm3Q8YIiLuFUTZ72JE&quot;</span></a>
-<a class="sourceLine" id="cb40-3" title="3"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs.:</strong> É possível obter o id do usuário através do JWT. Token expira em 15 minutos.</p>
-</blockquote>
-<h2 id="rotas-que-precisam-de-autenticação-3"><strong>Rotas que precisam de autenticação</strong></h2>
-<h2 align="center">
-Update de parent(usuário)
-<h2>
-<p><code>POST /api/parents - FORMATO DA REQUISIÇÃO</code></p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb41-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb41-2" title="2">    <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;123456789&quot;</span></a>
-<a class="sourceLine" id="cb41-3" title="3"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs.:</strong> Obrigatório pelo menos um campo que queira modificar.</p>
-</blockquote>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-14">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>POST /api/parents - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb42-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb42-2" title="2">  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">28</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb42-3" title="3">  <span class="dt">&quot;cpf&quot;</span><span class="fu">:</span> <span class="st">&quot;12312312313&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb42-4" title="4">  <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;fulano&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb42-5" title="5">  <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;fulano@mail.com&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb42-6" title="6">  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Fulano de Tal&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb42-7" title="7">  <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;99999999999&quot;</span></a>
-<a class="sourceLine" id="cb42-8" title="8"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Deletar parent(usuário)
-<h2>
-<p><code>GET /api/parents - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<blockquote>
-<p><strong>Obs.:</strong> Obrigatório estar logado. <strong>Atenção!</strong> Trata-se de uma deleção em cascata e todos os produtos, perguntas e respostas, inclusive interações em chats serão deletados.</p>
-</blockquote>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-15">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>POST /api/parents - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb44-1" title="1"><span class="er">Sem</span> <span class="er">corpo</span> <span class="er">de</span> <span class="er">resposta</span></a></code></pre></div>
-<h1 id="rotas-cities">Rotas Cities</h1>
-<blockquote>
-<p><strong>Obs.:</strong> Nesta rota além de query params para paginações (‘page’-&gt; deault=1 e/ou ‘per_page’ -&gt; default=8). Podem ser utilizados “city” e “state” para filtrar os resultados. #### Caso dê tudo certo, a resposta será assim:</p>
-</blockquote>
-<p><code>GET /api/cities?state=Santa Catarina - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb45-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb45-2" title="2">    <span class="dt">&quot;cities&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb45-3" title="3">        <span class="fu">{</span></a>
-<a class="sourceLine" id="cb45-4" title="4">            <span class="dt">&quot;point_id&quot;</span><span class="fu">:</span> <span class="dv">1786</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb45-5" title="5">            <span class="dt">&quot;capital&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb45-6" title="6">            <span class="dt">&quot;uf&quot;</span><span class="fu">:</span> <span class="st">&quot;SC&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb45-7" title="7">            <span class="dt">&quot;longitude&quot;</span><span class="fu">:</span> <span class="fl">-48.5477</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb45-8" title="8">            <span class="dt">&quot;code_uf&quot;</span><span class="fu">:</span> <span class="dv">42</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb45-9" title="9">            <span class="dt">&quot;code_ibge&quot;</span><span class="fu">:</span> <span class="dv">4205407</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb45-10" title="10">            <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Florianópolis&quot;,</span></a>
-<a class="sourceLine" id="cb45-11" title="11"><span class="st">            &quot;</span><span class="er">state</span><span class="st">&quot;: &quot;</span><span class="er">Santa</span> <span class="er">Catarina</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb45-12" title="12"><span class="st">            &quot;</span><span class="er">latitude</span><span class="st">&quot;: -27.5945</span></a>
-<a class="sourceLine" id="cb45-13" title="13"><span class="st">        },</span></a>
-<a class="sourceLine" id="cb45-14" title="14"><span class="st">        {</span></a>
-<a class="sourceLine" id="cb45-15" title="15"><span class="st">            &quot;</span><span class="er">point_id</span><span class="st">&quot;: 43,</span></a>
-<a class="sourceLine" id="cb45-16" title="16"><span class="st">            &quot;</span><span class="er">capital</span><span class="st">&quot;: false,</span></a>
-<a class="sourceLine" id="cb45-17" title="17"><span class="st">            &quot;</span><span class="er">uf</span><span class="st">&quot;: &quot;</span><span class="er">SC</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb45-18" title="18"><span class="st">            &quot;</span><span class="er">longitude</span><span class="st">&quot;: -49.822,</span></a>
-<a class="sourceLine" id="cb45-19" title="19"><span class="st">            &quot;</span><span class="er">code_uf</span><span class="st">&quot;: 42,</span></a>
-<a class="sourceLine" id="cb45-20" title="20"><span class="st">            &quot;</span><span class="er">code_ibge</span><span class="st">&quot;: 4200200,</span></a>
-<a class="sourceLine" id="cb45-21" title="21"><span class="st">            &quot;</span><span class="er">city</span><span class="st">&quot;: &quot;</span><span class="er">Agrolândia</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb45-22" title="22"><span class="st">            &quot;</span><span class="er">state</span><span class="st">&quot;: &quot;</span><span class="er">Santa</span> <span class="er">Catarina</span><span class="st">&quot;,</span></a>
-<a class="sourceLine" id="cb45-23" title="23"><span class="st">            &quot;</span><span class="er">latitude</span><span class="st">&quot;: -27.4087</span></a>
-<a class="sourceLine" id="cb45-24" title="24"><span class="st">        },</span></a>
-<a class="sourceLine" id="cb45-25" title="25"><span class="st">        (...)</span></a></code></pre></div>
-<h2 id="rota-não-precisa-de-autenticação-1"><strong>Rota não precisa de autenticação</strong></h2>
-<h2 align="center">
-Obter todos os parents(usernames)
-</h2>
-<p><code>GET /api/cities?state=&lt;estado&gt;&amp;city=&lt;cidade&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<h1 id="rotas-chat">Rotas Chat</h1>
-<h2 align="center">
-Ver todas conversas já iniciadas
-</h2>
-<p><code>GET /api/chat - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<blockquote>
-<p><strong>Obs:</strong> Rota mostra apenas as conversas ligadas ao usuário logado.</p>
-</blockquote>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-16">Caso dê tudo certo, a resposta será assim:</h4>
-<blockquote>
-<p><strong>Obs:</strong> Propriedade “read” mostra se a mensagem já foi lida.</p>
-</blockquote>
-<p><code>GET /api/chat - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb47-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb47-2" title="2">  <span class="dt">&quot;chats&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb47-3" title="3">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb47-4" title="4">      <span class="dt">&quot;other_parent_id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb47-5" title="5">      <span class="dt">&quot;messages&quot;</span><span class="fu">:</span> <span class="st">&quot;chat/1&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb47-6" title="6">      <span class="dt">&quot;read&quot;</span><span class="fu">:</span> <span class="kw">true</span></a>
-<a class="sourceLine" id="cb47-7" title="7">    <span class="fu">}</span><span class="ot">,</span></a>
-<a class="sourceLine" id="cb47-8" title="8">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb47-9" title="9">      <span class="dt">&quot;other_parent_id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb47-10" title="10">      <span class="dt">&quot;messages&quot;</span><span class="fu">:</span> <span class="st">&quot;chat/2&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb47-11" title="11">      <span class="dt">&quot;read&quot;</span><span class="fu">:</span> <span class="kw">true</span></a>
-<a class="sourceLine" id="cb47-12" title="12">    <span class="fu">}</span></a>
-<a class="sourceLine" id="cb47-13" title="13">  <span class="ot">]</span></a>
-<a class="sourceLine" id="cb47-14" title="14"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Enviar uma mensagem
-</h2>
-<p><code>POST /api/chat/&lt;parent_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Apenas necessário a mensagem no corpo de requisição.</code></pre>
-<blockquote>
-<p><strong>Obs:</strong> Usuário precisa estar logado para enviar a mensagem.</p>
-</blockquote>
-<div class="sourceCode" id="cb49"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb49-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb49-2" title="2">  <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;Boa noite, vi seu anuncio do site. Será que podemos conversar melhor sobre o envio?&quot;</span></a>
-<a class="sourceLine" id="cb49-3" title="3"><span class="fu">}</span></a></code></pre></div>
-<blockquote>
-<p><strong>Obs:</strong> Precisa passar id do parent logado ou de um outro parent existente.</p>
-</blockquote>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-17">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>POST /api/chat/2 - FORMATO DA RESPOSTA - STATUS 201</code></p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb50-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb50-2" title="2">  <span class="dt">&quot;msg&quot;</span><span class="fu">:</span> <span class="st">&quot;Mensagem enviada com sucesso!&quot;</span></a>
-<a class="sourceLine" id="cb50-3" title="3"><span class="fu">}</span></a></code></pre></div>
-<h2 align="center">
-Ver a conversa de um chat específico
-</h2>
-<p><code>GET /api/chat/&lt;parent_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
-<pre><code>Não é necessário um corpo da requisição.</code></pre>
-<h4 id="caso-dê-tudo-certo-a-resposta-será-assim-18">Caso dê tudo certo, a resposta será assim:</h4>
-<p><code>GET /api/chat/2 - FORMATO DA RESPOSTA - STATUS 200</code></p>
-<blockquote>
-<p><strong>Obs 1 :</strong> propriedade “msg_read” mostra se o usuário já leu a mensagem. <strong>Obs 2 :</strong> propriedade “parent” mostra a quem se destina a mensagem enviada</p>
-</blockquote>
-<div class="sourceCode" id="cb52"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb52-1" title="1"><span class="fu">{</span></a>
-<a class="sourceLine" id="cb52-2" title="2">  <span class="dt">&quot;messages&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
-<a class="sourceLine" id="cb52-3" title="3">    <span class="fu">{</span></a>
-<a class="sourceLine" id="cb52-4" title="4">      <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="st">&quot;Thu, 05 May 2022 19:20:28 GMT&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb52-5" title="5">      <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;Boa noite, vi seu anuncio do site. Será que podemos conversar melhor sobre o envio?&quot;</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb52-6" title="6">      <span class="dt">&quot;msg_read&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
-<a class="sourceLine" id="cb52-7" title="7">      <span class="dt">&quot;parent&quot;</span><span class="fu">:</span> <span class="st">&quot;Hirton Santos&quot;</span></a>
-<a class="sourceLine" id="cb52-8" title="8">    <span class="fu">}</span></a>
-<a class="sourceLine" id="cb52-9" title="9">  <span class="ot">]</span></a>
-<a class="sourceLine" id="cb52-10" title="10"><span class="fu">}</span></a></code></pre></div>
-</body>
+  <h1 align="center">
+    API - BabyShower (python*)
+    </h1>
+    <h1 id="rotas-products">Rotas Products</h1>
+    <blockquote>
+    <p><strong>Obs.:</strong> Alterações e deleções somente pode ser realizadas pelo parent que publicou o produto.</p>
+    </blockquote>
+    <h2 id="rotas-que-não-precisam-de-autenticação"><strong>Rotas que não precisam de autenticação</strong></h2>
+    <h2 align="center">
+    Obter todos os produtos
+    </h2>
+    <p><code>GET /api/products - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>GET /api/products - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb2-1" title="1"><span class="ot">[</span></a>
+    <a class="sourceLine" id="cb2-2" title="2">  <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb2-3" title="3">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">429</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-4" title="4">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;bebê-conforto&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-5" title="5">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">350.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">460</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-7" title="7">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Fugiat expedita eum qui dolorem a temporibus deserunt optio veritatis eius fuga blanditiis veniam ratione recusandae placeat nam atque aliquam impedit nisi dolorum.&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-8" title="8">    <span class="dt">&quot;image1&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-9" title="9">    <span class="dt">&quot;image2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-10" title="10">    <span class="dt">&quot;image3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-11" title="11">    <span class="dt">&quot;image4&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-12" title="12">    <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb2-13" title="13">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb2-14" title="14">        <span class="st">&quot;segurança para bebê&quot;,</span></a>
+    <a class="sourceLine" id="cb2-15" title="15"><span class="st">        &quot;</span><span class="dv">0</span> <span class="er">a</span> <span class="dv">3</span> <span class="er">meses</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb2-16" title="16"><span class="st">        &quot;</span><span class="dv">4</span> <span class="er">a</span> <span class="dv">6</span> <span class="er">meses</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb2-17" title="17"><span class="st">        &quot;</span><span class="dv">7</span> <span class="er">a</span> <span class="dv">9</span> <span class="er">meses</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb2-18" title="18"><span class="st">        &quot;</span><span class="dv">10</span> <span class="er">meses</span> <span class="er">a</span> <span class="dv">1</span> <span class="er">ano</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb2-19" title="19"><span class="st">        &quot;</span><span class="dv">2</span> <span class="er">anos</span><span class="st">&quot;</span></a>
+    <a class="sourceLine" id="cb2-20" title="20"><span class="st">    ],</span></a>
+    <a class="sourceLine" id="cb2-21" title="21"><span class="st">    &quot;</span><span class="er">city/state</span><span class="st">&quot;: &quot;</span><span class="er">Balneário</span> <span class="er">Arroio</span> <span class="er">do</span> <span class="er">Silva/Santa</span> <span class="er">Catarina</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb2-22" title="22"><span class="st">    &quot;</span><span class="er">questions</span><span class="st">&quot;: &quot;</span><span class="er">/api/questions/by_product/</span><span class="dv">429</span><span class="st">&quot;</span></a>
+    <a class="sourceLine" id="cb2-23" title="23"><span class="st">  },</span></a>
+    <a class="sourceLine" id="cb2-24" title="24"><span class="st">  (...)</span></a>
+    <a class="sourceLine" id="cb2-25" title="25"><span class="st">]</span></a></code></pre></div>
+    <h3 id="realizando-filtros-nesta-rota"><u>Realizando filtros nesta rota:</u></h3>
+    <p>Podem ser realizados filtros de duas formas a seguir: - Via <strong>Query Params</strong>: Para paginações utilizando <strong>‘page’(deault=1)</strong> e/ou <strong>‘per_page’ (default=8)</strong> - Via <strong>Body</strong> da requisição: - Para título do produto (podendo ser parcial); - Para lista de categorias do produto; - Para preços máximos e mínimos; - Para cidade/estado referência para geolocalização; - Para latitude/longitude referência também para geolocalização; - Para raio de cobertura geográfica a partir do local de referência.</p>
+    <blockquote>
+    <p><strong>Obs.:</strong> Essa forma de paginar resultados via query params também pode ser utilizada nas rotas para <em>obter todos os parents(usuários)</em> ou para <em>obter todas as perguntas por id de produto</em>.</p>
+    </blockquote>
+    <p><strong>Via Query Params sem body na requisição:</strong></p>
+    <p><code>GET /api/products?perPage=2&amp;page=1 - FORMATO DA REQUISIÇÃO</code></p>
+    <p>Caso dê tudo certo, a resposta será assim:</p>
+    <p><code>GET /api/products?perPage=2&amp;page=1 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb3-1" title="1"><span class="ot">[</span></a>
+    <a class="sourceLine" id="cb3-2" title="2">  <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb3-3" title="3">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">317</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-4" title="4">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Nanina&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-5" title="5">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">15.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">339</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-7" title="7">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Ab in neque earum odio quia molestias minima eaque ratione eos illum.&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-8" title="8">    <span class="dt">&quot;image1&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-9" title="9">    <span class="dt">&quot;image2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-10" title="10">    <span class="dt">&quot;image3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-11" title="11">    <span class="dt">&quot;image4&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-12" title="12">    <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-13" title="13">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb3-14" title="14">        <span class="st">&quot;brinquedos&quot;</span></a>
+    <a class="sourceLine" id="cb3-15" title="15">    <span class="ot">]</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-16" title="16">    <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Araranguá/Santa Catarina&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-17" title="17">    <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/317&quot;</span></a>
+    <a class="sourceLine" id="cb3-18" title="18">  <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb3-19" title="19">  <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb3-20" title="20">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">360</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-21" title="21">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;body tamanho M&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-22" title="22">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">36.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb3-23" title="23">    <span class="er">(...)</span></a>
+    <a class="sourceLine" id="cb3-24" title="24">  <span class="fu">}</span></a>
+    <a class="sourceLine" id="cb3-25" title="25"><span class="ot">]</span></a></code></pre></div>
+    <p><strong>Via Body na na requisição:</strong></p>
+    <blockquote>
+    <p><strong>Obs.:</strong> Pode ter query params para a paginação em conjunto.</p>
+    </blockquote>
+    <p><code>GET /api/products?page=1&amp;per_page=3 - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb4-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb4-2" title="2">  <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;roupas&quot;</span><span class="ot">,</span> <span class="st">&quot;0 a 3 meses&quot;</span><span class="ot">]</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb4-3" title="3">  <span class="dt">&quot;min_price&quot;</span><span class="fu">:</span> <span class="fl">30.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb4-4" title="4">  <span class="dt">&quot;max_price&quot;</span><span class="fu">:</span> <span class="fl">60.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb4-5" title="5">  <span class="dt">&quot;title_product&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb4-6" title="6">  <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb4-7" title="7">  <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;Santa catar&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb4-8" title="8">  <span class="dt">&quot;distance&quot;</span><span class="fu">:</span> <span class="dv">50000</span></a>
+    <a class="sourceLine" id="cb4-9" title="9"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs.:</strong> Para categories, title_product, city e state é busca é por aproximação. Exemplo: Pode-se buscar “Santa Catarina” como “santa c” ou “catarina” na informação state.</p>
+    </blockquote>
+    <p><code>GET /api/products?page=1&amp;per_page=3 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb5-1" title="1"><span class="ot">[</span></a>
+    <a class="sourceLine" id="cb5-2" title="2">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb5-3" title="3">        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2780</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-4" title="4">        <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Tênis tam 16&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-5" title="5">        <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">36.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-6" title="6">        <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">2987</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-7" title="7">        <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Accusamus nisi aspernatur nulla fuga enim velit quibusdam maxime voluptates vitae mollitia dolorum dolorum.&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-8" title="8">        <span class="dt">&quot;image1&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-9" title="9">        <span class="dt">&quot;image2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-10" title="10">        <span class="dt">&quot;image3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-11" title="11">        <span class="dt">&quot;image4&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-12" title="12">        <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-13" title="13">        <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb5-14" title="14">            <span class="st">&quot;roupas&quot;</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb5-15" title="15">            <span class="st">&quot;0 a 3 meses&quot;</span></a>
+    <a class="sourceLine" id="cb5-16" title="16">        <span class="ot">]</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-17" title="17">        <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Meleiro/Santa Catarina&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb5-18" title="18">        <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/2780&quot;</span></a>
+    <a class="sourceLine" id="cb5-19" title="19">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb5-20" title="20">  <span class="er">(...)</span></a>
+    <a class="sourceLine" id="cb5-21" title="21"><span class="ot">]</span></a></code></pre></div>
+    <h2 align="center">
+    Outras informações sobre a geolocalização
+    </h2>
+    <p>Sobre a rota anterior, caso seja fornecido o <strong>Token Bearer</strong> no head da requisição a localização de referência para o raio de alcance da pesquisa serão a cidade e o estado no cadastro do usuário. Caso o usuário não esteja autenticado, ou não seja fornecido o token a pesquisa não considerará aspectos geográficos.</p>
+    <p>Como mencionado anteriormente, podem ser fornecidos no body da requisição como referência para o raio de alcance: - Cidade E estado; OU - Latitude E Longitude</p>
+    <h3 id="raio-de-alcance">Raio de alcance:</h3>
+    <p>O raio de alcance quando não fornecido possui o valor padrão de 50 mil km. Deve-se utilizar a chave “distance” no body da requisição.</p>
+    <blockquote>
+    <p><strong>Obs.:</strong>: Esta área de cobertura só será utilizada se houver um ponto de referênica obtido pelos dados do usuário ou pelo body da requisição.</p>
+    </blockquote>
+    <h2 align="center">
+    Obter produto por id
+    </h2>
+    <p><code>GET /api/products/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-1">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>GET /api/products/2 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb7-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb7-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-3" title="3">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Nanina&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-4" title="4">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">15.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-5" title="5">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-6" title="6">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-7" title="7">    <span class="dt">&quot;image1&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-8" title="8">    <span class="dt">&quot;image2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-9" title="9">    <span class="dt">&quot;image3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-10" title="10">    <span class="dt">&quot;image4&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-11" title="11">    <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-12" title="12">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb7-13" title="13">        <span class="st">&quot;brinquedos&quot;</span></a>
+    <a class="sourceLine" id="cb7-14" title="14">    <span class="ot">]</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-15" title="15">    <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Abadia dos Dourados/Minas Gerais&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb7-16" title="16">    <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/2&quot;</span></a>
+    <a class="sourceLine" id="cb7-17" title="17"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Obter produto pelo id do parent
+    </h2>
+    <p><code>GET /api/products/by_parent/&lt;parent_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-2">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>GET /api/products/by_parent/2 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb9"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb9-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb9-2" title="2">  <span class="dt">&quot;products&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb9-3" title="3">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb9-4" title="4">        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-5" title="5">        <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Nanina&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-6" title="6">        <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">15.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-7" title="7">        <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-8" title="8">        <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Repellat deserunt eum necessitatibus nam consequuntur vero harum asperiores excepturi tenetur voluptatem voluptate commodi ratione suscipit quibusdam quibusdam quas illo atque incidunt commodi.&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-9" title="9">        <span class="dt">&quot;image1&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-10" title="10">        <span class="dt">&quot;image2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-11" title="11">        <span class="dt">&quot;image3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-12" title="12">        <span class="dt">&quot;image4&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-13" title="13">        <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-14" title="14">        <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb9-15" title="15">            <span class="st">&quot;brinquedos&quot;</span></a>
+    <a class="sourceLine" id="cb9-16" title="16">        <span class="ot">]</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-17" title="17">        <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Abadia dos Dourados/Minas Gerais&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb9-18" title="18">        <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/2&quot;</span></a>
+    <a class="sourceLine" id="cb9-19" title="19">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb9-20" title="20">  <span class="er">(...)</span></a>
+    <a class="sourceLine" id="cb9-21" title="21">  <span class="ot">]</span></a>
+    <a class="sourceLine" id="cb9-22" title="22"><span class="fu">}</span></a></code></pre></div>
+    <h2 id="rotas-que-precisam-de-autenticação"><strong>Rotas que precisam de autenticação</strong></h2>
+    <h2 align="center">
+    Criar novo produto
+    </h2>
+    <p><code>POST /api/products - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb10"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb10-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb10-2" title="2">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;tiptop&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb10-3" title="3">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Lorem Ipsum is simply dummy text of the printing and typesetting industry.&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb10-4" title="4">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">610.69</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb10-5" title="5">    <span class="dt">&quot;image1&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb10-6" title="6">    <span class="dt">&quot;image2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb10-7" title="7">    <span class="dt">&quot;image3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb10-8" title="8">    <span class="dt">&quot;image4&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb10-9" title="9">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;0 a 3 meses&quot;</span><span class="ot">,</span> <span class="st">&quot;roupas&quot;</span><span class="ot">]</span></a>
+    <a class="sourceLine" id="cb10-10" title="10"><span class="fu">}</span></a></code></pre></div>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-3">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>POST /api/products - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb11-1" title="1"></a>
+    <a class="sourceLine" id="cb11-2" title="2"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb11-3" title="3">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-4" title="4">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;tiptop&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-5" title="5">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">610.69</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-7" title="7">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Lorem Ipsum is simply dummy text of the printing and typesetting industry.&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-8" title="8">    <span class="dt">&quot;image1&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-9" title="9">    <span class="dt">&quot;image2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-10" title="10">    <span class="dt">&quot;image3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-11" title="11">    <span class="dt">&quot;image4&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-12" title="12">    <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-13" title="13">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb11-14" title="14">        <span class="st">&quot;0 a 3 meses&quot;</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb11-15" title="15">        <span class="st">&quot;roupas&quot;</span></a>
+    <a class="sourceLine" id="cb11-16" title="16">    <span class="ot">]</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-17" title="17">    <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul/Santa Catarina&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb11-18" title="18">    <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/5542&quot;</span></a>
+    <a class="sourceLine" id="cb11-19" title="19"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs.:</strong> Quando o parent cadastra um novo produto, um email de confirmação é enviado para o seu respectivo email cadastrado.</p>
+    </blockquote>
+    <blockquote>
+    <p><strong>Obs.:</strong> Um produto pode ser criado sem categoria. A categoria é buscada pela palavra aproximada na relação de categories desta api. Ao se inserir uma categoria não existente se obterá o seguinte erro:</p>
+    </blockquote>
+    <p><code>POST /api/products - FORMATO DA RESPOSTA - STATUS 422</code></p>
+    <div class="sourceCode" id="cb12"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb12-1" title="1"></a>
+    <a class="sourceLine" id="cb12-2" title="2"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb12-3" title="3">  <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Categories is invalid&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb12-4" title="4">  <span class="dt">&quot;invalid_options&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb12-5" title="5">    <span class="st">&quot;teste&quot;</span></a>
+    <a class="sourceLine" id="cb12-6" title="6">  <span class="ot">]</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb12-7" title="7">  <span class="dt">&quot;valid_options&quot;</span><span class="fu">:</span> <span class="st">&quot;api/categories&quot;</span></a>
+    <a class="sourceLine" id="cb12-8" title="8"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Atualizar produto por id
+    </h2>
+    <p><code>PATCH /api/products/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb13-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb13-2" title="2">  <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">52.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb13-3" title="3">  <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;4 a 6 meses&quot;</span><span class="ot">]</span></a>
+    <a class="sourceLine" id="cb13-4" title="4"><span class="fu">}</span></a></code></pre></div>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-4">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>PATCH /api/products/5542 - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb14-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb14-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-3" title="3">    <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;tiptop&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-4" title="4">    <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="fl">52.0</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-5" title="5">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-6" title="6">    <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-7" title="7">    <span class="dt">&quot;image1&quot;</span><span class="fu">:</span> <span class="st">&quot;https://imagem/320x240&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-8" title="8">    <span class="dt">&quot;image2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-9" title="9">    <span class="dt">&quot;image3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-10" title="10">    <span class="dt">&quot;image4&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-11" title="11">    <span class="dt">&quot;sold&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-12" title="12">    <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb14-13" title="13">        <span class="st">&quot;4 a 6 meses&quot;</span></a>
+    <a class="sourceLine" id="cb14-14" title="14">    <span class="ot">]</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-15" title="15">    <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul/Santa Catarina&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb14-16" title="16">    <span class="dt">&quot;questions&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/5542&quot;</span></a>
+    <a class="sourceLine" id="cb14-17" title="17"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Excluir produto por id
+    </h2>
+    <p><code>DELETE /api/products/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-5">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>DELETE /api/products/1 - FORMATO DA RESPOSTA - STATUS 204</code></p>
+    <div class="sourceCode" id="cb16"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb16-1" title="1"><span class="er">Sem</span> <span class="er">corpo</span> <span class="er">de</span> <span class="er">resposta</span></a></code></pre></div>
+    <h1 id="rota-categories">Rota Categories</h1>
+    <h2 id="rota-não-precisa-de-autenticação"><strong>Rota não precisa de autenticação</strong></h2>
+    <h2 align="center">
+    Obter todas as categories
+    </h2>
+    <p><code>GET /api/categories - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-6">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>GET /api/categories - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb18"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb18-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb18-2" title="2">  <span class="dt">&quot;categories&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb18-3" title="3">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb18-4" title="4">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb18-5" title="5">      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;até 3 meses&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb18-6" title="6">      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Tudo o que o seu bebê precisa até os seus 3 meses&quot;</span></a>
+    <a class="sourceLine" id="cb18-7" title="7">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb18-8" title="8">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb18-9" title="9">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb18-10" title="10">      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;até 6 meses&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb18-11" title="11">      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Tudo o que o seu bebê precisa até os seus 6 meses&quot;</span></a>
+    <a class="sourceLine" id="cb18-12" title="12">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb18-13" title="13">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb18-14" title="14">      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb18-15" title="15">      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;até 9 meses&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb18-16" title="16">      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Tudo o que o seu bebê precisa até os seus 9 meses&quot;</span></a>
+    <a class="sourceLine" id="cb18-17" title="17">    <span class="fu">}</span></a>
+    <a class="sourceLine" id="cb18-18" title="18">  <span class="ot">]</span></a>
+    <a class="sourceLine" id="cb18-19" title="19"><span class="fu">}</span></a></code></pre></div>
+    <h1 id="rotas-questions">Rotas Questions</h1>
+    <blockquote>
+    <p><strong>Obs.:</strong> Todos os parents podem fazer perguntas em quaisquer outros produtos. Inclusive nos próprios produtos.</p>
+    </blockquote>
+    <h2 id="rotas-que-não-precisam-de-autenticação-1"><strong>Rotas que não precisam de autenticação</strong></h2>
+    <h2 align="center">
+    Obter todas as perguntas por id de produto
+    </h2>
+    <p><code>GET /api/questions/by_product/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-7">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>GET /api/questions/by_product/3001 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb20"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb20-1" title="1"><span class="ot">[</span></a>
+    <a class="sourceLine" id="cb20-2" title="2">  <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb20-3" title="3">        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3001</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb20-4" title="4">        <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;teste&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb20-5" title="5">        <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Wed, 04 May 2022 21:12:02 GMT&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb20-6" title="6">        <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb20-7" title="7">        <span class="dt">&quot;product_id&quot;</span><span class="fu">:</span> <span class="dv">301</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb20-8" title="8">        <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">20</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb20-9" title="9">        <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb20-10" title="10">            <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/answers/1&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb20-11" title="11">            <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;fdddgd5dfd&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb20-12" title="12">            <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;teste2&quot;</span></a>
+    <a class="sourceLine" id="cb20-13" title="13">        <span class="fu">},</span></a>
+    <a class="sourceLine" id="cb20-14" title="14">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;miguel83&quot;</span></a>
+    <a class="sourceLine" id="cb20-15" title="15">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb20-16" title="16">  <span class="er">(...)</span></a>
+    <a class="sourceLine" id="cb20-17" title="17"><span class="ot">]</span></a></code></pre></div>
+    <h2 id="rotas-que-precisam-de-autenticação-1"><strong>Rotas que precisam de autenticação</strong></h2>
+    <h2 align="center">
+    Criar nova pergunta em um produto por id de produto
+    </h2>
+    <p><code>POST /api/questions/&lt;product_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb21"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb21-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb21-2" title="2">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta Teste?&quot;</span></a>
+    <a class="sourceLine" id="cb21-3" title="3"><span class="fu">}</span></a></code></pre></div>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-8">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>POST /api/question/3 - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb22"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb22-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb22-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb22-3" title="3">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta teste?&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb22-4" title="4">    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Thu, 05 May 2022 15:41:42 GMT&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb22-5" title="5">    <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb22-6" title="6">    <span class="dt">&quot;product_id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb22-7" title="7">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb22-8" title="8">    <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="kw">null</span></a>
+    <a class="sourceLine" id="cb22-9" title="9"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs.:</strong> É enviado uma mensagem para o e-mail do dono do produto o alertado sobre a nova pergunta enviado uma pergunta.</p>
+    </blockquote>
+    <h2 align="center">
+    Atualizar pergunta por id de pergunta
+    </h2>
+    <p><code>PATCH /api/questions/&lt;question_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb23"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb23-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb23-2" title="2">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta Teste Atualizada?&quot;</span></a>
+    <a class="sourceLine" id="cb23-3" title="3"><span class="fu">}</span></a></code></pre></div>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-9">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>PATCH /api/questions/1 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb24"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb24-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb24-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb24-3" title="3">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta teste atualizada?&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb24-4" title="4">    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Thu, 05 May 2022 10:29:22 GMT&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb24-5" title="5">    <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Thu, 05 May 2022 15:43:48 GMT&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb24-6" title="6">    <span class="dt">&quot;product_id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb24-7" title="7">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">5542</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb24-8" title="8">    <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="kw">null</span></a>
+    <a class="sourceLine" id="cb24-9" title="9"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Deletar pergunta por id de pergunta
+    </h2>
+    <p><code>DELETE /api/questions/&lt;question_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-10">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>DELETE /api/questions/1 - FORMATO DA RESPOSTA - STATUS 204</code></p>
+    <pre><code>Sem corpo de resposta</code></pre>
+    <h1 id="rotas-answers">Rotas Answers</h1>
+    <blockquote>
+    <p><strong>Obs.:</strong> Somente o parent que postou o produto pode responder as perguntas que estiverem vinculadas ao seu produto.</p>
+    </blockquote>
+    <h2 id="rotas-que-precisam-de-autenticação-2"><strong>Rotas que precisam de autenticação</strong></h2>
+    <h2 align="center">
+    Criar uma resposta
+    </h2>
+    <p><code>POST /api/answers/&lt;question_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb27"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb27-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb27-2" title="2">  <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste!&quot;</span></a>
+    <a class="sourceLine" id="cb27-3" title="3"><span class="fu">}</span></a></code></pre></div>
+    <h4 id="caso-tudo-dê-certo-a-resposta-será-assim">Caso tudo dê certo, a resposta será assim:</h4>
+    <p><code>POST /api/answers/1 - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb28"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb28-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb28-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb28-3" title="3">    <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste!&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb28-4" title="4">    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Wed, 04 May 2022 21:13:16 GMT&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb28-5" title="5">    <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb28-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">19</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb28-7" title="7">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb28-8" title="8">        <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/3001&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb28-9" title="9">        <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta Teste Atualizada?&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb28-10" title="10">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;Rita231&quot;</span></a>
+    <a class="sourceLine" id="cb28-11" title="11">    <span class="fu">}</span></a>
+    <a class="sourceLine" id="cb28-12" title="12"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs.:</strong> É enviado uma mensagem para o e-mail do parent que fez a pergunta o alertado sobre a resposta.</p>
+    </blockquote>
+    <h2 align="center">
+    Editar uma resposta
+    </h2>
+    <p><code>PATCH /api/answers/&lt;answer_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb29"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb29-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb29-2" title="2">  <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste Editada!&quot;</span></a>
+    <a class="sourceLine" id="cb29-3" title="3"><span class="fu">}</span></a></code></pre></div>
+    <h4 id="caso-tudo-dê-certo-a-resposta-será-assim-1">Caso tudo dê certo, a resposta será assim:</h4>
+    <p><code>PATCH /api/answers/1 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb30"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb30-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb30-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb30-3" title="3">    <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste Editada!&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb30-4" title="4">    <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Wed, 04 May 2022 21:13:16 GMT&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb30-5" title="5">    <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="st">&quot;Wed, 04 May 2022 21:16:26 GMT&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb30-6" title="6">    <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">19</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb30-7" title="7">    <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb30-8" title="8">        <span class="dt">&quot;link&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/questions/by_product/3001&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb30-9" title="9">        <span class="dt">&quot;question&quot;</span><span class="fu">:</span> <span class="st">&quot;Pergunta Teste Atualizada?&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb30-10" title="10">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;Rita231&quot;</span></a>
+    <a class="sourceLine" id="cb30-11" title="11">    <span class="fu">}</span></a>
+    <a class="sourceLine" id="cb30-12" title="12"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Deletar uma resposta
+    </h2>
+    <p><code>DELETE /api/answers/&lt;answer_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb31"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb31-1" title="1"><span class="er">Não</span> <span class="er">é</span> <span class="er">necessário</span> <span class="er">um</span> <span class="er">corpo</span> <span class="er">da</span> <span class="er">requisição.</span></a></code></pre></div>
+    <h4 id="caso-tudo-dê-certo-a-resposta-será-assim-2">Caso tudo dê certo, a resposta será assim:</h4>
+    <p><code>DELETE /api/answers/1 - FORMATO DA RESPOSTA - STATUS 204</code></p>
+    <div class="sourceCode" id="cb32"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb32-1" title="1"><span class="er">Sem</span> <span class="er">corpo</span> <span class="er">de</span> <span class="er">resposta.</span></a></code></pre></div>
+    <h2 id="rotas-que-não-precisam-de-autenticação-2"><strong>Rotas que não precisam de autenticação</strong></h2>
+    <h2 align="center">
+    Obter uma resposta
+    </h2>
+    <p><code>GET /api/answers/&lt;answer_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb33"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb33-1" title="1"><span class="er">Não</span> <span class="er">é</span> <span class="er">necessário</span> <span class="er">um</span> <span class="er">corpo</span> <span class="er">da</span> <span class="er">requisição.</span></a></code></pre></div>
+    <h4 id="caso-tudo-dê-certo-a-resposta-será-assim-3">Caso tudo dê certo, a resposta será assim:</h4>
+    <p><code>GET /api/answers/1 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb34"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb34-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb34-2" title="2">  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb34-3" title="3">  <span class="dt">&quot;answer&quot;</span><span class="fu">:</span> <span class="st">&quot;Resposta Teste Editada!&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb34-4" title="4">  <span class="dt">&quot;parent_id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb34-5" title="5">  <span class="dt">&quot;question_id&quot;</span><span class="fu">:</span> <span class="dv">1</span></a>
+    <a class="sourceLine" id="cb34-6" title="6"><span class="fu">}</span></a></code></pre></div>
+    <h1 id="rotas-parents">Rotas Parents</h1>
+    <blockquote>
+    <p><strong>Obs.:</strong> Rotas de obtenção de dados pessoais sensíveis, deleção e atualização só podem ser realizadas pelo próprio usuário. ## <strong>Rotas que não precisam de autenticação</strong></p>
+    </blockquote>
+    <h2 align="center">
+    Obter todos os parents(informação pública)
+    </h2>
+    <blockquote>
+    <p><strong>Obs.:</strong> A rota também permite paginação (page=1 e per_page=8), bem como o param “parent_id” retornando neste caso somente um usuário caso seja encontrado.</p>
+    </blockquote>
+    <p><code>GET /api/parents - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-11">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>GET /api/parents - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb36"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb36-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb36-2" title="2">  <span class="dt">&quot;users&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb36-3" title="3">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb36-4" title="4">        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-5" title="5">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;luiz-miguel90&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-6" title="6">        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Luiz Miguel&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-7" title="7">        <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="kw">null</span></a>
+    <a class="sourceLine" id="cb36-8" title="8">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb36-9" title="9">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb36-10" title="10">        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-11" title="11">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;marianacorreia2&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-12" title="12">        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Heloísa Da Costa&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-13" title="13">        <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="kw">null</span></a>
+    <a class="sourceLine" id="cb36-14" title="14">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb36-15" title="15">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb36-16" title="16">        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-17" title="17">        <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;ana-luiza363&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-18" title="18">        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Yuri Alves&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb36-19" title="19">        <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="kw">null</span></a>
+    <a class="sourceLine" id="cb36-20" title="20">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb36-21" title="21">  <span class="ot">]</span></a>
+    <a class="sourceLine" id="cb36-22" title="22"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Criar novo parent(usuário)
+    <h2>
+    <p><code>POST /api/parents - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb37"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb37-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb37-2" title="2">    <span class="dt">&quot;cpf&quot;</span><span class="fu">:</span> <span class="st">&quot;12345678910&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb37-3" title="3">    <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;marcos2345&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb37-4" title="4">    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Marcos&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb37-5" title="5">    <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;,marcos@yahoo.com.br&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb37-6" title="6">    <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;123456&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb37-7" title="7">    <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;(21) 99999-9999&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb37-8" title="8">    <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do s&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb37-9" title="9">    <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;Santa Catarina&quot;</span></a>
+    <a class="sourceLine" id="cb37-10" title="10"><span class="fu">}</span></a></code></pre></div>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-12">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>POST /api/parents - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb38"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb38-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb38-2" title="2">    <span class="dt">&quot;cpf&quot;</span><span class="fu">:</span> <span class="st">&quot;12345678910&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb38-3" title="3">    <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;marcos2345&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb38-4" title="4">    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Marcos&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb38-5" title="5">    <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;,marcos@yahoo.com.br&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb38-6" title="6">    <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;123456&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb38-7" title="7">    <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;(21) 99999-9999&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb38-8" title="8">    <span class="dt">&quot;city/state&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul/SC&quot;</span></a>
+    <a class="sourceLine" id="cb38-9" title="9"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs:</strong> Esta api não permite cpf, username ou email repetidos entre os usuários.</p>
+    </blockquote>
+    <h2 align="center">
+    Fazer login
+    <h2>
+    <p><code>POST /api/parents/login - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb39"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb39-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb39-2" title="2">  <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;fulano&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb39-3" title="3">  <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;k3nz13&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb39-4" title="4"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs:</strong> Obrigatórios uma identificação do usuário e seu password. Além de “username” podem ser usados “cpf” ou “email”.</p>
+    </blockquote>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-13">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>POST /api/parents - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb40"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb40-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb40-2" title="2">    <span class="dt">&quot;access_token&quot;</span><span class="fu">:</span> <span class="st">&quot;eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY1MTc3OTAxNywianRpIjoiOWJmOGM2M2QtNmFkYS00YTM1LTkxNDItY2FhNmU1NGIwYWM0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJpZCI6NTU0MiwidXNlcm5hbWUiOiJkX3NhdGlybzMifSwibmJmIjoxNjUxNzc5MDE3LCJleHAiOjE2NTE3Nzk5MTd9.DT8dcAjeSQnzsEw9DqImwqfF3Nm3Q8YIiLuFUTZ72JE&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb40-3" title="3">    <span class="dt">&quot;access_token_node&quot;</span><span class="fu">:</span> <span class="st">&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzYwNSwiaWF0IjoxNjU1OTg4MjQ5LCJleHAiOjE2NTU5ODkxNDl9.7ZAFBr7NvKxoQsDieraN-8gFxhrZuZlC8RnmX69Usf0&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb40-4" title="4">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3605</span></a>
+    <a class="sourceLine" id="cb40-5" title="5"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs.1:</strong> É possível obter o id do usuário através do JWT. Token expira em 15 minutos. <strong>Obs.2:</strong> Este backend faz um request para a api_node e caso tenha algum problema no servidor o access_token_node virá com este aviso.</p>
+    </blockquote>
+    <h2 id="rotas-que-precisam-de-autenticação-3"><strong>Rotas que precisam de autenticação</strong></h2>
+    <h2 align="center">
+    Get parent by id (usuário)
+    <h2>
+    <p><code>POST /api/parents/28 - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-14">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>POST /api/parents/28 - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb42"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb42-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb42-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">28</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-3" title="3">    <span class="dt">&quot;cpf&quot;</span><span class="fu">:</span> <span class="st">&quot;11111111119&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-4" title="4">    <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;daniel6&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-5" title="5">    <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;daniel6@yahoo.com.br&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-6" title="6">    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Daniel&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-7" title="7">    <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;(21) 99999-9999&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-8" title="8">    <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-9" title="9">    <span class="dt">&quot;products&quot;</span><span class="fu">:</span> <span class="st">&quot;api/products/by_parent/28&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-10" title="10">    <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb42-11" title="11">    <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;Santa Catarina&quot;</span></a>
+    <a class="sourceLine" id="cb42-12" title="12"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Update de parent(usuário)
+    <h2>
+    <p><code>POST /api/parents - FORMATO DA REQUISIÇÃO</code></p>
+    <div class="sourceCode" id="cb43"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb43-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb43-2" title="2">    <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;123456789&quot;</span></a>
+    <a class="sourceLine" id="cb43-3" title="3"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs.:</strong> Obrigatório pelo menos um campo que queira modificar.</p>
+    </blockquote>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-15">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>POST /api/parents - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb44"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb44-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb44-2" title="2">    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">28</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-3" title="3">    <span class="dt">&quot;cpf&quot;</span><span class="fu">:</span> <span class="st">&quot;12312312313&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-4" title="4">    <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;fulano&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-5" title="5">    <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;fulano@mail.com&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-6" title="6">    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Fulano de Tal&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-7" title="7">    <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;99999999999&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-8" title="8">    <span class="dt">&quot;image&quot;</span><span class="fu">:</span> <span class="st">&quot;http://...&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-9" title="9">    <span class="dt">&quot;products&quot;</span><span class="fu">:</span> <span class="st">&quot;api/products/by_parent/28&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-10" title="10">    <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cocal do Sul&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb44-11" title="11">    <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;Santa Catarina&quot;</span></a>
+    <a class="sourceLine" id="cb44-12" title="12"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Deletar parent(usuário)
+    <h2>
+    <p><code>GET /api/parents - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <blockquote>
+    <p><strong>Obs.:</strong> Obrigatório estar logado. <strong>Atenção!</strong> Trata-se de uma deleção em cascata e todos os produtos, perguntas e respostas, inclusive interações em chats serão deletados.</p>
+    </blockquote>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-16">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>POST /api/parents - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb46"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb46-1" title="1"><span class="er">Sem</span> <span class="er">corpo</span> <span class="er">de</span> <span class="er">resposta</span></a></code></pre></div>
+    <h1 id="rotas-cities">Rotas Cities</h1>
+    <blockquote>
+    <p><strong>Obs.:</strong> Nesta rota além de query params para paginações (‘page’-&gt; deault=1 e/ou ‘per_page’ -&gt; default=8). Podem ser utilizados “city” e “state” para filtrar os resultados. #### Caso dê tudo certo, a resposta será assim:</p>
+    </blockquote>
+    <p><code>GET /api/cities?state=Santa Catarina - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb47"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb47-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb47-2" title="2">    <span class="dt">&quot;cities&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb47-3" title="3">        <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb47-4" title="4">            <span class="dt">&quot;point_id&quot;</span><span class="fu">:</span> <span class="dv">1786</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb47-5" title="5">            <span class="dt">&quot;capital&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb47-6" title="6">            <span class="dt">&quot;uf&quot;</span><span class="fu">:</span> <span class="st">&quot;SC&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb47-7" title="7">            <span class="dt">&quot;longitude&quot;</span><span class="fu">:</span> <span class="fl">-48.5477</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb47-8" title="8">            <span class="dt">&quot;code_uf&quot;</span><span class="fu">:</span> <span class="dv">42</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb47-9" title="9">            <span class="dt">&quot;code_ibge&quot;</span><span class="fu">:</span> <span class="dv">4205407</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb47-10" title="10">            <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Florianópolis&quot;,</span></a>
+    <a class="sourceLine" id="cb47-11" title="11"><span class="st">            &quot;</span><span class="er">state</span><span class="st">&quot;: &quot;</span><span class="er">Santa</span> <span class="er">Catarina</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb47-12" title="12"><span class="st">            &quot;</span><span class="er">latitude</span><span class="st">&quot;: -27.5945</span></a>
+    <a class="sourceLine" id="cb47-13" title="13"><span class="st">        },</span></a>
+    <a class="sourceLine" id="cb47-14" title="14"><span class="st">        {</span></a>
+    <a class="sourceLine" id="cb47-15" title="15"><span class="st">            &quot;</span><span class="er">point_id</span><span class="st">&quot;: 43,</span></a>
+    <a class="sourceLine" id="cb47-16" title="16"><span class="st">            &quot;</span><span class="er">capital</span><span class="st">&quot;: false,</span></a>
+    <a class="sourceLine" id="cb47-17" title="17"><span class="st">            &quot;</span><span class="er">uf</span><span class="st">&quot;: &quot;</span><span class="er">SC</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb47-18" title="18"><span class="st">            &quot;</span><span class="er">longitude</span><span class="st">&quot;: -49.822,</span></a>
+    <a class="sourceLine" id="cb47-19" title="19"><span class="st">            &quot;</span><span class="er">code_uf</span><span class="st">&quot;: 42,</span></a>
+    <a class="sourceLine" id="cb47-20" title="20"><span class="st">            &quot;</span><span class="er">code_ibge</span><span class="st">&quot;: 4200200,</span></a>
+    <a class="sourceLine" id="cb47-21" title="21"><span class="st">            &quot;</span><span class="er">city</span><span class="st">&quot;: &quot;</span><span class="er">Agrolândia</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb47-22" title="22"><span class="st">            &quot;</span><span class="er">state</span><span class="st">&quot;: &quot;</span><span class="er">Santa</span> <span class="er">Catarina</span><span class="st">&quot;,</span></a>
+    <a class="sourceLine" id="cb47-23" title="23"><span class="st">            &quot;</span><span class="er">latitude</span><span class="st">&quot;: -27.4087</span></a>
+    <a class="sourceLine" id="cb47-24" title="24"><span class="st">        },</span></a>
+    <a class="sourceLine" id="cb47-25" title="25"><span class="st">        (...)</span></a></code></pre></div>
+    <p><code>GET /api/cities?state=&lt;estado&gt;&amp;city=&lt;cidade&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <h1 id="rotas-chat">Rotas Chat</h1>
+    <blockquote>
+    <p><strong>Obs:</strong> Rotas também dispaníveis na api complementar desenvolvida em node para utilização com socket.io.</p>
+    </blockquote>
+    <h2 align="center">
+    Ver todas conversas já iniciadas
+    </h2>
+    <p><code>GET /api/chat - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <blockquote>
+    <p><strong>Obs:</strong> Rota mostra apenas as conversas ligadas ao usuário logado.</p>
+    </blockquote>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-17">Caso dê tudo certo, a resposta será assim:</h4>
+    <blockquote>
+    <p><strong>Obs:</strong> Propriedade “read” mostra se a mensagem já foi lida.</p>
+    </blockquote>
+    <p><code>GET /api/chat - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <div class="sourceCode" id="cb49"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb49-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb49-2" title="2">  <span class="dt">&quot;chats&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb49-3" title="3">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb49-4" title="4">      <span class="dt">&quot;other_parent_id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb49-5" title="5">      <span class="dt">&quot;messages&quot;</span><span class="fu">:</span> <span class="st">&quot;chat/1&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb49-6" title="6">      <span class="dt">&quot;read&quot;</span><span class="fu">:</span> <span class="kw">true</span></a>
+    <a class="sourceLine" id="cb49-7" title="7">    <span class="fu">}</span><span class="ot">,</span></a>
+    <a class="sourceLine" id="cb49-8" title="8">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb49-9" title="9">      <span class="dt">&quot;other_parent_id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb49-10" title="10">      <span class="dt">&quot;messages&quot;</span><span class="fu">:</span> <span class="st">&quot;chat/2&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb49-11" title="11">      <span class="dt">&quot;read&quot;</span><span class="fu">:</span> <span class="kw">true</span></a>
+    <a class="sourceLine" id="cb49-12" title="12">    <span class="fu">}</span></a>
+    <a class="sourceLine" id="cb49-13" title="13">  <span class="ot">]</span></a>
+    <a class="sourceLine" id="cb49-14" title="14"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Enviar uma mensagem
+    </h2>
+    <p><code>POST /api/chat/&lt;parent_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Apenas necessário a mensagem no corpo de requisição.</code></pre>
+    <blockquote>
+    <p><strong>Obs:</strong> Usuário precisa estar logado para enviar a mensagem.</p>
+    </blockquote>
+    <div class="sourceCode" id="cb51"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb51-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb51-2" title="2">  <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;Boa noite, vi seu anuncio do site. Será que podemos conversar melhor sobre o envio?&quot;</span></a>
+    <a class="sourceLine" id="cb51-3" title="3"><span class="fu">}</span></a></code></pre></div>
+    <blockquote>
+    <p><strong>Obs:</strong> Precisa passar id do parent logado ou de um outro parent existente.</p>
+    </blockquote>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-18">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>POST /api/chat/2 - FORMATO DA RESPOSTA - STATUS 201</code></p>
+    <div class="sourceCode" id="cb52"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb52-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb52-2" title="2">  <span class="dt">&quot;msg&quot;</span><span class="fu">:</span> <span class="st">&quot;Mensagem enviada com sucesso!&quot;</span></a>
+    <a class="sourceLine" id="cb52-3" title="3"><span class="fu">}</span></a></code></pre></div>
+    <h2 align="center">
+    Ver a conversa de um chat específico
+    </h2>
+    <p><code>GET /api/chat/&lt;parent_id&gt; - FORMATO DA REQUISIÇÃO</code></p>
+    <pre><code>Não é necessário um corpo da requisição.</code></pre>
+    <h4 id="caso-dê-tudo-certo-a-resposta-será-assim-19">Caso dê tudo certo, a resposta será assim:</h4>
+    <p><code>GET /api/chat/2 - FORMATO DA RESPOSTA - STATUS 200</code></p>
+    <blockquote>
+    <p><strong>Obs 1 :</strong> propriedade “msg_read” mostra se o usuário já leu a mensagem. <strong>Obs 2 :</strong> propriedade “parent” mostra a quem se destina a mensagem enviada</p>
+    </blockquote>
+    <div class="sourceCode" id="cb54"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb54-1" title="1"><span class="fu">{</span></a>
+    <a class="sourceLine" id="cb54-2" title="2">  <span class="dt">&quot;messages&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+    <a class="sourceLine" id="cb54-3" title="3">    <span class="fu">{</span></a>
+    <a class="sourceLine" id="cb54-4" title="4">      <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="st">&quot;Thu, 05 May 2022 19:20:28 GMT&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb54-5" title="5">      <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;Boa noite, vi seu anuncio do site. Será que podemos conversar melhor sobre o envio?&quot;</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb54-6" title="6">      <span class="dt">&quot;msg_read&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></a>
+    <a class="sourceLine" id="cb54-7" title="7">      <span class="dt">&quot;parent&quot;</span><span class="fu">:</span> <span class="st">&quot;Hirton Santos&quot;</span></a>
+    <a class="sourceLine" id="cb54-8" title="8">    <span class="fu">}</span></a>
+    <a class="sourceLine" id="cb54-9" title="9">  <span class="ot">]</span></a>
+    <a class="sourceLine" id="cb54-10" title="10"><span class="fu">}</span></a></code></pre></div>
+    </body>
 </html>
