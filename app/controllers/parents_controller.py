@@ -1,8 +1,6 @@
 from copy import deepcopy
 from dataclasses import asdict
 from http import HTTPStatus
-from urllib import response
-from zoneinfo import available_timezones
 
 from app.configs.database import db
 from app.exceptions import InvalidKeyError, InvalidTypeValueError, NotAuthorizedError
@@ -232,10 +230,11 @@ def update_parents():
         parent: Query = session.query(ParentModel)
         parent = parent.filter_by(id=user_logged["id"]).first()
         city: CityModel = CityModel.query.get(parent.city_point_id)
-
+        
         if new_city or new_state:
             city_payload = new_city if new_city else city.city
             state_payload = new_state if new_state else city.state
+            
             new_city: CityModel = (
                 CityModel.query.filter(CityModel.state.ilike(f"%{state_payload}%"))
                 .filter(CityModel.city.ilike(f"%{city_payload}%"))
@@ -244,9 +243,11 @@ def update_parents():
 
             if not new_city:
                 raise InvalidStateOrCityError
-
-        data["city_point_id"] = new_city.point_id
-
+        
+        if new_city:
+            
+            data["city_point_id"] = new_city.point_id
+        
         for key, value in data.items():
             setattr(parent, key, value)
 
@@ -267,10 +268,10 @@ def update_parents():
             }, HTTPStatus.CONFLICT
 
     updated_parent = asdict(parent)
-
     updated_parent["products"] = f"api/products/by_parent/{updated_parent['id']}"
-    updated_parent["city"] = new_city.city
-    updated_parent["state"] = new_city.state
+    updated_parent["city"] = new_city.city if new_city else city.city
+    updated_parent["state"] = new_city.state if new_city else city.state
+
 
     return jsonify(updated_parent)
 
